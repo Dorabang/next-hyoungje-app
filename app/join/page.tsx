@@ -1,22 +1,28 @@
 'use client';
-import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import AgreeTerms from '../components/JoinTerms/AgreeTerms';
 import TextField from '@mui/material/TextField';
 import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { authService, createUserWithEmailAndPassword } from '@/firebase';
+import { authService } from '@/firebase';
 import { ErrorMessage } from '@hookform/error-message';
 import { useRouter } from 'next/navigation';
 import JoinTerms from '../components/JoinTerms/JoinTerms';
-import { getAuth, updateProfile } from 'firebase/auth';
-import getUser from '../hooks/useAuthStateChanged';
+import {
+  updateProfile,
+  createUserWithEmailAndPassword,
+  updatePhoneNumber,
+} from 'firebase/auth';
+import uploadImage from '@/utils/uploadImage';
+import { ChangeEvent, useState } from 'react';
+import Image, { StaticImageData } from 'next/image';
+import defaultProfile from '@/assets/defaultProfile.jpg';
 
 interface Inputs {
   email: string;
   password1: string;
   password2: string;
-  userName: string;
+  photoUrl: string;
+  // userName: string;
   nickName: string;
   phoneNumber: string;
   agree: boolean;
@@ -24,6 +30,8 @@ interface Inputs {
 
 const JoinPage = () => {
   const router = useRouter();
+
+  const [image, setImage] = useState<string>('');
 
   const {
     control,
@@ -33,33 +41,25 @@ const JoinPage = () => {
   } = useForm<Inputs>();
 
   const onSubmit = async (data: Inputs) => {
-    const {
-      email,
-      password1,
-      password2,
-      userName,
-      nickName,
-      phoneNumber,
-      agree,
-    } = data;
-    // console.log(data);
+    const { email, password2, nickName, phoneNumber } = data;
+
     try {
-      await createUserWithEmailAndPassword(authService, email, password2).then(
-        () => {
-          const auth = getAuth();
-          auth.currentUser &&
-            updateProfile(auth?.currentUser, {
-              displayName: userName,
-            });
-          /* const currentUser = getUser();
-          localStorage.setItem(
-            'isLoggedIn',
-            JSON.stringify(currentUser ? true : false)
-          ); */
-        }
-      );
+      await createUserWithEmailAndPassword(authService, email, password2);
+      const user = authService.currentUser;
+      const photo = await uploadImage(image);
+
+      user &&
+        (await updateProfile(user, {
+          displayName: nickName,
+          photoURL: photo,
+        }));
+
       alert('회원가입에 성공 했습니다.');
       router.push('/');
+
+      if (authService.currentUser) {
+        // await updatePhoneNumber(authService.currentUser, phoneNumber);
+      }
     } catch (error) {
       if (error) {
         const { code } = error as { code: string };
@@ -81,6 +81,26 @@ const JoinPage = () => {
     }
   };
 
+  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { files },
+    } = e;
+
+    if (files) {
+      const theFile = files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = (finishedEvent) => {
+        const {
+          currentTarget: { result },
+        } = finishedEvent;
+
+        setImage(result);
+      };
+      reader.readAsDataURL(theFile);
+    }
+  };
+
   return (
     <Stack
       marginX={'auto'}
@@ -88,7 +108,7 @@ const JoinPage = () => {
       justifyContent={'center'}
       alignItems={'center'}
     >
-      <Typography component={'h1'} variant='h4' sx={{ mb: 3, mt: 5 }}>
+      <Typography component={'h2'} variant='h4' sx={{ mb: 3, mt: 5 }}>
         회원가입
       </Typography>
       <Stack
@@ -98,6 +118,27 @@ const JoinPage = () => {
         onSubmit={handleSubmit(onSubmit)}
         autoComplete='off'
       >
+        <div className='flex flex-col gap-4 items-center'>
+          <p className='text-neutral-700'>프로필 이미지</p>
+          <div className='h-40 w-40 rounded-full overflow-hidden relative'>
+            <Image
+              src={image !== '' ? image : defaultProfile}
+              alt='프로필 이미지 미리보기'
+              fill
+              className='object-cover'
+            />
+          </div>
+          <label className='p-2 border border-neutral-400 hover:bg-neutral-400 rounded hover:text-white cursor-pointer'>
+            파일 업로드하기
+            <input
+              type='file'
+              accept='image/*'
+              onChange={onFileChange}
+              className='hidden'
+            />
+          </label>
+        </div>
+
         <Controller
           name='email'
           rules={{
@@ -169,13 +210,15 @@ const JoinPage = () => {
             />
           )}
         />
-        <Controller
+
+        {/* <Controller
           name='userName'
           control={control}
           render={({ field }) => (
             <TextField autoComplete={'off'} label='이름' {...field} />
           )}
-        />
+        /> */}
+
         <Controller
           name='nickName'
           control={control}
@@ -209,6 +252,7 @@ const JoinPage = () => {
             />
           )}
         />
+
         <JoinTerms />
         <Controller
           name='agree'
