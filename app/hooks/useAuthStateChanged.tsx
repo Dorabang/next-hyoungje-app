@@ -1,5 +1,6 @@
 'use client';
-import { authService, onAuthStateChanged } from '@/firebase';
+import { authService } from '@/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { authState } from '@/recoil/atoms';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
