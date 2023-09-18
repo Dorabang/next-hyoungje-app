@@ -1,16 +1,6 @@
 import { initializeApp } from '@firebase/app';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-  updateProfile,
-} from '@firebase/auth';
-import { getFirestore, addDoc, collection } from '@firebase/firestore';
+import { getAuth } from '@firebase/auth';
+import { getFirestore } from '@firebase/firestore';
 import { getStorage } from '@firebase/storage';
 
 const firebaseConfig = {
@@ -27,16 +17,5 @@ const firebaseApp = initializeApp(firebaseConfig);
 export default firebaseApp;
 
 export const authService = getAuth(firebaseApp);
-export const dbService = getFirestore();
-export const storageService = getStorage();
-export {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-  addDoc,
-  updateProfile,
-};
+export const dbService = getFirestore(firebaseApp);
+export const storageService = getStorage(firebaseApp);
