@@ -7,3 +7,8 @@ export const authState = atom<User | null>({
   // TypeError: Cannot freeze 방지
   dangerouslyAllowMutability: true,
 });
+
+export const editorState = atom<string>({
+  key: 'editorState',
+  default: '',
+});
