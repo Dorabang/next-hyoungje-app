@@ -1,4 +1,10 @@
 @tailwind base;
+
+@layer base {
+  button[type='submit'] {
+    background-color: #1976d2;
+  }
+}
 @tailwind components;
 @tailwind utilities;
 
