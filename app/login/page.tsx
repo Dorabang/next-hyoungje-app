@@ -3,14 +3,13 @@ import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import { Button, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { authService, signInWithEmailAndPassword } from '@/firebase';
-import { ErrorMessage } from '@hookform/error-message';
+import { authService } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { UserCredential } from 'firebase/auth';
-import { useRecoilState } from 'recoil';
-import { authState } from '../recoil/atoms';
-import getUser from '../hooks/useAuthStateChanged';
-import { browserSessionPersistence, setPersistence } from 'firebase/auth';
+import {
+  browserSessionPersistence,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 
 interface Inputs {
   email: string;
@@ -52,7 +51,7 @@ const LoginPage = () => {
       alignItems={'center'}
       paddingY={20}
     >
-      <Typography component={'h1'} variant='h4' sx={{ mb: 3 }}>
+      <Typography component={'h2'} variant='h4' sx={{ mb: 3 }}>
         로그인
       </Typography>
       <Stack
