@@ -1,13 +1,15 @@
 'use client';
 import React from 'react';
 import getUser from './useAuthStateChanged';
-import ErrorPage from '../404/page';
+import ErrorPage from '../not-found/page';
 import { redirect } from 'next/navigation';
+import { useRecoilValue } from 'recoil';
+import { authState } from '@/recoil/atoms';
 
 const useRedirect = () => {
-  const user = getUser();
+  const user = useRecoilValue(authState);
 
-  if (!user) redirect('/error');
+  if (!user) return redirect('/not-found');
 };
 
 export default useRedirect;
