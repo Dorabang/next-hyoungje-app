@@ -46,7 +46,7 @@ const JoinPage = () => {
     try {
       await createUserWithEmailAndPassword(authService, email, password2);
       const user = authService.currentUser;
-      const photo = await uploadImage(image);
+      const photo = await uploadImage('profile', image);
 
       user &&
         (await updateProfile(user, {
