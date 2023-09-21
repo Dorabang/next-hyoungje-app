@@ -2,7 +2,19 @@
 
 @layer base {
   button[type='submit'] {
-    background-color: #1976d2;
+    background-color: #fff;
+    border-radius: 0;
+    color: #000;
+    border: 1px solid #333;
+    transition: all 0.2s ease-in-out;
+    box-shadow: none;
+  }
+
+  button[type='submit']:hover {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #333;
+    box-shadow: none;
   }
 }
 @tailwind components;
