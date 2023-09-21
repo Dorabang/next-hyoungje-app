@@ -98,7 +98,7 @@ const Nav = () => {
   const [user, setUser] = useRecoilState<User | null>(authState);
 
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
-  console.log('🚀 ~ file: index.tsx:101 ~ Nav ~ isScrolled:', isScrolled);
+
   const router = useRouter();
 
   const onLogOutClick = () => {
