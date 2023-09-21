@@ -12,3 +12,8 @@ export const editorState = atom<string>({
   key: 'editorState',
   default: '',
 });
+
+export const imageState = atom<string>({
+  key: 'imageState',
+  default: '',
+});

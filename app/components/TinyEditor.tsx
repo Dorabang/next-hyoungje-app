@@ -1,6 +1,5 @@
 'use client';
-import React, { useRef, useState } from 'react';
-import { storageService } from '@/firebase';
+import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useRecoilState } from 'recoil';
 import { editorState } from '@/recoil/atoms';
@@ -29,15 +28,13 @@ const TinyEditor = () => {
     'code',
     'help',
     'wordcount',
-    'image',
   ];
 
   const tinymceToolbar =
     'undo redo | blocks | ' +
     'bold italic forecolor | alignleft aligncenter ' +
     'alignright alignjustify | bullist numlist outdent indent | ' +
-    'removeformat | help' +
-    'image';
+    'removeformat | help ';
 
   const imageFileType = 'jpg,svg,webp';
 
@@ -53,7 +50,6 @@ const TinyEditor = () => {
           menubar: false,
           plugins: tinymcePlugin,
           toolbar: tinymceToolbar,
-          images_file_types: imageFileType,
           language: 'ko_KR',
         }}
       />
