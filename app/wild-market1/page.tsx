@@ -19,8 +19,17 @@ export interface postProps {
   data: {
     id: string;
     title: string;
+    status: string;
+    variant: string;
+    phone: string;
+    place: string;
     contents: string;
-    attachmentUrl?: string;
+    date: string;
+    price: string;
+    height: string;
+    width: string;
+    amount: string;
+    image?: string[];
     like: string[];
     comment: {
       creatorId: string;
@@ -38,8 +47,17 @@ export interface postProps {
 export interface postsProps {
   id: string;
   title: string;
+  status: string;
+  variant: string;
+  phone: string;
+  place: string;
   contents: string;
-  attachmentUrl?: string;
+  date: string;
+  price: string;
+  height: string;
+  width: string;
+  amount: string;
+  image?: string[];
   like: string[];
   comment: {
     creatorId: string;
@@ -55,18 +73,30 @@ export interface postsProps {
 
 const Living1Page = () => {
   const user = useRecoilValue(authState);
-  console.log('🚀 ~ file: page.tsx:52 ~ Living1Page ~ user:', user);
+
   const pathname = usePathname();
 
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<postProps[]>([]);
   const [page, setPage] = useState(1);
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const postsData = (posts) => {
+  const postsData = (posts: postProps[]) => {
     if (posts) {
       let result = posts.slice(offset, offset + limit);
       return result;
+    }
+  };
+
+  const statusOptions = (
+    status: 'sale' | 'sold-out' | 'reservation' | string
+  ) => {
+    if (status === 'sale') {
+      return '판매 중';
+    } else if (status === 'sold-out') {
+      return '판매 완료';
+    } else {
+      return '예약 중';
     }
   };
 
@@ -93,8 +123,9 @@ const Living1Page = () => {
 
       <ul className='w-full border-b border-neutral-500'>
         <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_div]:py-2 [&_div]:px-4'>
+          <div className='w-[10%]'>분류</div>
           <div className='w-[10%]'>작성자</div>
-          <div className='w-[70%] text-left'>제목</div>
+          <div className='w-[60%] text-left'>제목</div>
           <div className='w-[10%]'>등록 일자</div>
           <div className='w-[10%]'>조회수</div>
         </li>
@@ -103,15 +134,16 @@ const Living1Page = () => {
             return (
               <li
                 key={post.id}
-                className='flex border-b border-neutral-300 text-center [&_div]:py-2 [&_div]:px-4'
+                className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_div]:py-2 [&_div]:px-4'
               >
+                <div className='w-[10%]'>{statusOptions(post.data.status)}</div>
                 <div className='w-[10%]'>{post.data.creatorName}</div>
-                <div className='flex-grow flex justify-between w-[70%]'>
+                <div className='flex-grow flex justify-between items-center w-[60%]'>
                   <Link href={`/wild-market1/${post.id}`}>
                     {post.data.title}
                   </Link>
                   {user && user.uid === post.data.creatorId && (
-                    <div className='text-gray-300 flex gap-2 text-sm'>
+                    <div className='text-gray-500 flex gap-2 text-sm'>
                       <span>편집</span>
                       <span>삭제</span>
                     </div>
