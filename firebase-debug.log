@@ -1,0 +1,21 @@
+[debug] [2023-09-20T06:50:08.439Z] ----------------------------------------------------------------------
+[debug] [2023-09-20T06:50:08.441Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\user\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2023-09-20T06:50:08.442Z] CLI Version:   12.4.4
+[debug] [2023-09-20T06:50:08.442Z] Platform:      win32
+[debug] [2023-09-20T06:50:08.442Z] Node Version:  v18.15.0
+[debug] [2023-09-20T06:50:08.444Z] Time:          Wed Sep 20 2023 15:50:08 GMT+0900 (대한민국 표준시)
+[debug] [2023-09-20T06:50:08.444Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-09-20T06:50:08.454Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-09-20T06:50:08.454Z] > authorizing via signed-in user (pyj04149@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\수아쓰 백업용\coding\github\next-hyoungje-app
+
