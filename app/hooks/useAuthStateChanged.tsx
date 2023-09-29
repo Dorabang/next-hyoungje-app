@@ -16,7 +16,7 @@ const useAuthStateChanged = () => {
         setUser(null);
       }
     });
-  }, []);
+  });
 };
 
 export default useAuthStateChanged;

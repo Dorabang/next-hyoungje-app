@@ -105,7 +105,7 @@ const Living1Page = () => {
     if (posts.length === 0) {
       getPosts(pathname).then((response) => setPosts(response));
     }
-  }, [posts]);
+  }, [posts, pathname]);
 
   return (
     <ContainerBox>

@@ -54,6 +54,8 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       imageUrl && newArr.push(imageUrl);
     });
 
+    console.log('🚀 ~ file: page.tsx:58 ~ handleSubmit ~ newArr:', newArr);
+
     const newPostObj = {
       id: uuid(),
       title: title,
@@ -76,6 +78,11 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
+
+    console.log(
+      '🚀 ~ file: page.tsx:81 ~ handleSubmit ~ newPostObj:',
+      newPostObj
+    );
 
     await addDoc(collection(dbService, `${id}`), newPostObj);
     setTitle('');
@@ -100,10 +107,10 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       const theFile = files[0];
       const reader = new FileReader();
 
-      reader.onloadend = (finishedEvent) => {
+      reader.onloadend = (finishedEvent: ProgressEvent<EventTarget>) => {
         const {
           currentTarget: { result },
-        } = finishedEvent;
+        }: { currentTarget: { result: EventTarget | null } } = finishedEvent;
 
         if (result) {
           setImage(result);
