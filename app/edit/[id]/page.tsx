@@ -1,7 +1,7 @@
 'use client';
+
 import React, { useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
-import TinyEditor from '@/components/TinyEditor';
 import useRedirect from '@/hooks/useRedirect';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { authState, editorState, imageState } from '@/recoil/atoms';
@@ -103,7 +103,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       const theFile = files[0];
       const reader = new FileReader();
 
-      reader.onloadend = (finishedEvent: ProgressEvent<EventTarget>) => {
+      reader.onloadend = (finishedEvent: any) => {
         const {
           currentTarget: { result },
         } = finishedEvent;
@@ -302,7 +302,6 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
           </div>
         </form>
 
-        {/* <TinyEditor /> */}
         <Editor />
 
         <div className='flex justify-center pt-[80px]'>
