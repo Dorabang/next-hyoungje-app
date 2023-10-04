@@ -34,7 +34,7 @@ import { routes } from './Constants';
 
 /* utils */
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
-import GetImageURL from '@/utils/getImageURL';
+import GetProfileURL from '@/utils/getProfileURL';
 
 /* image */
 import logoImg from '@/assets/common/logo.png';
@@ -121,7 +121,7 @@ const Nav = () => {
       setProfile(value);
     };
     /* proflie */
-    GetImageURL(user, changeProfile);
+    GetProfileURL(user, changeProfile);
 
     /* scroll event */
     const handleScroll = () => {
