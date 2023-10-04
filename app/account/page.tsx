@@ -28,7 +28,7 @@ interface Inputs {
   agree: boolean;
 }
 
-const JoinPage = () => {
+const AccountPage = () => {
   const router = useRouter();
 
   const [image, setImage] = useState<string>('');
@@ -46,7 +46,8 @@ const JoinPage = () => {
     try {
       await createUserWithEmailAndPassword(authService, email, password2);
       const user = authService.currentUser;
-      const photo = await uploadImage('profile', image);
+      const photo =
+        user && (await uploadImage(`/profile/${user.uid}/photo`, image));
 
       user &&
         (await updateProfile(user, {
@@ -128,7 +129,7 @@ const JoinPage = () => {
               className='object-cover'
             />
           </div>
-          <label className='p-2 border border-neutral-400 hover:bg-neutral-400 rounded hover:text-white cursor-pointer'>
+          <label className='p-2 border border-neutral-400 transition-colors hover:bg-neutral-400 rounded hover:text-white cursor-pointer'>
             파일 업로드하기
             <input
               type='file'
@@ -297,4 +298,4 @@ const JoinPage = () => {
   );
 };
 
-export default JoinPage;
+export default AccountPage;
