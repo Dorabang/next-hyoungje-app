@@ -2,17 +2,32 @@
 
 @layer base {
   button[type='submit'] {
-    background-color: #fff;
+    background-color: #333;
     border-radius: 0;
-    color: #000;
+    color: #fff;
     border: 1px solid #333;
     transition: all 0.2s ease-in-out;
     box-shadow: none;
   }
 
   button[type='submit']:hover {
-    background-color: #333;
-    color: #fff;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #333;
+    box-shadow: none;
+  }
+
+  button[type='reset'] {
+    background-color: #fff;
+    border-radius: 0;
+    color: #000;
+    border: 1px solid #ddd;
+    transition: all 0.2s ease-in-out;
+    box-shadow: none;
+  }
+
+  button[type='reset']:hover {
+    background-color: #fff;
     border: 1px solid #333;
     box-shadow: none;
   }
