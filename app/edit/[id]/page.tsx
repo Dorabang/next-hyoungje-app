@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import uploadImage from '@/utils/uploadImage';
 import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
+import Editor from '@/components/Editor';
 
 interface ImageObjProps {
   id: string;
@@ -39,8 +40,8 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const [price, setPrice] = useState('');
   const [place, setPlace] = useState('');
   const [date, setDate] = useState('');
-  const [height, setHeight] = useState('cm');
-  const [width, setWidth] = useState('cm');
+  const [height, setHeight] = useState(' cm');
+  const [width, setWidth] = useState(' cm');
   const [amount, setAmount] = useState('');
   const [image, setImage] = useRecoilState(imageState);
   const [imageArr, setImageArr] = useState<ImageObjProps[] | null>(null);
@@ -50,14 +51,12 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     // const imageUrlArr = await uploadImage(id, image);
     let newArr: string[] = [];
     imageArr?.map(async (image) => {
-      const imageUrl = await uploadImage(id, image.imageUrl);
+      const imageUrl =
+        user && (await uploadImage(`${id}/${user.uid}/image`, image.imageUrl));
       imageUrl && newArr.push(imageUrl);
     });
 
-    console.log('🚀 ~ file: page.tsx:58 ~ handleSubmit ~ newArr:', newArr);
-
     const newPostObj = {
-      id: uuid(),
       title: title,
       status: status,
       variant: variant,
@@ -79,18 +78,13 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       updatedAt: Date.now(),
     };
 
-    console.log(
-      '🚀 ~ file: page.tsx:81 ~ handleSubmit ~ newPostObj:',
-      newPostObj
-    );
-
     await addDoc(collection(dbService, `${id}`), newPostObj);
     setTitle('');
     setImage('');
     setValue('');
     setDate('');
-    setWidth('cm');
-    setHeight('cm');
+    setWidth(' cm');
+    setHeight(' cm');
     setPlace('');
     setPrice('');
     setAmount('');
@@ -98,7 +92,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     router.back();
   };
 
-  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const inputWrapperClass = 'flex w-full border-b border-[#dddddd] p-2';
+
+  const onFileChange = (e: any) => {
     const {
       target: { files },
     } = e;
@@ -110,7 +106,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       reader.onloadend = (finishedEvent: ProgressEvent<EventTarget>) => {
         const {
           currentTarget: { result },
-        }: { currentTarget: { result: EventTarget | null } } = finishedEvent;
+        } = finishedEvent;
 
         if (result) {
           setImage(result);
@@ -138,7 +134,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     <ContainerBox>
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <div className='pr-4'>
               <select
                 id='status'
@@ -163,7 +159,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='variant'>* 종류</label>
             <input
               name='variant'
@@ -175,7 +171,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='phone'>* 연락처</label>
             <input
               name='phone'
@@ -187,7 +183,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='place'>* 산지</label>
             <input
               name='place'
@@ -199,7 +195,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='date'>* 산채일</label>
             <input
               name='date'
@@ -211,7 +207,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='price'>* 가격</label>
             <input
               name='price'
@@ -223,7 +219,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='height'>* 키</label>
             <input
               name='height'
@@ -235,7 +231,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='width'>* 폭</label>
             <input
               name='width'
@@ -247,7 +243,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
+          <div className={`${inputWrapperClass}`}>
             <label htmlFor='amount'>촉수</label>
             <input
               name='amount'
@@ -258,20 +254,29 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className='flex w-full border-b border-[#dddddd] p-2'>
-            <label htmlFor='phone'>파일 첨부</label>
+          <div className={`${inputWrapperClass}`}>
+            <p className='w-[90px] border-r border-neutral-300'>파일 첨부</p>
             <div className='flex flex-wrap pl-3'>
-              <input
-                id='addFile'
-                name='addFile'
-                type='file'
-                accept='image/*'
-                onChange={onFileChange}
-                className='outline-none w-full'
-              />
-              <ul className='py-4 flex gap-2'>
-                {imageArr &&
-                  imageArr.map((item) => (
+              <label
+                htmlFor='addFile'
+                className='py-1 w-[100px_!important] text-center cursor-pointer
+                border border-[#ddd] transition-colors
+                hover:border-[#333]
+                '
+              >
+                파일 선택
+                <input
+                  id='addFile'
+                  name='addFile'
+                  type='file'
+                  accept='image/*'
+                  onChange={onFileChange}
+                  className='outline-none w-full hidden'
+                />
+              </label>
+              {imageArr && (
+                <ul className='w-full py-4 flex gap-2'>
+                  {imageArr.map((item) => (
                     <li key={item.id}>
                       <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
                         <Image
@@ -281,7 +286,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                           className='object-cover'
                         />
                         <div
-                          className='absolute right-0 top-0 w-5 h-5 bg-black flex justify-center items-center cursor-pointer'
+                          className='absolute right-0 top-0 w-5 h-5
+                          bg-black hover:bg-gray-900 transition-colors
+                          flex justify-center items-center cursor-pointer'
                           onClick={() => handleDeleteImage(item.id)}
                         >
                           <AiOutlineClose className='text-white' />
@@ -289,13 +296,16 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                       </div>
                     </li>
                   ))}
-              </ul>
+                </ul>
+              )}
             </div>
           </div>
         </form>
-        <TinyEditor />
 
-        <div className='flex justify-center pt-4'>
+        {/* <TinyEditor /> */}
+        <Editor />
+
+        <div className='flex justify-center pt-[80px]'>
           <Button
             type='submit'
             size='large'
