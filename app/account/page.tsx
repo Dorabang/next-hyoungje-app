@@ -91,7 +91,7 @@ const AccountPage = () => {
       const theFile = files[0];
       const reader = new FileReader();
 
-      reader.onloadend = (finishedEvent) => {
+      reader.onloadend = (finishedEvent: any) => {
         const {
           currentTarget: { result },
         } = finishedEvent;
