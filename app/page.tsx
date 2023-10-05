@@ -12,16 +12,19 @@ export default function Home() {
           src={mvDesktop}
           alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
           className='hidden lg:block w-full'
+          priority
         />
         <Image
           src={mvTablet}
           alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
           className='hidden sm:block lg:hidden w-full'
+          priority
         />
         <Image
           src={mvMobile}
           alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
           className='block sm:hidden w-full'
+          priority
         />
       </div>
       <ContainerBox>Slider 1</ContainerBox>
