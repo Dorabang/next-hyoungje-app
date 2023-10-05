@@ -1,13 +1,12 @@
 'use client';
 import { editorState } from '@/recoil/atoms';
-import React, { useEffect, useMemo } from 'react';
-import ReactQuill, { Quill } from 'react-quill';
+import React, { useEffect } from 'react';
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useRecoilState } from 'recoil';
 
 const Editor = () => {
   const [value, setValue] = useRecoilState<string>(editorState);
-  console.log('🚀 ~ file: Editor.tsx:10 ~ Editor ~ value:', value);
 
   useEffect(() => {
     if (value === `<p><br></p>`) {
