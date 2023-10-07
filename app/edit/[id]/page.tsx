@@ -52,9 +52,19 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     let newArr: string[] = [];
     imageArr?.map(async (image) => {
       const imageUrl =
-        user && (await uploadImage(`${id}/${user.uid}/image`, image.imageUrl));
+        user &&
+        (await uploadImage(
+          `${id}/${user.uid}/post/${image.id}/image`,
+          image.imageUrl
+        ));
       imageUrl && newArr.push(imageUrl);
     });
+
+    const imageIdArr = imageArr && imageArr.map((item) => item.id);
+    console.log(
+      '🚀 ~ file: page.tsx:65 ~ handleSubmit ~ imageIdArr:',
+      imageIdArr
+    );
 
     const newPostObj = {
       title: title,
@@ -68,7 +78,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       height: height,
       width: width,
       amount: amount,
-      image: newArr,
+      image: imageIdArr,
       like: [],
       comment: [],
       views: 0,
@@ -92,9 +102,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     router.back();
   };
 
-  const inputWrapperClass = 'flex w-full border-b border-[#dddddd] p-2';
+  const inputWrapperClass = 'flex w-full border-b border-[#ddd] p-2';
 
-  const onFileChange = (e: any) => {
+  const onFileChange = async (e: any) => {
     const {
       target: { files },
     } = e;
@@ -103,10 +113,14 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       const theFile = files[0];
       const reader = new FileReader();
 
-      reader.onloadend = (finishedEvent: any) => {
+      reader.onloadend = async (finishedEvent: any) => {
         const {
           currentTarget: { result },
         } = finishedEvent;
+        console.log(
+          '🚀 ~ file: page.tsx:115 ~ reader.onloadend= ~ finishedEvent:',
+          finishedEvent
+        );
 
         if (result) {
           setImage(result);
@@ -123,11 +137,13 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   };
 
   const handleDeleteImage = (id: string) => {
-    const modifyImageArr = imageArr
-      ? imageArr?.filter((imageObj) => imageObj.id !== id)
-      : [];
+    if (imageArr?.length === 0 || imageArr === null) {
+      return setImageArr(null);
+    } else {
+      const modifyImageArr = imageArr.filter((imageObj) => imageObj.id !== id);
 
-    setImageArr(modifyImageArr);
+      return setImageArr(modifyImageArr);
+    }
   };
 
   return (
@@ -255,7 +271,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
           </div>
 
           <div className={`${inputWrapperClass}`}>
-            <p className='w-[90px] border-r border-neutral-300'>파일 첨부</p>
+            <p className='w-[90px] border-r border-neutral-300 cursor-default'>
+              파일 첨부
+            </p>
             <div className='flex flex-wrap pl-3'>
               <label
                 htmlFor='addFile'
