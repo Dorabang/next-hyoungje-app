@@ -1,6 +1,5 @@
 'use client';
 import { useForm, Controller } from 'react-hook-form';
-import TextField from '@mui/material/TextField';
 import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { authService } from '@/firebase';
@@ -14,8 +13,9 @@ import {
 } from 'firebase/auth';
 import uploadImage from '@/utils/uploadImage';
 import { ChangeEvent, useState } from 'react';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
+import { CssTextField } from '@/login/styleComponents';
 
 interface Inputs {
   email: string;
@@ -154,7 +154,7 @@ const AccountPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
               label='* 이메일'
@@ -173,7 +173,7 @@ const AccountPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               autoComplete={'new-password'}
               label='* 비밀번호'
               type='password'
@@ -201,7 +201,7 @@ const AccountPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               autoComplete={'new-password'}
               label='* 비밀번호 확인'
               type='password'
@@ -227,7 +227,7 @@ const AccountPage = () => {
             required: { message: '닉네임을 입력해주세요.', value: true },
           }}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               label='* 닉네임'
               {...field}
               error={Boolean(errors.nickName)}
@@ -245,7 +245,7 @@ const AccountPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               label='* 연락처'
               {...field}
               error={Boolean(errors.phoneNumber)}
@@ -266,6 +266,7 @@ const AccountPage = () => {
               sx={{ justifyContent: 'end' }}
               control={<Checkbox {...field} />}
               label='약관을 모두 읽었으며 동의합니다.'
+              className='checkbox'
             />
           )}
         />
