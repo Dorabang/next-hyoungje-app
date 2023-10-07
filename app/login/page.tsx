@@ -10,6 +10,7 @@ import {
   setPersistence,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import { CssTextField } from './styleComponents';
 
 interface Inputs {
   email: string;
@@ -72,7 +73,7 @@ const LoginPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
               label='* 이메일'
@@ -91,7 +92,7 @@ const LoginPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               autoComplete={'password'}
               label='* 비밀번호'
               type='password'
@@ -110,7 +111,7 @@ const LoginPage = () => {
             type='reset'
             variant='outlined'
             onClick={() => {
-              router.push('/join');
+              router.push('/account');
             }}
             sx={{ width: '100%' }}
           >

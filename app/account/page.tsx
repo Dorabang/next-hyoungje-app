@@ -1,6 +1,5 @@
 'use client';
 import { useForm, Controller } from 'react-hook-form';
-import TextField from '@mui/material/TextField';
 import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { authService } from '@/firebase';
@@ -14,8 +13,9 @@ import {
 } from 'firebase/auth';
 import uploadImage from '@/utils/uploadImage';
 import { ChangeEvent, useState } from 'react';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
+import { CssTextField } from '@/login/styleComponents';
 
 interface Inputs {
   email: string;
@@ -28,7 +28,7 @@ interface Inputs {
   agree: boolean;
 }
 
-const JoinPage = () => {
+const AccountPage = () => {
   const router = useRouter();
 
   const [image, setImage] = useState<string>('');
@@ -46,7 +46,8 @@ const JoinPage = () => {
     try {
       await createUserWithEmailAndPassword(authService, email, password2);
       const user = authService.currentUser;
-      const photo = await uploadImage('profile', image);
+      const photo =
+        user && (await uploadImage(`/profile/${user.uid}/photo`, image));
 
       user &&
         (await updateProfile(user, {
@@ -90,7 +91,7 @@ const JoinPage = () => {
       const theFile = files[0];
       const reader = new FileReader();
 
-      reader.onloadend = (finishedEvent) => {
+      reader.onloadend = (finishedEvent: any) => {
         const {
           currentTarget: { result },
         } = finishedEvent;
@@ -128,7 +129,7 @@ const JoinPage = () => {
               className='object-cover'
             />
           </div>
-          <label className='p-2 border border-neutral-400 hover:bg-neutral-400 rounded hover:text-white cursor-pointer'>
+          <label className='p-2 border border-neutral-400 transition-colors hover:bg-neutral-400 rounded hover:text-white cursor-pointer'>
             파일 업로드하기
             <input
               type='file'
@@ -153,7 +154,7 @@ const JoinPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
               label='* 이메일'
@@ -172,7 +173,7 @@ const JoinPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               autoComplete={'new-password'}
               label='* 비밀번호'
               type='password'
@@ -200,7 +201,7 @@ const JoinPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               autoComplete={'new-password'}
               label='* 비밀번호 확인'
               type='password'
@@ -226,7 +227,7 @@ const JoinPage = () => {
             required: { message: '닉네임을 입력해주세요.', value: true },
           }}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               label='* 닉네임'
               {...field}
               error={Boolean(errors.nickName)}
@@ -244,7 +245,7 @@ const JoinPage = () => {
           }}
           control={control}
           render={({ field }) => (
-            <TextField
+            <CssTextField
               label='* 연락처'
               {...field}
               error={Boolean(errors.phoneNumber)}
@@ -265,6 +266,7 @@ const JoinPage = () => {
               sx={{ justifyContent: 'end' }}
               control={<Checkbox {...field} />}
               label='약관을 모두 읽었으며 동의합니다.'
+              className='checkbox'
             />
           )}
         />
@@ -297,4 +299,4 @@ const JoinPage = () => {
   );
 };
 
-export default JoinPage;
+export default AccountPage;

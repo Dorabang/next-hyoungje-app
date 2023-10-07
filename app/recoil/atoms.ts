@@ -17,3 +17,13 @@ export const imageState = atom<string>({
   key: 'imageState',
   default: '',
 });
+
+export const imageUploadState = atom<File | null>({
+  key: 'imageUploadState',
+  default: null,
+});
+
+export const uploadPreviewState = atom<string[]>({
+  key: 'uploadPreviewState',
+  default: [],
+});

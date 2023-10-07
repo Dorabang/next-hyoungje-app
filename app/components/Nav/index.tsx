@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
+/* mui */
 import {
   AppBar,
   Box,
@@ -9,28 +12,33 @@ import {
   MenuList,
   Stack,
   Toolbar,
-  Tooltip,
-  TooltipProps,
-  styled,
-  tooltipClasses,
 } from '@mui/material';
-
-import { User, signOut } from 'firebase/auth';
-import { authService } from '@/firebase';
-
-import logoImg from '@/assets/common/logo.png';
 import { MUIStyledCommonProps } from '@mui/system';
+import { LightTooltip, authBtnStyle, btnStyle } from './StyleComponents';
 
-import { routes } from './Constants';
+/* next */
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+
+/* firebase */
+import { User, signOut } from 'firebase/auth';
+import { authService } from '@/firebase';
+
+/* recoil */
 import { useRecoilState } from 'recoil';
-import getUser from '@/hooks/useAuthStateChanged';
 import { authState } from '@/recoil/atoms';
-import GetUser from '@/hooks/useAuthStateChanged';
+
+/* constants */
+import { routes } from './Constants';
+
+/* utils */
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
+import GetImageURL from '@/utils/getImageURL';
+
+/* image */
+import logoImg from '@/assets/common/logo.png';
+import defaultProfile from '@/assets/defaultProfile.jpg';
 
 const {
   livingVegetable,
@@ -96,19 +104,26 @@ const LogoButton = (props: MUIStyledCommonProps) => {
 const Nav = () => {
   useAuthStateChanged();
   const [user, setUser] = useRecoilState<User | null>(authState);
-
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
+
+  const [profile, setProfile] = useState<string>();
 
   const router = useRouter();
 
   const onLogOutClick = () => {
     signOut(authService);
     setUser(null);
-    localStorage.setItem('isLoggedIn', JSON.stringify(false));
     router.refresh();
   };
 
   useEffect(() => {
+    const changeProfile = (value: string) => {
+      setProfile(value);
+    };
+    /* proflie */
+    user && GetImageURL(`profile/${user.uid}/image`, changeProfile);
+
+    /* scroll event */
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -122,40 +137,6 @@ const Nav = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [user]);
-
-  const btnStyle = {
-    color: '#666',
-    fontSize: 18,
-    fontFamily: 'Noto Sans KR',
-    padding: '10px 20px',
-    fontWeight: '400',
-    ':hover': {
-      color: '#333',
-      background: '#fafafa',
-    },
-  };
-
-  const authBtnStyle = {
-    color: '#999',
-    fontSize: 15,
-    fontFamily: 'Noto Sans KR',
-    padding: '10px',
-    fontWeight: '400',
-    ':hover': {
-      color: '#333',
-      background: '#fafafa',
-    },
-  };
-
-  const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.common.white,
-      color: 'rgba(0, 0, 0)',
-      marginTop: '20px',
-    },
-  }));
 
   return (
     <>
@@ -174,7 +155,7 @@ const Nav = () => {
           <Toolbar
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: { xs: 'end', lg: 'space-between' },
               position: 'relative',
             }}
           >
@@ -273,7 +254,17 @@ const Nav = () => {
                     onClick={() => router.push(routes.myPage.path)}
                     sx={authBtnStyle}
                   >
-                    {routes.myPage.name}
+                    <div className='flex gap-1 items-center'>
+                      <div className='relative mt-[1px] w-5 h-5 rounded-full overflow-hidden'>
+                        <Image
+                          src={profile ? profile : defaultProfile}
+                          alt={`${user.displayName} 업로드 이미지`}
+                          fill
+                          sizes='100%'
+                        />
+                      </div>
+                      <p className='normal-case'>{user.displayName}</p>
+                    </div>
                   </Button>
                   <Button onClick={onLogOutClick} sx={authBtnStyle}>
                     로그아웃

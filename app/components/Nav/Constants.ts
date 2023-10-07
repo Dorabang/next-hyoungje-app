@@ -14,7 +14,7 @@ export const community = [
 export const routes = {
   home: { path: '/', name: '홈' },
   login: { path: '/login', name: '로그인' },
-  join: { path: '/join', name: '회원가입' },
+  join: { path: '/account', name: '회원가입' },
   livingVegetable: {
     path: '/wild-market1',
     name: '산채품장터',
