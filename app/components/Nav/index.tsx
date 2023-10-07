@@ -34,7 +34,7 @@ import { routes } from './Constants';
 
 /* utils */
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
-import GetProfileURL from '@/utils/getProfileURL';
+import GetImageURL from '@/utils/getImageURL';
 
 /* image */
 import logoImg from '@/assets/common/logo.png';
@@ -121,7 +121,7 @@ const Nav = () => {
       setProfile(value);
     };
     /* proflie */
-    GetProfileURL(user, changeProfile);
+    user && GetImageURL(`profile/${user.uid}/image`, changeProfile);
 
     /* scroll event */
     const handleScroll = () => {
@@ -155,7 +155,7 @@ const Nav = () => {
           <Toolbar
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: { xs: 'end', lg: 'space-between' },
               position: 'relative',
             }}
           >
