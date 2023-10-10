@@ -16,6 +16,7 @@ import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/login/styleComponents';
+import imageCompression from 'browser-image-compression';
 
 interface Inputs {
   email: string;
@@ -89,16 +90,22 @@ const AccountPage = () => {
 
     if (files) {
       const theFile = files[0];
-      const reader = new FileReader();
 
-      reader.onloadend = (finishedEvent: any) => {
-        const {
-          currentTarget: { result },
-        } = finishedEvent;
-
-        setImage(result);
+      const options = {
+        maxSizeMB: 0.2, // 이미지 최대 용량
+        maxWidthOrHeight: 1920, // 최대 넓이(혹은 높이)
+        useWebWorker: true,
       };
-      reader.readAsDataURL(theFile);
+
+      imageCompression(theFile, options)
+        .then((response) => {
+          imageCompression.getDataUrlFromFile(response).then((result) => {
+            setImage(result);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 

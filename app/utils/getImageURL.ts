@@ -5,7 +5,7 @@ const GetImageURL = async (
   url: string,
   changeProfile: (value: string) => void
 ) => {
-  const photoRef = ref(storageService, `${url}.png`);
+  const photoRef = ref(storageService, `${url}.jpg`);
 
   await getDownloadURL(photoRef)
     .then((url) => {

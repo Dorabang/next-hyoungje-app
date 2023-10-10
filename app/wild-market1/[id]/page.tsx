@@ -67,14 +67,12 @@ const WildMarketDetailPage = ({
       {/* title */}
       <div
         className='border-b border-neutral-500
-          flex gap-2 justify-between items-center
+          flex gap-4 justify-between items-center
           py-3'
       >
         <div className='p-2 cursor-pointer' onClick={() => router.back()}>
           <IoArrowBack size={18} />
         </div>
-
-        <div className='w-[1px] h-[30px] bg-[#ddd]'></div>
 
         <h2 className='text-lg font-bold flex-grow'>
           <span className='px-2'>{StatusOptions(post.data.status)}</span>
@@ -167,13 +165,13 @@ const WildMarketDetailPage = ({
         </div>
 
         {/* image */}
-        <div className='pt-8 w-full'>
+        <div className='pt-4 w-full'>
           {postImages &&
             image &&
             image.map((imageURL) => (
               <div
                 key={image + '-key'}
-                className='relative w-full h-[400px] md:max-w-[800px] md:min-h-[800px] mx-auto my-4'
+                className='relative w-full h-[400px] md:max-w-[800px] md:min-h-[800px] mx-auto'
               >
                 <Image
                   src={imageURL}
@@ -195,7 +193,7 @@ const WildMarketDetailPage = ({
           [&_.ql-container.ql-snow]:border-none
           [&_.ql-container]:text-base
           [&_.ql-editor]:p-0
-          pt-8
+          pt-4
         '
         >
           <ReactQuill

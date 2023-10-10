@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { authState, editorState, imageState } from '@/recoil/atoms';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { authState, editorState } from '@/recoil/atoms';
 import { Button } from '@mui/material';
-import { dbService, storageService } from '@/firebase';
+import { dbService } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import uuid from 'react-uuid';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ import uploadImage from '@/utils/uploadImage';
 import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '@/components/Editor';
+import imageCompression from 'browser-image-compression';
 
 interface ImageObjProps {
   id: string;
@@ -43,28 +44,23 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const [height, setHeight] = useState(' cm');
   const [width, setWidth] = useState(' cm');
   const [amount, setAmount] = useState('');
-  const [image, setImage] = useRecoilState(imageState);
   const [imageArr, setImageArr] = useState<ImageObjProps[] | null>(null);
   const [value, setValue] = useRecoilState(editorState);
 
   const handleSubmit = async () => {
     // const imageUrlArr = await uploadImage(id, image);
     let newArr: string[] = [];
-    imageArr?.map(async (image) => {
+    imageArr?.map(async (value) => {
       const imageUrl =
         user &&
         (await uploadImage(
-          `${id}/${user.uid}/post/${image.id}/image`,
-          image.imageUrl
+          `${id}/${user.uid}/post/${value.id}/image`,
+          value.imageUrl
         ));
       imageUrl && newArr.push(imageUrl);
     });
 
     const imageIdArr = imageArr && imageArr.map((item) => item.id);
-    console.log(
-      '🚀 ~ file: page.tsx:65 ~ handleSubmit ~ imageIdArr:',
-      imageIdArr
-    );
 
     const newPostObj = {
       title: title,
@@ -90,7 +86,6 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     await addDoc(collection(dbService, `${id}`), newPostObj);
     setTitle('');
-    setImage('');
     setValue('');
     setDate('');
     setWidth(' cm');
@@ -104,35 +99,33 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   const inputWrapperClass = 'flex w-full border-b border-[#ddd] p-2';
 
-  const onFileChange = async (e: any) => {
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
 
     if (files) {
       const theFile = files[0];
-      const reader = new FileReader();
 
-      reader.onloadend = async (finishedEvent: any) => {
-        const {
-          currentTarget: { result },
-        } = finishedEvent;
-        console.log(
-          '🚀 ~ file: page.tsx:115 ~ reader.onloadend= ~ finishedEvent:',
-          finishedEvent
-        );
-
-        if (result) {
-          setImage(result);
-
-          const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
-
-          setImageArr((prev) =>
-            prev !== null ? [...prev, imageObj] : [imageObj]
-          );
-        }
+      const options = {
+        maxSizeMB: 0.2, // 이미지 최대 용량
+        maxWidthOrHeight: 1920, // 최대 넓이(혹은 높이)
+        useWebWorker: true,
       };
-      reader.readAsDataURL(theFile);
+
+      imageCompression(theFile, options)
+        .then((response) => {
+          imageCompression.getDataUrlFromFile(response).then((result) => {
+            const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
+
+            setImageArr((prev) =>
+              prev !== null ? [...prev, imageObj] : [imageObj]
+            );
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
