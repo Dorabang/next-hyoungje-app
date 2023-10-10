@@ -254,8 +254,8 @@ const Nav = () => {
                     onClick={() => router.push(routes.myPage.path)}
                     sx={authBtnStyle}
                   >
-                    <div className='flex gap-1 items-center'>
-                      <div className='relative mt-[1px] w-5 h-5 rounded-full overflow-hidden'>
+                    <div className='flex gap-[6px] items-center'>
+                      <div className='relative mt-[1px] w-6 h-6 rounded-full overflow-hidden'>
                         <Image
                           src={profile ? profile : defaultProfile}
                           alt={`${user.displayName} 업로드 이미지`}
