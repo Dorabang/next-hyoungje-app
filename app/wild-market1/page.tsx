@@ -75,7 +75,9 @@ const Living1Page = () => {
   const pathname = usePathname();
 
   const [posts, setPosts] = useState<postProps[]>([]);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const [page, setPage] = useState(1);
   const limit = 10;
   const offset = (page - 1) * limit;
@@ -102,68 +104,92 @@ const Living1Page = () => {
 
   return (
     <ContainerBox>
-      <Breadcrumbs pathname={pathname} />
-
-      <div className='flex justify-end mt-[40px]'>
-        {user && (
-          <Link
-            href={`/edit/${pathname}`}
-            className='text-neutral-500 hover:text-neutral-800 p-2 mb-3 flex items-center transition-colors'
-          >
-            <HiOutlinePencilSquare size={18} className='mr-1' />
-            글쓰기
-          </Link>
-        )}
+      <div className='flex justify-between'>
+        <Breadcrumbs pathname={pathname} />
       </div>
+
+      <ul
+        className='flex justify-end items-center gap-2 pt-10 pb-5
+        text-gray-500 text-sm
+       '
+      >
+        {user && (
+          <>
+            <li>
+              <Link
+                href={`/edit/${pathname}`}
+                className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
+              >
+                <HiOutlinePencilSquare size={18} className='mr-1' />
+                글쓰기
+              </Link>
+            </li>
+
+            <li className='cursor-default'>|</li>
+          </>
+        )}
+        <li className='cursor-pointer hover:text-gray-700'>전체</li>
+        <li className='cursor-default'>|</li>
+        <li className='cursor-pointer hover:text-gray-700'>판매 중</li>
+        <li className='cursor-default'>|</li>
+        <li className='cursor-pointer hover:text-gray-700'>판매 완료</li>
+        <li className='cursor-default'>|</li>
+        <li className='cursor-pointer hover:text-gray-700'>예약 중</li>
+      </ul>
 
       <ul className='w-full border-b border-neutral-500'>
         <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_div]:py-2 [&_div]:px-4'>
-          <div className='w-[10%]'>종류</div>
-          <div className='w-[15%]'>분류</div>
+          <div className='w-[8%]'>종류</div>
+          <div className='w-[10%]'>분류</div>
           <div className='flex-grow text-left'>제목</div>
-          <div className='w-[15%]'>작성자</div>
+          <div className='w-[12%]'>작성자</div>
           <div className='w-[10%]'>등록 일자</div>
-          <div className='w-[10%]'>조회수</div>
+          <div className='w-[8%]'>조회수</div>
         </li>
         {!isLoading ? (
           posts.length !== 0 ? (
-            posts.map((post: postProps) => {
-              return (
-                <li
-                  key={post.id}
-                  className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_div]:py-2 [&_div]:px-4'
-                >
-                  <div className='w-[10%]'>
-                    {post.data.variant.length > 5
-                      ? post.data.variant.substring(0, 5)
-                      : post.data.variant}
-                  </div>
-                  <div className='w-[15%]'>
-                    {StatusOptions(post.data.status)}
-                  </div>
-                  <div className='flex-grow flex justify-between items-center'>
-                    <Link href={`/wild-market1/${post.id}`}>
-                      {post.data.title}
-                    </Link>
-                    {user && user.uid === post.data.creatorId && (
-                      <div className='text-gray-500 flex gap-2 text-sm [&_span]:cursor-pointer'>
-                        <span>편집</span>
-                        <span>삭제</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className='w-[15%]'>
-                    {post.data.creatorName.length > 8
-                      ? post.data.creatorName.substring(0, 8) + '...'
-                      : post.data.creatorName}
-                  </div>
-                  <div className='w-[10%]'>
-                    {DateFormat(post.data.createdAt)}
-                  </div>
-                  <div className='w-[10%]'>{post.data.views}</div>
-                </li>
-              );
-            })
+            posts.map(
+              ({
+                id,
+                data: {
+                  variant,
+                  status,
+                  title,
+                  creatorId,
+                  creatorName,
+                  createdAt,
+                  views,
+                },
+              }: postProps) => {
+                return (
+                  <li
+                    key={id}
+                    className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_div]:py-2 [&_div]:px-4'
+                  >
+                    <div className='w-[8%]'>
+                      {variant.length > 5 ? variant.substring(0, 5) : variant}
+                    </div>
+                    <div className='w-[10%]'>{StatusOptions(status)}</div>
+                    <div className='flex-grow flex justify-between items-center'>
+                      <Link href={`/wild-market1/${id}`}>{title}</Link>
+                      {user && user.uid === creatorId && (
+                        <div className='text-gray-500 flex gap-2 text-sm [&_span]:cursor-pointer'>
+                          <span>편집</span>
+                          <span>삭제</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className='w-[12%]'>
+                      {creatorName.length > 8
+                        ? creatorName.substring(0, 8) + '...'
+                        : creatorName}
+                    </div>
+                    <div className='w-[10%]'>{DateFormat(createdAt)}</div>
+                    <div className='w-[8%]'>{views}</div>
+                  </li>
+                );
+              }
+            )
           ) : (
             <li className='py-3 h-52 flex justify-center items-center'>
               <p className='text-neutral-500'>현재 게시물이 없습니다.</p>

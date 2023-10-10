@@ -138,12 +138,12 @@ const WildMarketDetailPage = ({
 
           <table
             className='w-full md:w-[500px]
-        [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-neutral-300
-        [&_th]:w-[20%]
-        sm:[&_th]:w-[15%] [&_th]:p-2
-        [&_td]:w-[80%]
-        sm:[&_td]:w-[85%] [&_td]:p-2
-        '
+              [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-neutral-300
+              [&_th]:w-[20%]
+              sm:[&_th]:w-[15%] [&_th]:p-2
+              [&_td]:w-[80%]
+              sm:[&_td]:w-[85%] [&_td]:p-2
+            '
           >
             <tbody>
               <tr>
@@ -173,7 +173,7 @@ const WildMarketDetailPage = ({
             image.map((imageURL) => (
               <div
                 key={image + '-key'}
-                className='relative w-full h-[400px] md:max-w-[700px] md:min-h-[400px] mx-auto my-4'
+                className='relative w-full h-[400px] md:max-w-[800px] md:min-h-[800px] mx-auto my-4'
               >
                 <Image
                   src={imageURL}
