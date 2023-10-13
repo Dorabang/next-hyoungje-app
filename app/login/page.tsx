@@ -30,13 +30,15 @@ const LoginPage = () => {
     const { email, password } = data;
     // console.log(data);
     setPersistence(authService, browserSessionPersistence)
-      .then(() => {
-        return signInWithEmailAndPassword(authService, email, password).then(
-          () => {
-            alert('로그인에 성공했습니다.');
-            router.push('/');
-          }
-        );
+      .then(async () => {
+        return await signInWithEmailAndPassword(
+          authService,
+          email,
+          password
+        ).then(() => {
+          alert('로그인에 성공했습니다.');
+          router.push('/');
+        });
       })
       .catch((error) => {
         const errorCode = error.code;
