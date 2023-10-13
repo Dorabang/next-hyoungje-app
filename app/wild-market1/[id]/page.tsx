@@ -12,6 +12,7 @@ import Image from 'next/image';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
 import StatusOptions from '@/components/StatusOptions';
+import HasLikes from '@/utils/HasLikes';
 
 interface WildMarketDetailPageProps {
   params: { id: string };
@@ -31,7 +32,7 @@ const WildMarketDetailPage = ({
   console.log('🚀 ~ file: page.tsx:27 ~ post:', post);
 
   const [image, setImage] = useState<string[]>();
-  console.log('🚀 ~ file: page.tsx:33 ~ image:', image);
+
   const postImages = post?.data.image;
 
   const modules = {
@@ -202,6 +203,16 @@ const WildMarketDetailPage = ({
             readOnly
           />
         </div>
+
+        <button
+          className='flex flex-wrap gap-1 justify-center items-center
+            mx-auto mt-8 px-2 py-2
+            border border-[#ddd] rounded-sm'
+        >
+          <div className='w-full'>좋아요</div>
+          {HasLikes(post.data.like, user)}
+          {post.data.like.length}
+        </button>
       </div>
     </ContainerBox>
   );
