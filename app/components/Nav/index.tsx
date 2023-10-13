@@ -14,7 +14,7 @@ import {
   Toolbar,
 } from '@mui/material';
 import { MUIStyledCommonProps } from '@mui/system';
-import { LightTooltip, authBtnStyle, btnStyle } from './StyleComponents';
+import { LightTooltip, btnStyle } from './StyleComponents';
 
 /* next */
 import Image from 'next/image';
@@ -22,8 +22,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 /* firebase */
-import { User, signOut } from 'firebase/auth';
-import { authService } from '@/firebase';
+import { User } from 'firebase/auth';
 
 /* recoil */
 import { useRecoilState } from 'recoil';
@@ -34,11 +33,10 @@ import { routes } from './Constants';
 
 /* utils */
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
-import GetImageURL from '@/utils/getImageURL';
 
 /* image */
 import logoImg from '@/assets/common/logo.png';
-import defaultProfile from '@/assets/defaultProfile.jpg';
+import UtilBtn from './UtilBtn';
 
 const {
   livingVegetable,
@@ -106,23 +104,9 @@ const Nav = () => {
   const [user, setUser] = useRecoilState<User | null>(authState);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
-  const [profile, setProfile] = useState<string>();
-
   const router = useRouter();
 
-  const onLogOutClick = () => {
-    signOut(authService);
-    setUser(null);
-    router.refresh();
-  };
-
   useEffect(() => {
-    const changeProfile = (value: string) => {
-      setProfile(value);
-    };
-    /* proflie */
-    user && GetImageURL(`profile/${user.uid}/image`, changeProfile);
-
     /* scroll event */
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -246,47 +230,8 @@ const Nav = () => {
             />
             {/* 로고옆 메뉴들 */}
 
-            {/* 오른쪽 */}
-            <Box sx={{ flexGrow: 0 }}>
-              {user ? (
-                <>
-                  <Button
-                    onClick={() => router.push(routes.myPage.path)}
-                    sx={authBtnStyle}
-                  >
-                    <div className='flex gap-[6px] items-center'>
-                      <div className='relative mt-[1px] w-6 h-6 rounded-full overflow-hidden'>
-                        <Image
-                          src={profile ? profile : defaultProfile}
-                          alt={`${user.displayName} 업로드 이미지`}
-                          fill
-                          sizes='100%'
-                        />
-                      </div>
-                      <p className='normal-case'>{user.displayName}</p>
-                    </div>
-                  </Button>
-                  <Button onClick={onLogOutClick} sx={authBtnStyle}>
-                    로그아웃
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => router.push(routes.login.path)}
-                    sx={authBtnStyle}
-                  >
-                    {routes.login.name}
-                  </Button>
-                  <Button
-                    onClick={() => router.push(routes.join.path)}
-                    sx={authBtnStyle}
-                  >
-                    {routes.join.name}
-                  </Button>
-                </>
-              )}
-            </Box>
+            {/* utilBtn */}
+            <UtilBtn />
           </Toolbar>
         </Container>
       </AppBar>
