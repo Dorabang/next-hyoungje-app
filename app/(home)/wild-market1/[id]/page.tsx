@@ -1,7 +1,6 @@
 'use client';
 import getPosts from '@/utils/getPosts';
 import { useEffect, useState } from 'react';
-import { postProps } from '../page';
 import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
@@ -13,6 +12,7 @@ import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
 import StatusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
+import { DocumentData } from 'firebase/firestore';
 
 interface WildMarketDetailPageProps {
   params: { id: string };
@@ -21,7 +21,7 @@ interface WildMarketDetailPageProps {
 const WildMarketDetailPage = ({
   params: { id },
 }: WildMarketDetailPageProps) => {
-  const [posts, setPosts] = useState<postProps[]>([]);
+  const [posts, setPosts] = useState<DocumentData[]>([]);
 
   const pathname = 'wild-market1';
   const user = useRecoilValue(authState);
@@ -33,7 +33,7 @@ const WildMarketDetailPage = ({
 
   const [image, setImage] = useState<string[]>();
 
-  const postImages = post?.data.image;
+  const postImages = post && post?.image;
 
   const modules = {
     toolbar: { container: [] },
@@ -52,14 +52,11 @@ const WildMarketDetailPage = ({
     };
 
     postImages &&
-      post.data.creatorId &&
-      postImages.map((id) =>
-        GetImageURL(
-          `${pathname}/${post.data.creatorId}/post/${id}/image`,
-          getImage
-        )
+      post.creatorId &&
+      postImages.map((id: string) =>
+        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage)
       );
-  }, [posts, pathname, postImages, post?.data.creatorId]);
+  }, [posts, pathname, postImages, post?.creatorId]);
 
   if (!post) return;
 
@@ -76,13 +73,15 @@ const WildMarketDetailPage = ({
         </div>
 
         <h2 className='text-lg font-bold flex-grow'>
-          <span className='px-2'>{StatusOptions(post.data.status)}</span>
-          {post?.data.title}
+          <span className='px-2'>{StatusOptions(post.status)}</span>
+          {post?.title}
         </h2>
 
-        {user?.uid === post.data.creatorId && (
+        {user?.uid === post.creatorId && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
-            <li>편집</li>
+            <li onClick={() => router.push(`/${pathname}/edit/${post.id}`)}>
+              편집
+            </li>
             <li>삭제</li>
           </ul>
         )}
@@ -92,15 +91,15 @@ const WildMarketDetailPage = ({
       <ul className='flex gap-4 pt-2 pb-6 justify-end text-sm text-gray-500'>
         <li>
           <span className='pr-2 font-semibold'>작성자</span>
-          {post.data.creatorName}
+          {post.creatorName}
         </li>
         <li>
           <span className='pr-2 font-semibold'>등록일자</span>
-          {DateFormat(post.data.createdAt)}
+          {DateFormat(post.createdAt)}
         </li>
         <li>
           <span className='pr-2 font-semibold'>조회수</span>
-          {post.data.views}
+          {post.views}
         </li>
       </ul>
 
@@ -118,19 +117,19 @@ const WildMarketDetailPage = ({
             <tbody>
               <tr>
                 <th>종류</th>
-                <td>{post.data.variant}</td>
+                <td>{post.variant}</td>
               </tr>
               <tr>
                 <th>연락처</th>
-                <td>{post.data.phone}</td>
+                <td>{post.phone}</td>
               </tr>
               <tr>
                 <th>산지</th>
-                <td>{post.data.place}</td>
+                <td>{post.place}</td>
               </tr>
               <tr>
                 <th>산채일</th>
-                <td>{DateFormat(new Date(post.data.date))}</td>
+                <td>{DateFormat(new Date(post.date))}</td>
               </tr>
             </tbody>
           </table>
@@ -147,19 +146,19 @@ const WildMarketDetailPage = ({
             <tbody>
               <tr>
                 <th>가격</th>
-                <td>{post.data.price}</td>
+                <td>{post.price}</td>
               </tr>
               <tr>
                 <th>키</th>
-                <td>{post.data.height}</td>
+                <td>{post.height}</td>
               </tr>
               <tr>
                 <th>폭</th>
-                <td>{post.data.width}</td>
+                <td>{post.width}</td>
               </tr>
               <tr>
                 <th>촉수</th>
-                <td>{post.data.amount}</td>
+                <td>{post.amount}</td>
               </tr>
             </tbody>
           </table>
@@ -176,7 +175,7 @@ const WildMarketDetailPage = ({
               >
                 <Image
                   src={imageURL}
-                  alt={`${post.data.creatorName} 업로드 이미지`}
+                  alt={`${post.creatorName} 업로드 이미지`}
                   fill
                   sizes='100%'
                   style={{ objectFit: 'contain' }}
@@ -197,11 +196,7 @@ const WildMarketDetailPage = ({
           pt-4
         '
         >
-          <ReactQuill
-            defaultValue={post.data.contents}
-            modules={modules}
-            readOnly
-          />
+          <ReactQuill defaultValue={post.contents} modules={modules} readOnly />
         </div>
 
         <button
@@ -210,8 +205,8 @@ const WildMarketDetailPage = ({
             border border-[#ddd] rounded-sm'
         >
           <div className='w-full'>좋아요</div>
-          {HasLikes(post.data.like, user)}
-          {post.data.like.length}
+          {HasLikes(post.like, user)}
+          {post.like.length}
         </button>
       </div>
     </ContainerBox>
