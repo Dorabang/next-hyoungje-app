@@ -82,7 +82,7 @@ const WildMarketDetailPage = ({
 
         {user?.uid === post.data.creatorId && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
-            <li>수정</li>
+            <li>편집</li>
             <li>삭제</li>
           </ul>
         )}

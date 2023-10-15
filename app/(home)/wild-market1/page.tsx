@@ -129,8 +129,16 @@ const Living1Page = () => {
         text-gray-500 text-sm
        '
         >
+          <li className='cursor-pointer hover:text-gray-700'>전체</li>
+          <li className='cursor-default'>|</li>
+          <li className='cursor-pointer hover:text-gray-700'>판매 중</li>
+          <li className='cursor-default'>|</li>
+          <li className='cursor-pointer hover:text-gray-700'>판매 완료</li>
+          <li className='cursor-default'>|</li>
+          <li className='cursor-pointer hover:text-gray-700'>예약 중</li>
           {user && (
             <>
+              <li className='cursor-default'>|</li>
               <li>
                 <Link
                   href={`/edit/${pathname}`}
@@ -140,17 +148,8 @@ const Living1Page = () => {
                   글쓰기
                 </Link>
               </li>
-
-              <li className='cursor-default'>|</li>
             </>
           )}
-          <li className='cursor-pointer hover:text-gray-700'>전체</li>
-          <li className='cursor-default'>|</li>
-          <li className='cursor-pointer hover:text-gray-700'>판매 중</li>
-          <li className='cursor-default'>|</li>
-          <li className='cursor-pointer hover:text-gray-700'>판매 완료</li>
-          <li className='cursor-default'>|</li>
-          <li className='cursor-pointer hover:text-gray-700'>예약 중</li>
         </ul>
 
         <ul className='w-full border-b border-neutral-500'>

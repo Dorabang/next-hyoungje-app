@@ -5,7 +5,7 @@ import { Stack } from '@mui/system';
 import { authService } from '@/firebase';
 import { ErrorMessage } from '@hookform/error-message';
 import { useRouter } from 'next/navigation';
-import JoinTerms from '../components/JoinTerms/JoinTerms';
+import JoinTerms from '@/components/JoinTerms/JoinTerms';
 import {
   updateProfile,
   createUserWithEmailAndPassword,
@@ -15,7 +15,7 @@ import uploadImage from '@/utils/uploadImage';
 import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import { CssTextField } from '@/login/styleComponents';
+import { CssTextField } from '@/(home)/login/styleComponents';
 import imageCompression from 'browser-image-compression';
 
 interface Inputs {
@@ -23,7 +23,6 @@ interface Inputs {
   password1: string;
   password2: string;
   photoUrl: string;
-  // userName: string;
   nickName: string;
   phoneNumber: string;
   agree: boolean;
