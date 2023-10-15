@@ -16,7 +16,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '@/components/Editor';
 import imageCompression from 'browser-image-compression';
 
-interface ImageObjProps {
+export interface ImageObjProps {
   id: string;
   imageUrl: string;
 }
