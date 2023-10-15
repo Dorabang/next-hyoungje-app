@@ -109,7 +109,7 @@ const Nav = () => {
   useEffect(() => {
     /* scroll event */
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 100) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -133,7 +133,7 @@ const Nav = () => {
           boxShadow: 'none',
         }}
         color='transparent'
-        style={{ backdropFilter: isScrolled ? 'blur(80%)' : 'none' }}
+        style={{ backdropFilter: isScrolled ? 'blur(5px)' : 'none' }}
       >
         <Container maxWidth='xl'>
           <Toolbar
@@ -228,7 +228,6 @@ const Nav = () => {
                 justifyContent: 'center',
               }}
             />
-            {/* 로고옆 메뉴들 */}
 
             {/* utilBtn */}
             <UtilBtn />
