@@ -1,20 +1,19 @@
 import { dbService, storageService } from '@/firebase';
-import { postProps } from '@/wild-market1/page';
 import { User } from 'firebase/auth';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { DocumentData, deleteDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 
 const DeletePost = async (
-  post: postProps,
+  post: DocumentData,
   user: User | null,
   pathname: string,
   id: string
 ) => {
-  const imageArr = post.data.image;
+  const imageArr = post.image;
 
   if (!user) return;
   if (imageArr && imageArr.length > 0) {
-    imageArr.map(async (item) => {
+    imageArr.map(async (item: string) => {
       const imgRef = ref(
         storageService,
         `${pathname}/${user.uid}/post/${item}/image.jpg`
