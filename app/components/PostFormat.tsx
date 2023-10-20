@@ -1,7 +1,6 @@
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ContainerBox from './ContainerBox';
 import Link from 'next/link';
-import { HiOutlinePencilSquare } from 'react-icons/hi2';
 import { DocumentData } from 'firebase/firestore';
 import StatusOptions from './StatusOptions';
 import DateFormat from '@/utils/DateFormat';
@@ -9,13 +8,17 @@ import PostsNotFound from './PostsNotFound';
 import PostsLoading from './PostsLoading';
 import { User } from 'firebase/auth';
 import DeletePost from '@/utils/deletePost';
+import FilterOption from './FilterOption';
+import { useRouter } from 'next/navigation';
 
 interface PostFormatProps {
   pathname: string;
   isLoading: boolean;
-  posts: DocumentData[] | undefined;
+  posts: DocumentData[] | null;
   user: User | null;
   handleUpdatePosts: (data: DocumentData[]) => void;
+  selectedCategory: string;
+  handleUpdateFilter: (status: string) => void;
 }
 
 const PostFormat = ({
@@ -24,7 +27,11 @@ const PostFormat = ({
   posts,
   user,
   handleUpdatePosts,
+  selectedCategory,
+  handleUpdateFilter,
 }: PostFormatProps) => {
+  const router = useRouter();
+
   const handleDeletePost = (id: string) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
@@ -45,33 +52,11 @@ const PostFormat = ({
           <Breadcrumbs pathname={pathname} />
         </div>
 
-        <ul
-          className='flex justify-end items-center gap-2 pt-10 pb-5
-    text-gray-500 text-sm
-   '
-        >
-          <li className='cursor-pointer hover:text-gray-700'>전체</li>
-          <li className='cursor-default'>|</li>
-          <li className='cursor-pointer hover:text-gray-700'>판매 중</li>
-          <li className='cursor-default'>|</li>
-          <li className='cursor-pointer hover:text-gray-700'>판매 완료</li>
-          <li className='cursor-default'>|</li>
-          <li className='cursor-pointer hover:text-gray-700'>예약 중</li>
-          {user && (
-            <>
-              <li className='cursor-default'>|</li>
-              <li>
-                <Link
-                  href={`/edit/${pathname}`}
-                  className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
-                >
-                  <HiOutlinePencilSquare size={18} className='mr-1' />
-                  글쓰기
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
+        <FilterOption
+          selectedCategory={selectedCategory}
+          handleUpdateFilter={handleUpdateFilter}
+          pathname={pathname}
+        />
 
         <ul className='w-full border-b border-neutral-500'>
           <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2'>
@@ -105,14 +90,21 @@ const PostFormat = ({
                       className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_>_div]:py-3'
                     >
                       <div className='w-[6%]'>
-                        {variant.length > 5 ? variant.substring(0, 5) : variant}
+                        {variant.length > 5
+                          ? variant.substring(0, 5) + '...'
+                          : variant}
                       </div>
                       <div className='w-[10%]'>{StatusOptions(status)}</div>
                       <div className='flex-grow flex justify-between items-center'>
                         <Link href={`/wild-market1/${id}`}>{title}</Link>
                         {user && user.uid === creatorId && (
                           <div className='text-gray-400 text-xs flex [&_span]:px-1 ml-4'>
-                            <span className='hover:text-gray-700 cursor-pointer'>
+                            <span
+                              className='hover:text-gray-700 cursor-pointer'
+                              onClick={() =>
+                                router.push(`/${pathname}/edit/${id}`)
+                              }
+                            >
                               편집
                             </span>
                             <span>/</span>
