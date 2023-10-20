@@ -8,6 +8,10 @@ const getPosts = async (pathname: string) => {
     post.push({ id: doc.id, ...doc.data() });
   });
 
+  post.sort(function (a: DocumentData, b: DocumentData) {
+    return Number(a.createdAt) - Number(b.createdAt);
+  });
+
   return post;
 };
 
