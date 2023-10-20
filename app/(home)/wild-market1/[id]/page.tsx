@@ -29,7 +29,6 @@ const WildMarketDetailPage = ({
   const router = useRouter();
 
   const post = posts.find((item) => item.id === id);
-  console.log('🚀 ~ file: page.tsx:27 ~ post:', post);
 
   const [image, setImage] = useState<string[]>();
 
@@ -38,25 +37,24 @@ const WildMarketDetailPage = ({
   const modules = {
     toolbar: { container: [] },
   };
-
   useEffect(() => {
     /* setPosts(querySnapshot); */
-    if (posts.length === 0) {
-      getPosts(pathname).then((response) => setPosts(response));
-    }
+    getPosts(pathname).then((response) => setPosts(response));
+  }, []);
 
+  useEffect(() => {
     const getImage = (value: string) => {
       return setImage((prev) =>
         prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value]
       );
     };
 
-    postImages &&
-      post.creatorId &&
+    if (postImages && post.creatorId) {
       postImages.map((id: string) =>
         GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage)
       );
-  }, [posts, pathname, postImages, post?.creatorId]);
+    }
+  }, [postImages, post?.creatorId]);
 
   if (!post) return;
 
