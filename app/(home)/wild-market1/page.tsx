@@ -48,7 +48,12 @@ const Living1Page = () => {
 
   const pathname = usePathname();
 
-  const [posts, setPosts] = useState<DocumentData[]>([]);
+  const [posts, setPosts] = useState<DocumentData[] | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  const handleUpdateFilter = (status: string) => {
+    setSelectedCategory(status);
+  };
 
   const handleUpdatePosts = (data: DocumentData[]) => {
     setPosts(data);
@@ -69,16 +74,29 @@ const Living1Page = () => {
 
   useEffect(() => {
     /* setPosts(querySnapshot); */
-    if (posts.length === 0) {
+    if (selectedCategory === 'all') {
       getPosts(pathname).then((response) => {
         response.sort(function (a: DocumentData, b: DocumentData) {
           return Number(a.createdAt) - Number(b.createdAt);
         });
+
         setPosts(response.reverse());
+
         setIsLoading(false);
       });
     }
-  }, [posts, pathname]);
+
+    if (selectedCategory !== 'all') {
+      getPosts(pathname).then((response) => {
+        const filter = response.filter(
+          (item) => item.status === selectedCategory
+        );
+        setPosts(filter.reverse());
+
+        setIsLoading(false);
+      });
+    }
+  }, [pathname, selectedCategory]);
 
   return (
     <PostFormat
@@ -87,6 +105,8 @@ const Living1Page = () => {
       posts={posts}
       user={user}
       handleUpdatePosts={handleUpdatePosts}
+      selectedCategory={selectedCategory}
+      handleUpdateFilter={handleUpdateFilter}
     />
   );
 };
