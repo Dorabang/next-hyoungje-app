@@ -2,11 +2,10 @@
 import Edit from '@/components/Edit';
 import getPosts from '@/utils/getPosts';
 import { DocumentData } from 'firebase/firestore';
-import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
-  const pathname = usePathname();
+  const pathname = 'wild-market1';
   const [posts, setPosts] = useState<DocumentData[]>([]);
 
   const post = posts.find((item) => item.id === id);
@@ -18,7 +17,7 @@ const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
   }, [posts.length]);
 
   if (!post) return;
-  return <Edit post={post} />;
+  return <Edit post={post} pathname={pathname} />;
 };
 
 export default DetailEditPage;
