@@ -21,18 +21,18 @@ export interface ImageObjProps {
   imageUrl: string;
 }
 
+export const statusList = [
+  { value: 'sale', desc: '판매 중' },
+  { value: 'sold-out', desc: '판매 완료' },
+  { value: 'reservation', desc: '예약 중' },
+];
+
 const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   useRedirect();
 
   const user = useRecoilValue(authState);
 
   const router = useRouter();
-
-  const statusList = [
-    { value: 'sale', desc: '판매 중' },
-    { value: 'sold-out', desc: '판매 완료' },
-    { value: 'reservation', desc: '예약 중' },
-  ];
 
   const [title, setTitle] = useState('');
   const [variant, setVariant] = useState('');
