@@ -1,5 +1,5 @@
 'use client';
-import useRedirect from '../hooks/useRedirect';
+import useRedirect from '@/hooks/useRedirect';
 
 const SingleLeafPage = () => {
   useRedirect();
