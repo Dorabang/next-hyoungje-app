@@ -1,12 +1,15 @@
 import { dbService } from '@/firebase';
-import { postsProps } from '@/wild-market1/page';
-import { collection, getDocs } from 'firebase/firestore';
+import { DocumentData, collection, getDocs } from 'firebase/firestore';
 
 const getPosts = async (pathname: string) => {
-  let post: postsProps[] | any = [];
+  let post: DocumentData[] = [];
   const querySnapshot = await getDocs(collection(dbService, `${pathname}`));
   querySnapshot.forEach((doc) => {
-    post.push({ id: doc.id, data: doc.data() });
+    post.push({ id: doc.id, ...doc.data() });
+  });
+
+  post.sort(function (a: DocumentData, b: DocumentData) {
+    return Number(a.createdAt) - Number(b.createdAt);
   });
 
   return post;

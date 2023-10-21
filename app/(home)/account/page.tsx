@@ -5,7 +5,7 @@ import { Stack } from '@mui/system';
 import { authService } from '@/firebase';
 import { ErrorMessage } from '@hookform/error-message';
 import { useRouter } from 'next/navigation';
-import JoinTerms from '../components/JoinTerms/JoinTerms';
+import JoinTerms from '@/components/JoinTerms/JoinTerms';
 import {
   updateProfile,
   createUserWithEmailAndPassword,
@@ -15,14 +15,14 @@ import uploadImage from '@/utils/uploadImage';
 import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import { CssTextField } from '@/login/styleComponents';
+import { CssTextField } from '@/(home)/login/styleComponents';
+import imageCompression from 'browser-image-compression';
 
 interface Inputs {
   email: string;
   password1: string;
   password2: string;
   photoUrl: string;
-  // userName: string;
   nickName: string;
   phoneNumber: string;
   agree: boolean;
@@ -89,16 +89,22 @@ const AccountPage = () => {
 
     if (files) {
       const theFile = files[0];
-      const reader = new FileReader();
 
-      reader.onloadend = (finishedEvent: any) => {
-        const {
-          currentTarget: { result },
-        } = finishedEvent;
-
-        setImage(result);
+      const options = {
+        maxSizeMB: 0.2, // 이미지 최대 용량
+        maxWidthOrHeight: 1920, // 최대 넓이(혹은 높이)
+        useWebWorker: true,
       };
-      reader.readAsDataURL(theFile);
+
+      imageCompression(theFile, options)
+        .then((response) => {
+          imageCompression.getDataUrlFromFile(response).then((result) => {
+            setImage(result);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 

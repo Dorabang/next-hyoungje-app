@@ -6,7 +6,7 @@ const uploadImage = async (path: string, url: string) => {
 
   if (!user || !url) return;
 
-  const photoRef = ref(storageService, `/${path}.png`);
+  const photoRef = ref(storageService, `/${path}.jpg`);
   await uploadString(photoRef, url, 'data_url');
 
   const photoURL = await getDownloadURL(photoRef);
