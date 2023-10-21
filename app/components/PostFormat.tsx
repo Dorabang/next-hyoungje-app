@@ -102,7 +102,7 @@ const PostFormat = ({
                             <span
                               className='hover:text-gray-700 cursor-pointer'
                               onClick={() =>
-                                router.push(`/${pathname}/edit/${id}`)
+                                router.push(`${pathname}/edit/${id}`)
                               }
                             >
                               편집
