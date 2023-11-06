@@ -37,6 +37,7 @@ const WildMarketDetailPage = ({
   const modules = {
     toolbar: { container: [] },
   };
+
   useEffect(() => {
     /* setPosts(querySnapshot); */
     getPosts(pathname).then((response) => setPosts(response));
@@ -168,7 +169,7 @@ const WildMarketDetailPage = ({
             image &&
             image.map((imageURL) => (
               <div
-                key={image + '-key'}
+                key={imageURL}
                 className='relative w-full h-[400px] md:max-w-[800px] md:min-h-[800px] mx-auto'
               >
                 <Image
