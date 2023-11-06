@@ -10,6 +10,7 @@ import { User } from 'firebase/auth';
 import DeletePost from '@/utils/deletePost';
 import FilterOption from './FilterOption';
 import { useRouter } from 'next/navigation';
+import { AiOutlineFileImage } from 'react-icons/ai';
 
 interface PostFormatProps {
   pathname: string;
@@ -83,6 +84,7 @@ const PostFormat = ({
                   views,
                   place,
                   price,
+                  image,
                 }: DocumentData) => {
                   return (
                     <li
@@ -96,7 +98,15 @@ const PostFormat = ({
                       </div>
                       <div className='w-[10%]'>{StatusOptions(status)}</div>
                       <div className='flex-grow flex justify-between items-center'>
-                        <Link href={`/wild-market1/${id}`}>{title}</Link>
+                        <Link
+                          href={`/wild-market1/${id}`}
+                          className='flex items-center'
+                        >
+                          {image?.length !== 0 && (
+                            <AiOutlineFileImage className='mr-2' />
+                          )}
+                          {title}{' '}
+                        </Link>
                         {user && user.uid === creatorId && (
                           <div className='text-gray-400 text-xs flex [&_span]:px-1 ml-4'>
                             <span
