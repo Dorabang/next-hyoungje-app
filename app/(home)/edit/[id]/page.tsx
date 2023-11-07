@@ -1,13 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { authState, editorState } from '@/recoil/atoms';
 import { Button } from '@mui/material';
 import { dbService } from '@/firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  DocumentData,
+  addDoc,
+  collection,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
 import uuid from 'react-uuid';
 import { useRouter } from 'next/navigation';
 import uploadImage from '@/utils/uploadImage';
@@ -15,17 +21,13 @@ import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '@/components/Editor';
 import imageCompression from 'browser-image-compression';
+import getPostsAmount from '@/utils/getPostsAmount';
+import statusList from '@/constant/StatusLists';
 
 export interface ImageObjProps {
   id: string;
   imageUrl: string;
 }
-
-export const statusList = [
-  { value: 'sale', desc: '판매 중' },
-  { value: 'sold-out', desc: '판매 완료' },
-  { value: 'reservation', desc: '예약 중' },
-];
 
 const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   useRedirect();
@@ -54,6 +56,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const handleSubmit = async () => {
     if (!user) return;
 
+    /* 이미지 업로드 */
     selectedImage?.map(async (value) => {
       await uploadImage(
         `${id}/${user.uid}/post/${value.id}/image`,
@@ -61,7 +64,12 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       );
     });
 
+    /* 이미지 ID 저장 */
     const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
+
+    const postAmount: DocumentData | undefined = await getPostsAmount(
+      `postsAmount/${id}`
+    );
 
     const newPostObj = {
       title: title,
@@ -79,6 +87,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       like: [],
       comment: [],
       views: 0,
+      num: postAmount?.amount + 1,
       creatorName: user?.displayName,
       creatorId: user?.uid,
       createdAt: Date.now(),
@@ -86,6 +95,11 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     };
 
     await addDoc(collection(dbService, `${id}`), newPostObj);
+
+    const postsAmountRef = doc(dbService, `postsAmount/${id}`);
+
+    updateDoc(postsAmountRef, { amount: postAmount?.amount + 1 });
+
     setTitle('');
     setValue('');
     setDate('');
