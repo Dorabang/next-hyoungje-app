@@ -61,6 +61,7 @@ const PostFormat = ({
 
         <ul className='w-full border-b border-neutral-500'>
           <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2'>
+            <div className='w-[4%]'>번호</div>
             <div className='w-[6%]'>종류</div>
             <div className='w-[10%]'>분류</div>
             <div className='flex-grow text-left'>제목</div>
@@ -85,14 +86,16 @@ const PostFormat = ({
                   place,
                   price,
                   image,
+                  num,
                 }: DocumentData) => {
                   return (
                     <li
                       key={id}
                       className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_>_div]:py-3'
                     >
+                      <div className='w-[4%]'>{num ? num : null}</div>
                       <div className='w-[6%]'>
-                        {variant.length > 5
+                        {variant?.length > 5
                           ? variant.substring(0, 5) + '...'
                           : variant}
                       </div>
@@ -130,7 +133,7 @@ const PostFormat = ({
                       <div className='w-[6%]'>{place}</div>
                       <div className='w-[6%]'>{price}</div>
                       <div className='w-[10%]'>
-                        {creatorName.length > 8
+                        {creatorName?.length > 8
                           ? creatorName.substring(0, 8) + '...'
                           : creatorName}
                       </div>
