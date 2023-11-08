@@ -11,63 +11,52 @@ import 'swiper/css';
 import { useEffect, useState } from 'react';
 import getPosts from '@/utils/getPosts';
 import { DocumentData } from 'firebase/firestore';
-import GetImageURL from '@/utils/getImageURL';
+import GetImageURL from './GetImageURL';
 import Image from 'next/image';
+
+interface ImageObjProps {
+  id: string;
+  imageURL: string;
+}
 
 const Slide = ({ pathname }: { pathname: string }) => {
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
-  const [imagePosts, setImagePosts] = useState<DocumentData[] | null>(null);
-  const [test, setTest] = useState<string | null>(null);
-  console.log('🚀 ~ file: slide.tsx:23 ~ Slide ~ imagePosts:', imagePosts);
+  const [downloadURL, setDownloadURL] = useState<ImageObjProps[] | null>(null);
 
   useEffect(() => {
     getPosts(pathname).then((response) => {
       const imagePost = response.filter(
-        (item) => item?.image.length !== 0 && item.status === 'sale'
+        (item) =>
+          item?.image && item?.image?.length !== 0 && item.status === 'sale'
       );
       const latestPost = imagePost.reverse().slice(0, 5);
       setPosts(latestPost);
     });
   }, [pathname]);
 
+  const getImage = (postId: string, value: string) => {
+    setDownloadURL((prev) =>
+      prev
+        ? prev.filter((item) => item.imageURL.includes(postId))
+          ? [...prev, { id: postId, imageURL: value }]
+          : prev
+        : [{ id: postId, imageURL: value }]
+    );
+  };
+
   useEffect(() => {
-    const getImage = (value: string) => {
-      setTest(value);
-    };
+    posts &&
+      posts.map((post) => {
+        const newImgArr =
+          post.image && post.image?.length > 0 && post?.image[0];
 
-    if (posts && posts.length !== 0) {
-      if (!test || test.length === 0) {
-        const addImgArr = posts.map((post) => {
-          const newImgArr = post.image[0];
-
-          GetImageURL(
-            `${pathname}/${post.creatorId}/post/${newImgArr}/image`,
-            getImage
-          );
-
-          return { ...post, image: test };
-        });
-
-        setImagePosts(addImgArr);
-      }
-    }
-  }, [pathname, posts, test]);
-
-  /* 
-  useEffect(() => {
-    const getImage = (value: string) => {
-      setImageArr(value);
-    };
-
-    if (images && post?.creatorId) {
-      const currentImage = images.find((item) => item.id === post.id);
-      GetImageURL(
-        `${pathname}/${post.creatorId}/post/${currentImage?.image}/image`,
-        getImage
-      );
-    }
-  }, [pathname, images, post?.creatorId, post?.id]);
- */
+        GetImageURL(
+          `${pathname}/${post.creatorId}/post/${newImgArr}/image`,
+          post?.id,
+          getImage
+        );
+      });
+  }, [pathname, posts]);
 
   return (
     <Swiper
@@ -88,22 +77,29 @@ const Slide = ({ pathname }: { pathname: string }) => {
       modules={[Autoplay]}
       className='w-full'
     >
-      {imagePosts &&
-        imagePosts.map(({ id, image, creatorId, title }) => {
+      {posts &&
+        posts.map(({ id, creatorId, title }) => {
           return (
             <SwiperSlide key={id} className='w-[50%]'>
-              {image && (
-                <div className='relative w-full h-[250px] xl:h-[420px]'>
-                  <Image
-                    src={image}
-                    alt={`${creatorId} 업로드 이미지`}
-                    fill
-                    sizes='100%'
-                    className='object-cover'
-                    priority
-                  />
-                </div>
-              )}
+              {downloadURL &&
+                downloadURL.map(
+                  (img) =>
+                    img.id === id && (
+                      <div
+                        key={img.id}
+                        className='relative w-full h-[250px] xl:h-[420px]'
+                      >
+                        <Image
+                          src={img.imageURL}
+                          alt={`${creatorId} 업로드 이미지`}
+                          fill
+                          sizes='100%'
+                          className='object-cover'
+                          priority
+                        />
+                      </div>
+                    )
+                )}
               {title}
             </SwiperSlide>
           );
