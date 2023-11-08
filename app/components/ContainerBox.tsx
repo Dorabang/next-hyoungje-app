@@ -6,7 +6,7 @@ const ContainerBox = ({ children }: { children: React.ReactNode }) => {
     <Container
       maxWidth='xl'
       sx={{
-        padding: '24px 0',
+        padding: { xs: '24px 10px', xl: '24px 0' },
       }}
     >
       {children}
