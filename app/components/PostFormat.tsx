@@ -105,7 +105,7 @@ const PostFormat = ({
                           href={`/wild-market1/${id}`}
                           className='flex items-center'
                         >
-                          {image?.length !== 0 && (
+                          {image && image?.length !== 0 && (
                             <AiOutlineFileImage className='mr-2' />
                           )}
                           {title}{' '}
