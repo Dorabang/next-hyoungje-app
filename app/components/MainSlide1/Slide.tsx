@@ -13,6 +13,7 @@ import getPosts from '@/utils/getPosts';
 import { DocumentData } from 'firebase/firestore';
 import GetImageURL from './GetImageURL';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface ImageObjProps {
   id: string;
@@ -85,9 +86,10 @@ const Slide = ({ pathname }: { pathname: string }) => {
                 downloadURL.map(
                   (img) =>
                     img.id === id && (
-                      <div
+                      <Link
+                        href={`/${pathname}/${id}`}
                         key={img.id}
-                        className='relative w-full h-[250px] xl:h-[420px]'
+                        className='relative block w-full h-[250px] xl:h-[420px]'
                       >
                         <Image
                           src={img.imageURL}
@@ -97,10 +99,9 @@ const Slide = ({ pathname }: { pathname: string }) => {
                           className='object-cover'
                           priority
                         />
-                      </div>
+                      </Link>
                     )
                 )}
-              {title}
             </SwiperSlide>
           );
         })}
