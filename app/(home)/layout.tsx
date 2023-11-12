@@ -6,7 +6,7 @@ import './globals.css';
 import RecoilRootWrapper from '@/components/RecoilRootWrapper';
 
 const noto_sans_kr = Noto_Sans_KR({
-  weight: ['100', '300', '400', '500', '700', '900'],
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
 });
 

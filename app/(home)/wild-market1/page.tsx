@@ -1,18 +1,9 @@
 'use client';
-import ContainerBox from '@/components/ContainerBox';
 import { authState } from '@/recoil/atoms';
 import getPosts from '@/utils/getPosts';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import DateFormat from '@/utils/DateFormat';
-import { HiOutlinePencilSquare } from 'react-icons/hi2';
-import StatusOptions from '@/components/StatusOptions';
-import Breadcrumbs from '@/components/Breadcrumbs';
-import DeletePost from '@/utils/deletePost';
-import PostsLoading from '@/components/PostsLoading';
-import PostsNotFound from '@/components/PostsNotFound';
 import { DocumentData } from 'firebase/firestore';
 import PostFormat from '@/components/PostFormat';
 

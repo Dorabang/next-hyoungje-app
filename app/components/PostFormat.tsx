@@ -10,6 +10,7 @@ import { User } from 'firebase/auth';
 import DeletePost from '@/utils/deletePost';
 import FilterOption from './FilterOption';
 import { useRouter } from 'next/navigation';
+import { AiOutlineFileImage } from 'react-icons/ai';
 
 interface PostFormatProps {
   pathname: string;
@@ -60,14 +61,15 @@ const PostFormat = ({
 
         <ul className='w-full border-b border-neutral-500'>
           <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2'>
-            <div className='w-[6%]'>종류</div>
-            <div className='w-[10%]'>분류</div>
+            <div className='w-[4%] hidden lg:block'>번호</div>
+            <div className='w-[6%] hidden lg:block'>종류</div>
+            <div className='min-w-[90px] w-[10%]'>분류</div>
             <div className='flex-grow text-left'>제목</div>
-            <div className='w-[6%]'>산지</div>
-            <div className='w-[6%]'>가격</div>
-            <div className='w-[10%]'>작성자</div>
-            <div className='w-[6%]'>등록 일자</div>
-            <div className='w-[6%]'>조회수</div>
+            <div className='w-[6%] hidden md:block'>산지</div>
+            <div className='w-[6%] hidden md:block'>가격</div>
+            <div className='w-[10%] hidden md:block'>작성자</div>
+            <div className='w-[6%] hidden lg:block'>등록 일자</div>
+            <div className='w-[6%] hidden lg:block'>조회수</div>
           </li>
           {!isLoading ? (
             posts && posts.length !== 0 ? (
@@ -83,20 +85,42 @@ const PostFormat = ({
                   views,
                   place,
                   price,
+                  image,
+                  num,
                 }: DocumentData) => {
                   return (
                     <li
                       key={id}
                       className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_>_div]:py-3'
                     >
-                      <div className='w-[6%]'>
-                        {variant.length > 5
+                      {/* 문서 번호 */}
+                      <div className='w-[4%] hidden lg:block'>
+                        {num ? num : null}
+                      </div>
+
+                      {/* 종류 */}
+                      <div className='w-[6%] hidden lg:block'>
+                        {variant?.length > 5
                           ? variant.substring(0, 5) + '...'
                           : variant}
                       </div>
-                      <div className='w-[10%]'>{StatusOptions(status)}</div>
+
+                      {/* 분류 */}
+                      <div className='min-w-[90px] w-[10%] text-xs'>
+                        {StatusOptions(status)}
+                      </div>
+
+                      {/* 제목 */}
                       <div className='flex-grow flex justify-between items-center'>
-                        <Link href={`/wild-market1/${id}`}>{title}</Link>
+                        <Link
+                          href={`/wild-market1/${id}`}
+                          className='flex items-center whitespace-nowrap'
+                        >
+                          {image && image?.length !== 0 && (
+                            <AiOutlineFileImage className='mr-2' />
+                          )}
+                          {title}{' '}
+                        </Link>
                         {user && user.uid === creatorId && (
                           <div className='text-gray-400 text-xs flex [&_span]:px-1 ml-4'>
                             <span
@@ -117,15 +141,23 @@ const PostFormat = ({
                           </div>
                         )}
                       </div>
-                      <div className='w-[6%]'>{place}</div>
-                      <div className='w-[6%]'>{price}</div>
-                      <div className='w-[10%]'>
-                        {creatorName.length > 8
+
+                      {/* 산지 */}
+                      <div className='w-[6%] hidden md:block'>{place}</div>
+
+                      {/* 가격 */}
+                      <div className='w-[6%] hidden md:block'>{price}</div>
+
+                      {/* 작성자 */}
+                      <div className='w-[10%] hidden md:block'>
+                        {creatorName?.length > 8
                           ? creatorName.substring(0, 8) + '...'
                           : creatorName}
                       </div>
-                      <div className='w-[6%]'>{DateFormat(createdAt)}</div>
-                      <div className='w-[6%]'>{views}</div>
+                      <div className='w-[6%] hidden lg:block'>
+                        {DateFormat(createdAt)}
+                      </div>
+                      <div className='w-[6%] hidden lg:block'>{views}</div>
                     </li>
                   );
                 }

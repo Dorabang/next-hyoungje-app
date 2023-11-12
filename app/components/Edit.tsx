@@ -4,7 +4,8 @@ import ContainerBox from './ContainerBox';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { ImageObjProps, statusList } from '@/(home)/edit/[id]/page';
+import { ImageObjProps } from '@/(home)/edit/[id]/page';
+import statusList from '@/constant/StatusLists';
 import { authState, editorState } from '@/recoil/atoms';
 import Image from 'next/image';
 import imageCompression from 'browser-image-compression';
@@ -61,15 +62,13 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   const inputWrapperClass = 'flex w-full border-b border-[#ddd] p-2';
 
   const handleSubmit = async () => {
-    let newArr: string[] = [];
+    if (!user) return;
+
     imageArr?.map(async (value) => {
-      const imageUrl =
-        user &&
-        (await uploadImage(
-          `${pathname}/${user.uid}/post/${value.id}/image`,
-          value.imageUrl
-        ));
-      imageUrl && newArr.push(imageUrl);
+      await uploadImage(
+        `${pathname}/${user.uid}/post/${value.id}/image`,
+        value.imageUrl
+      );
     });
 
     const newImageArr = imageArr && imageArr.map((item) => item.id);
@@ -370,28 +369,28 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
               )}
             </div>
           </div>
+
+          <Editor />
+
+          <div className='flex gap-2 justify-center pt-[80px]'>
+            <Button
+              type='reset'
+              size='large'
+              variant='contained'
+              onClick={() => router.back()}
+            >
+              취소
+            </Button>
+            <Button
+              type='submit'
+              size='large'
+              variant='contained'
+              onClick={handleSubmit}
+            >
+              등록하기
+            </Button>
+          </div>
         </form>
-
-        <Editor />
-
-        <div className='flex gap-2 justify-center pt-[80px]'>
-          <Button
-            type='reset'
-            size='large'
-            variant='contained'
-            onClick={() => router.back()}
-          >
-            취소
-          </Button>
-          <Button
-            type='submit'
-            size='large'
-            variant='contained'
-            onClick={handleSubmit}
-          >
-            등록하기
-          </Button>
-        </div>
       </div>
     </ContainerBox>
   );

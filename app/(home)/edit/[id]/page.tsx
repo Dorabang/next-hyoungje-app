@@ -1,13 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { authState, editorState } from '@/recoil/atoms';
 import { Button } from '@mui/material';
 import { dbService } from '@/firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  DocumentData,
+  addDoc,
+  collection,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
 import uuid from 'react-uuid';
 import { useRouter } from 'next/navigation';
 import uploadImage from '@/utils/uploadImage';
@@ -15,17 +21,13 @@ import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '@/components/Editor';
 import imageCompression from 'browser-image-compression';
+import getPostsAmount from '@/utils/getPostsAmount';
+import statusList from '@/constant/StatusLists';
 
 export interface ImageObjProps {
   id: string;
   imageUrl: string;
 }
-
-export const statusList = [
-  { value: 'sale', desc: '판매 중' },
-  { value: 'sold-out', desc: '판매 완료' },
-  { value: 'reservation', desc: '예약 중' },
-];
 
 const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   useRedirect();
@@ -44,23 +46,30 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const [height, setHeight] = useState(' cm');
   const [width, setWidth] = useState(' cm');
   const [amount, setAmount] = useState('');
-  const [imageArr, setImageArr] = useState<ImageObjProps[] | null>(null);
   const [value, setValue] = useRecoilState(editorState);
 
+  /* 이미지 id, url 정보를 담은 배열 */
+  const [selectedImage, setSelectedImage] = useState<ImageObjProps[] | null>(
+    null
+  );
+
   const handleSubmit = async () => {
-    // const imageUrlArr = await uploadImage(id, image);
-    let newArr: string[] = [];
-    imageArr?.map(async (value) => {
-      const imageUrl =
-        user &&
-        (await uploadImage(
-          `${id}/${user.uid}/post/${value.id}/image`,
-          value.imageUrl
-        ));
-      imageUrl && newArr.push(imageUrl);
+    if (!user) return;
+
+    /* 이미지 업로드 */
+    selectedImage?.map(async (value) => {
+      await uploadImage(
+        `${id}/${user.uid}/post/${value.id}/image`,
+        value.imageUrl
+      );
     });
 
-    const imageIdArr = imageArr && imageArr.map((item) => item.id);
+    /* 이미지 ID 저장 */
+    const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
+
+    const postAmount: DocumentData | undefined = await getPostsAmount(
+      `postsAmount/${id}`
+    );
 
     const newPostObj = {
       title: title,
@@ -78,6 +87,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       like: [],
       comment: [],
       views: 0,
+      num: postAmount?.amount + 1,
       creatorName: user?.displayName,
       creatorId: user?.uid,
       createdAt: Date.now(),
@@ -85,6 +95,11 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     };
 
     await addDoc(collection(dbService, `${id}`), newPostObj);
+
+    const postsAmountRef = doc(dbService, `postsAmount/${id}`);
+
+    updateDoc(postsAmountRef, { amount: postAmount?.amount + 1 });
+
     setTitle('');
     setValue('');
     setDate('');
@@ -118,7 +133,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
           imageCompression.getDataUrlFromFile(response).then((result) => {
             const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
 
-            setImageArr((prev) =>
+            setSelectedImage((prev) =>
               prev !== null ? [...prev, imageObj] : [imageObj]
             );
           });
@@ -130,12 +145,14 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   };
 
   const handleDeleteImage = (id: string) => {
-    if (imageArr?.length === 0 || imageArr === null) {
-      return setImageArr(null);
+    if (selectedImage?.length === 0 || selectedImage === null) {
+      return setSelectedImage(null);
     } else {
-      const modifyImageArr = imageArr.filter((imageObj) => imageObj.id !== id);
+      const modifyImageArr = selectedImage.filter(
+        (imageObj) => imageObj.id !== id
+      );
 
-      return setImageArr(modifyImageArr);
+      return setSelectedImage(modifyImageArr);
     }
   };
 
@@ -285,9 +302,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                   className='outline-none w-full hidden'
                 />
               </label>
-              {imageArr && (
+              {selectedImage && (
                 <ul className='w-full py-4 flex gap-2'>
-                  {imageArr.map((item) => (
+                  {selectedImage.map((item) => (
                     <li key={item.id}>
                       <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
                         <Image

@@ -12,7 +12,7 @@ import {
   updatePhoneNumber,
 } from 'firebase/auth';
 import uploadImage from '@/utils/uploadImage';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/login/styleComponents';
@@ -82,7 +82,7 @@ const AccountPage = () => {
     }
   };
 
-  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
