@@ -13,6 +13,8 @@ import GetImageURL from '@/utils/getImageURL';
 import StatusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
+import PrevNextPost from '@/components/PrevNextPost';
+import DeletePost from '@/utils/deletePost';
 
 interface WildMarketDetailPageProps {
   params: { id: string };
@@ -22,13 +24,19 @@ const WildMarketDetailPage = ({
   params: { id },
 }: WildMarketDetailPageProps) => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
+  const [post, setPost] = useState<DocumentData | null>(null);
 
   const pathname = 'wild-market1';
   const user = useRecoilValue(authState);
 
   const router = useRouter();
 
-  const post = posts.find((item) => item.id === id);
+  useEffect(() => {
+    if (!post) {
+      const currentPost = posts.find((item) => item.id === id);
+      currentPost && setPost(currentPost);
+    }
+  }, [post, id, posts]);
 
   const [image, setImage] = useState<string[]>();
 
@@ -36,6 +44,17 @@ const WildMarketDetailPage = ({
 
   const modules = {
     toolbar: { container: [] },
+  };
+
+  const handleDeletePost = (id: string) => {
+    const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
+
+    if (!post) return;
+
+    if (ok) {
+      DeletePost(post, user, pathname, id);
+      router.push(`/${pathname}`);
+    }
   };
 
   useEffect(() => {
@@ -63,11 +82,14 @@ const WildMarketDetailPage = ({
     <ContainerBox>
       {/* title */}
       <div
-        className='border-b border-neutral-500
+        className='border-b border-grayColor-400
           flex gap-4 justify-between items-center
           py-3'
       >
-        <div className='p-2 cursor-pointer' onClick={() => router.back()}>
+        <div
+          className='p-2 cursor-pointer'
+          onClick={() => router.push(`/${pathname}`)}
+        >
           <IoArrowBack size={18} />
         </div>
 
@@ -81,7 +103,7 @@ const WildMarketDetailPage = ({
             <li onClick={() => router.push(`/${pathname}/edit/${post.id}`)}>
               편집
             </li>
-            <li>삭제</li>
+            <li onClick={() => handleDeletePost(id)}>삭제</li>
           </ul>
         )}
       </div>
@@ -208,6 +230,8 @@ const WildMarketDetailPage = ({
           {post.like.length}
         </button>
       </div>
+
+      <PrevNextPost pathname={pathname} posts={posts} post={post} />
     </ContainerBox>
   );
 };
