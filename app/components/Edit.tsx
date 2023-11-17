@@ -59,7 +59,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     setValue(contents);
   }, [setValue, contents]);
 
-  const inputWrapperClass = 'flex w-full border-b border-[#ddd] p-2';
+  const inputWrapperClass = 'flex w-full border-b border-grayColor-200 p-2';
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -73,9 +73,13 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
     const newImageArr = imageArr && imageArr.map((item) => item.id);
 
-    const imageIdArr = newImageArr
-      ? [...newImageArr, ...postImages]
-      : [...postImages];
+    const imageIdArr = postImages
+      ? newImageArr
+        ? [...newImageArr, ...postImages]
+        : [...postImages]
+      : newImageArr
+      ? [...newImageArr]
+      : null;
 
     const newPostObj = {
       title: title,
@@ -307,8 +311,8 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
               <label
                 htmlFor='addFile'
                 className='py-1 w-[100px_!important] text-center cursor-pointer
-                border border-[#ddd] transition-colors
-                hover:border-[#333]
+                border border-grayColor-200 transition-colors
+                hover:border-grayColor-500
                 '
               >
                 파일 선택
