@@ -13,7 +13,7 @@ import GetImageURL from '@/utils/getImageURL';
 import StatusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
-import PrevNextPost from '@/components/PrevNextPost';
+import PrevNextPost from '@/components/Posts/PrevNextPost';
 import DeletePost from '@/utils/deletePost';
 
 interface WildMarketDetailPageProps {

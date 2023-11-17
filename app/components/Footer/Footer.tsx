@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Container } from '@mui/material';
 
 export const FooterStyle = styled.footer`
-  margin-top: 150px;
+  margin-top: 80px;
   width: 100%;
   padding: 80px 0 50px;
   background: #333;

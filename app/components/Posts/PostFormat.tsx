@@ -1,15 +1,22 @@
-import Breadcrumbs from '@/components/Breadcrumbs';
-import ContainerBox from './ContainerBox';
-import Link from 'next/link';
-import { DocumentData } from 'firebase/firestore';
-import StatusOptions from './StatusOptions';
-import DateFormat from '@/utils/DateFormat';
-import PostsNotFound from './PostsNotFound';
-import PostsLoading from './PostsLoading';
-import { User } from 'firebase/auth';
-import DeletePost from '@/utils/deletePost';
-import FilterOption from './FilterOption';
+'use client';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ContainerBox from '@/components/ContainerBox';
+import StatusOptions from '@/components/StatusOptions';
+import PostsNotFound from '@/components/Posts/PostsNotFound';
+import PostsLoading from '@/components/Posts/PostsLoading';
+import FilterOption from '@/components/FilterOption';
+import Pagination from '@/components/Pagination';
+
+import DateFormat from '@/utils/DateFormat';
+import DeletePost from '@/utils/deletePost';
+
+import { User } from 'firebase/auth';
+import { DocumentData } from 'firebase/firestore';
+
 import { AiOutlineFileImage } from 'react-icons/ai';
 
 interface PostFormatProps {
@@ -32,6 +39,22 @@ const PostFormat = ({
   handleUpdateFilter,
 }: PostFormatProps) => {
   const router = useRouter();
+
+  const [postsSlice, setPageSlice] = useState<DocumentData[] | null>(null);
+  const [page, setPage] = useState(1);
+  const limit = 15;
+  const offset = (page - 1) * limit;
+
+  useEffect(() => {
+    setPage(1);
+  }, [posts]);
+
+  useEffect(() => {
+    if (posts) {
+      let result = posts.slice(offset, offset + limit);
+      setPageSlice(result);
+    }
+  }, [posts, offset]);
 
   const handleDeletePost = (id: string) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
@@ -72,8 +95,8 @@ const PostFormat = ({
             <div className='w-[6%] hidden lg:block'>조회수</div>
           </li>
           {!isLoading ? (
-            posts && posts.length !== 0 ? (
-              posts.map(
+            postsSlice && postsSlice.length !== 0 ? (
+              postsSlice.map(
                 ({
                   id,
                   variant,
@@ -171,6 +194,15 @@ const PostFormat = ({
             <PostsLoading />
           )}
         </ul>
+
+        {posts && (
+          <Pagination
+            totalPosts={posts.length}
+            limit={limit}
+            page={page}
+            setPage={(value) => setPage(value)}
+          />
+        )}
       </div>
     </ContainerBox>
   );

@@ -1,40 +1,13 @@
 'use client';
+import React, { useEffect, useState } from 'react';
 import { authState } from '@/recoil/atoms';
 import getPosts from '@/utils/getPosts';
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { DocumentData } from 'firebase/firestore';
-import PostFormat from '@/components/PostFormat';
+import PostFormat from '@/components/Posts/PostFormat';
 
-export interface postsProps {
-  id: string;
-  title: string;
-  status: string;
-  variant: string;
-  phone: string;
-  place: string;
-  contents: string;
-  date: string;
-  price: string;
-  height: string;
-  width: string;
-  amount: string;
-  image?: string[];
-  like: string[];
-  comment: {
-    creatorId: string;
-    like: string[];
-    recomment: { creatorId: string; contents: string }[];
-  }[];
-  views: number;
-  creatorName: string;
-  creatorId: string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
-}
-
-const Living1Page = () => {
+const PostsFormatWrapper = () => {
   const user = useRecoilValue(authState);
 
   const pathname = usePathname();
@@ -52,26 +25,15 @@ const Living1Page = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [page, setPage] = useState(1);
-  const limit = 15;
-  const offset = (page - 1) * limit;
-
-  const postsData = (posts: DocumentData[]) => {
-    if (posts) {
-      let result = posts.slice(offset, offset + limit);
-      return result;
-    }
-  };
-
   useEffect(() => {
     /* setPosts(querySnapshot); */
     if (selectedCategory === 'all') {
       getPosts(pathname).then((response) => {
         response.sort(function (a: DocumentData, b: DocumentData) {
-          return Number(a.createdAt) - Number(b.createdAt);
+          return Number(b.createdAt) - Number(a.createdAt);
         });
 
-        setPosts(response.reverse());
+        setPosts(response);
 
         setIsLoading(false);
       });
@@ -102,4 +64,4 @@ const Living1Page = () => {
   );
 };
 
-export default Living1Page;
+export default PostsFormatWrapper;
