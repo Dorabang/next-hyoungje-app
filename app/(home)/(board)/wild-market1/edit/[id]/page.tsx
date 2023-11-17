@@ -7,20 +7,21 @@ import { useState, useEffect } from 'react';
 
 const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
   // const pathname = 'wild-market1';
-  const pathname = usePathname();
+  const pathname = usePathname().trim().split('/');
+
   const [posts, setPosts] = useState<DocumentData[]>([]);
 
   const post = posts.find((item) => item.id === id);
 
   useEffect(() => {
     if (posts.length === 0) {
-      getPosts('wild-market1').then((response) => setPosts(response));
+      getPosts(pathname[1]).then((response) => setPosts(response));
     }
-  }, [posts.length]);
+  }, [posts.length, pathname]);
 
   if (!post) return;
 
-  return <Edit post={post} pathname={pathname} />;
+  return <Edit post={post} pathname={pathname[1]} />;
 };
 
 export default DetailEditPage;
