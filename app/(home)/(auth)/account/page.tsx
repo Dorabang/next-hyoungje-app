@@ -15,7 +15,7 @@ import uploadImage from '@/utils/uploadImage';
 import { useState } from 'react';
 import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import { CssTextField } from '@/(home)/login/styleComponents';
+import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import imageCompression from 'browser-image-compression';
 
 interface Inputs {
