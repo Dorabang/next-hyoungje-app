@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { authState, editorState } from '@/recoil/atoms';
 import { Button } from '@mui/material';
 import { dbService } from '@/firebase';
