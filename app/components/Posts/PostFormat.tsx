@@ -24,6 +24,7 @@ interface PostFormatProps {
   isLoading: boolean;
   posts: DocumentData[] | null;
   user: User | null;
+  admin: DocumentData | null;
   handleUpdatePosts: (data: DocumentData[]) => void;
   selectedCategory: string;
   handleUpdateFilter: (status: string) => void;
@@ -34,6 +35,7 @@ const PostFormat = ({
   isLoading,
   posts,
   user,
+  admin,
   handleUpdatePosts,
   selectedCategory,
   handleUpdateFilter,
@@ -144,7 +146,8 @@ const PostFormat = ({
                           )}
                           {title}{' '}
                         </Link>
-                        {user && user.uid === creatorId && (
+                        {((user && user.uid === creatorId) ||
+                          (admin && admin.includes(user?.uid))) && (
                           <div className='text-gray-400 text-xs flex [&_span]:px-1 ml-4'>
                             <span
                               className='hover:text-gray-700 cursor-pointer'
@@ -195,7 +198,7 @@ const PostFormat = ({
           )}
         </ul>
 
-        {posts && (
+        {posts && posts.length !== 0 && (
           <Pagination
             totalPosts={posts.length}
             limit={limit}
