@@ -17,8 +17,10 @@ const Pagination = ({ totalPosts, limit, page, setPage }: PaginationProp) => {
       <div className='flex gap-2 [&_button]:p-2'>
         <button
           onClick={() => setPage(page === 1 ? page : page - 1)}
-          className={`text-grayColor-300 ${
-            page === 1 ? 'cursor-default' : 'hover:text-black'
+          className={`${
+            page === 1
+              ? 'cursor-default text-grayColor-200'
+              : 'text-grayColor-300 hover:text-black'
           }`}
         >
           <div>
@@ -29,10 +31,10 @@ const Pagination = ({ totalPosts, limit, page, setPage }: PaginationProp) => {
           <button
             key={i + 1}
             onClick={() => setPage(i + 1)}
-            className={`text-gray-500 ${
+            className={`${
               page === i + 1
                 ? 'font-semibold text-black'
-                : 'text-sm hover:text-black'
+                : 'text-grayColor-300 text-sm hover:text-black'
             }`}
           >
             {i + 1}
@@ -42,7 +44,9 @@ const Pagination = ({ totalPosts, limit, page, setPage }: PaginationProp) => {
         <button
           onClick={() => setPage(numPages === page ? numPages : page + 1)}
           className={`text-grayColor-300 transition-colors ${
-            page === numPages ? 'cursor-default' : 'hover:text-black'
+            page === numPages
+              ? 'cursor-default text-grayColor-200'
+              : 'text-grayColor-300 hover:text-black'
           }`}
         >
           <div>
