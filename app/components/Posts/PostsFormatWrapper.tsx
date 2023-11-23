@@ -6,10 +6,12 @@ import { usePathname } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { DocumentData } from 'firebase/firestore';
 import PostFormat from '@/components/Posts/PostFormat';
+import getAdmin from '@/utils/getAdmin';
 
 const PostsFormatWrapper = () => {
   const user = useRecoilValue(authState);
 
+  const [admin, setAdmin] = useState<DocumentData | null>(null);
   const pathname = usePathname();
 
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
@@ -26,13 +28,17 @@ const PostsFormatWrapper = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    if (!admin) {
+      getAdmin().then((response) => {
+        setAdmin(response[0].user);
+      });
+    }
+  }, [admin]);
+
+  useEffect(() => {
     /* setPosts(querySnapshot); */
     if (selectedCategory === 'all') {
       getPosts(pathname).then((response) => {
-        response.sort(function (a: DocumentData, b: DocumentData) {
-          return Number(b.createdAt) - Number(a.createdAt);
-        });
-
         setPosts(response);
 
         setIsLoading(false);
@@ -57,6 +63,7 @@ const PostsFormatWrapper = () => {
       isLoading={isLoading}
       posts={posts}
       user={user}
+      admin={admin}
       handleUpdatePosts={handleUpdatePosts}
       selectedCategory={selectedCategory}
       handleUpdateFilter={handleUpdateFilter}

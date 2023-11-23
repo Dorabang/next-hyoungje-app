@@ -30,7 +30,7 @@ const Slide = ({ pathname }: { pathname: string }) => {
         (item) =>
           item?.image && item?.image?.length !== 0 && item.status === 'sale'
       );
-      const latestPost = imagePost.reverse().slice(0, 5);
+      const latestPost = imagePost.slice(0, 5);
       setPosts(latestPost);
     });
   }, [pathname]);
