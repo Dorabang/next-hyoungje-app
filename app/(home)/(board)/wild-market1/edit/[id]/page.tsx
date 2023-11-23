@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
-  // const pathname = 'wild-market1';
   const pathname = usePathname().trim().split('/');
 
   const [posts, setPosts] = useState<DocumentData[]>([]);
