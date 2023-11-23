@@ -9,7 +9,7 @@ import StatusOptions from '@/components/StatusOptions';
 import PostsNotFound from '@/components/Posts/PostsNotFound';
 import PostsLoading from '@/components/Posts/PostsLoading';
 import FilterOption from '@/components/FilterOption';
-import Pagination from '@/components/Pagination';
+import PaginationComponets from '@/components/PaginationComponent';
 
 import DateFormat from '@/utils/DateFormat';
 import DeletePost from '@/utils/deletePost';
@@ -198,8 +198,17 @@ const PostFormat = ({
           )}
         </ul>
 
-        {posts && posts.length !== 0 && (
+        {/* {posts && posts.length !== 0 && (
           <Pagination
+            totalPosts={posts.length}
+            limit={limit}
+            page={page}
+            setPage={(value) => setPage(value)}
+          />
+        )} */}
+
+        {posts && posts.length !== 0 && (
+          <PaginationComponets
             totalPosts={posts.length}
             limit={limit}
             page={page}
