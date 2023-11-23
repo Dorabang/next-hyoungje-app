@@ -2,21 +2,18 @@
 import { useForm, Controller } from 'react-hook-form';
 import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { authService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import { ErrorMessage } from '@hookform/error-message';
 import { useRouter } from 'next/navigation';
 import JoinTerms from '@/components/JoinTerms/JoinTerms';
-import {
-  updateProfile,
-  createUserWithEmailAndPassword,
-  updatePhoneNumber,
-} from 'firebase/auth';
+import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
 import uploadImage from '@/utils/uploadImage';
 import { useState } from 'react';
 import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import imageCompression from 'browser-image-compression';
+import { addDoc, collection } from 'firebase/firestore';
 
 interface Inputs {
   email: string;
@@ -55,12 +52,16 @@ const AccountPage = () => {
           photoURL: photo,
         }));
 
+      const userObj = user && {
+        id: user.uid,
+        displayName: nickName,
+        phoneNumber: phoneNumber,
+      };
+
+      userObj && (await addDoc(collection(dbService, 'users'), userObj));
+
       alert('회원가입에 성공 했습니다.');
       router.push('/');
-
-      if (authService.currentUser) {
-        // await updatePhoneNumber(authService.currentUser, phoneNumber);
-      }
     } catch (error) {
       if (error) {
         const { code } = error as { code: string };
