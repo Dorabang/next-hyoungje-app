@@ -1,5 +1,7 @@
+import CommWrapper from '@/components/Posts/CommWrapper';
+
 const NoticePage = () => {
-  return <div>NoticePage</div>;
+  return <CommWrapper />;
 };
 
 export default NoticePage;
