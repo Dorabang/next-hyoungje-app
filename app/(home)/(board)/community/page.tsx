@@ -1,5 +1,7 @@
+import CommWrapper from '@/components/Posts/CommWrapper';
+
 const CommunityPage = () => {
-  return <div>CommunityPage</div>;
+  return <CommWrapper />;
 };
 
 export default CommunityPage;
