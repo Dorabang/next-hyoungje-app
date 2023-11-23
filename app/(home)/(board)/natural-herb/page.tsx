@@ -1,5 +1,7 @@
+import PostsFormatWrapper from '@/components/Posts/PostsFormatWrapper';
+
 const naturalHerbPage = () => {
-  return <div>naturalHerbPage</div>;
+  return <PostsFormatWrapper />;
 };
 
 export default naturalHerbPage;
