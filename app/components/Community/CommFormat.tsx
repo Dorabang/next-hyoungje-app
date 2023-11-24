@@ -37,8 +37,6 @@ const CommFormat = ({
   user,
   admin,
   handleUpdatePosts,
-  selectedCategory,
-  handleUpdateFilter,
 }: PostFormatProps) => {
   const router = useRouter();
 
@@ -89,17 +87,20 @@ const CommFormat = ({
           <Breadcrumbs pathname={pathname} />
         </div>
 
-        {/* <FilterOption
-          selectedCategory={selectedCategory}
-          handleUpdateFilter={handleUpdateFilter}
-          pathname={pathname}
-          community
-        /> */}
         <div
           className='flex justify-end items-center pt-10 pb-5
       text-gray-500 text-sm'
         >
-          {admin && admin.includes(user?.uid) && (
+          {pathname === '/notice' && admin && admin.includes(user?.uid) && (
+            <Link
+              href={`/community/edit${pathname}`}
+              className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
+            >
+              <HiOutlinePencilSquare size={18} className='mr-1' />
+              글쓰기
+            </Link>
+          )}
+          {pathname !== '/notice' && user && (
             <Link
               href={`/community/edit${pathname}`}
               className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
@@ -199,18 +200,9 @@ const CommFormat = ({
           )}
         </ul>
 
-        {/* {posts && posts.length !== 0 && (
-          <Pagination
-            totalPosts={posts.length}
-            limit={limit}
-            page={page}
-            setPage={(value) => setPage(value)}
-          />
-        )} */}
-
-        {posts && posts.length !== 0 && (
+        {posts && (
           <PaginationComponets
-            totalPosts={posts.length}
+            totalPosts={posts.length === 0 ? posts.length + 10 : posts.length}
             limit={limit}
             page={page}
             setPage={(value) => setPage(value)}

@@ -15,6 +15,7 @@ import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import DeletePost from '@/utils/deletePost';
+import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 interface WildMarketDetailPageProps {
   params: { id: string };
@@ -192,14 +193,11 @@ const WildMarketDetailPage = ({
             image.map((imageURL) => (
               <div
                 key={imageURL}
-                className='relative w-full h-[400px] md:max-w-[800px] md:min-h-[800px] mx-auto'
+                className='relative w-full md:max-w-[700px] mx-auto'
               >
-                <Image
+                <AutoHeightImageWrapper
                   src={imageURL}
                   alt={`${post.creatorName} 업로드 이미지`}
-                  fill
-                  sizes='100%'
-                  style={{ objectFit: 'contain' }}
                 />
               </div>
             ))}

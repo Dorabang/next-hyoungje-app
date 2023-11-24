@@ -213,16 +213,7 @@ const PostFormat = ({
           )}
         </ul>
 
-        {/* {posts && posts.length !== 0 && (
-          <Pagination
-            totalPosts={posts.length}
-            limit={limit}
-            page={page}
-            setPage={(value) => setPage(value)}
-          />
-        )} */}
-
-        {posts && posts.length !== 0 && (
+        {posts && (
           <PaginationComponets
             totalPosts={posts.length}
             limit={limit}

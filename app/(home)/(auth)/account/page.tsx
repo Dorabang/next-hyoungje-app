@@ -9,11 +9,11 @@ import JoinTerms from '@/components/JoinTerms/JoinTerms';
 import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
 import uploadImage from '@/utils/uploadImage';
 import { useState } from 'react';
-import Image from 'next/image';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import imageCompression from 'browser-image-compression';
 import { addDoc, collection } from 'firebase/firestore';
+import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 interface Inputs {
   email: string;
@@ -121,7 +121,8 @@ const AccountPage = () => {
       </Typography>
       <Stack
         spacing={2}
-        width={400}
+        width={{ xs: '100%', md: 400 }}
+        paddingX={{ xs: '12px' }}
         component={'form'}
         onSubmit={handleSubmit(onSubmit)}
         autoComplete='off'
@@ -129,11 +130,9 @@ const AccountPage = () => {
         <div className='flex flex-col gap-4 items-center'>
           <p className='text-neutral-700'>프로필 이미지</p>
           <div className='h-40 w-40 rounded-full overflow-hidden relative'>
-            <Image
+            <AutoHeightImageWrapper
               src={image !== '' ? image : defaultProfile}
               alt='프로필 이미지 미리보기'
-              fill
-              className='object-cover'
             />
           </div>
           <label className='p-2 border border-neutral-400 transition-colors hover:bg-neutral-400 rounded hover:text-white cursor-pointer'>

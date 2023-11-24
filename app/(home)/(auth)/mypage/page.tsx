@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { authState } from '@/recoil/atoms';
 import { useRecoilValue } from 'recoil';
@@ -8,6 +7,7 @@ import ContainerBox from '@/components/ContainerBox';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import imageCompression from 'browser-image-compression';
 import uploadImage from '@/utils/uploadImage';
+import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 const MyPage = () => {
   const user = useRecoilValue(authState);
@@ -68,11 +68,9 @@ const MyPage = () => {
               hover:opacity-70 transition-opacity
             '
             >
-              <Image
+              <AutoHeightImageWrapper
                 src={image !== '' ? image : defaultProfile}
                 alt='프로필 이미지 미리보기'
-                fill
-                className='object-cover'
               />
             </div>
             <input

@@ -72,7 +72,8 @@ const LoginPage = () => {
       </Typography>
       <Stack
         spacing={2}
-        width={400}
+        width={{ xs: '100%', md: 400 }}
+        paddingX={{ xs: '12px' }}
         component={'form'}
         onSubmit={handleSubmit(onSubmit)}
         autoComplete='off'

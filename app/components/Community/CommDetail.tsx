@@ -7,12 +7,12 @@ import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
-import Image from 'next/image';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import DeletePost from '@/utils/deletePost';
+import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 
 interface CommDetailPageProps {
   id: string;
@@ -132,14 +132,11 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
             image.map((imageURL) => (
               <div
                 key={imageURL}
-                className='relative w-full h-[400px] md:max-w-[800px] md:min-h-[800px] mx-auto'
+                className='relative w-full md:max-w-[800px] mx-auto'
               >
-                <Image
+                <AutoHeightImageWrapper
                   src={imageURL}
                   alt={`${post.creatorName} 업로드 이미지`}
-                  fill
-                  sizes='100%'
-                  style={{ objectFit: 'contain' }}
                 />
               </div>
             ))}

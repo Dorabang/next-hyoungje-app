@@ -55,7 +55,7 @@ const Footer = () => {
     <FooterStyle>
       <Container maxWidth='xl'>
         <FooterLogo>
-          <Image src={FImg} alt='형제난원' />
+          <Image src={FImg} alt='형제난원' priority />
         </FooterLogo>
 
         <address>
