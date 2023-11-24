@@ -46,7 +46,7 @@ const MyPage = () => {
           });
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
         });
     }
   };

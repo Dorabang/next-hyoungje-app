@@ -139,7 +139,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
           });
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
         });
     }
   };

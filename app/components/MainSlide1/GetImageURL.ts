@@ -12,7 +12,9 @@ const GetImageURL = async (
     .then((url) => {
       changeImg(id, url);
     })
-    .catch((error) => console.log('DownloadURL error: ' + error));
+    .catch((error) => {
+      // console.log('DownloadURL error: ' + error)
+    });
 };
 
 export default GetImageURL;

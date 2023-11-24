@@ -142,7 +142,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
           });
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
         });
     }
   };
