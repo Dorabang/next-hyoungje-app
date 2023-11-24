@@ -11,7 +11,7 @@ import 'swiper/css';
 import { useEffect, useState } from 'react';
 import getPosts from '@/utils/getPosts';
 import { DocumentData } from 'firebase/firestore';
-import GetImageURL from './GetImageURL';
+import GetImageURL from './GetSlideURL';
 import Image from 'next/image';
 import Link from 'next/link';
 
