@@ -1,4 +1,4 @@
-import CommWrapper from '@/components/Posts/CommWrapper';
+import CommWrapper from '@/components/Community/CommWrapper';
 
 const BoastPage = () => {
   return <CommWrapper />;
