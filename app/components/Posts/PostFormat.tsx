@@ -15,9 +15,10 @@ import DateFormat from '@/utils/DateFormat';
 import DeletePost from '@/utils/deletePost';
 
 import { User } from 'firebase/auth';
-import { DocumentData } from 'firebase/firestore';
+import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 
 import { AiOutlineFileImage } from 'react-icons/ai';
+import { dbService } from '@/firebase';
 
 interface PostFormatProps {
   pathname: string;
@@ -68,6 +69,17 @@ const PostFormat = ({
       DeletePost(post, user, pathname, id);
       const deletePosts = posts.filter((item) => item.id !== id);
       handleUpdatePosts(deletePosts);
+    }
+  };
+
+  const handleClickViewUp = async (id: string) => {
+    const post = posts && posts.find((item) => item.id === id);
+
+    if (post) {
+      const newPostObj = { ...post, views: post.views + 1 };
+      const docRef = doc(dbService, `${pathname}/${post.id}`);
+
+      await updateDoc(docRef, newPostObj);
     }
   };
 
@@ -140,6 +152,7 @@ const PostFormat = ({
                         <Link
                           href={`/wild-market1/${id}`}
                           className='flex items-center whitespace-nowrap'
+                          onClick={() => handleClickViewUp(id)}
                         >
                           {image && image?.length !== 0 && (
                             <AiOutlineFileImage className='mr-2' />
@@ -183,7 +196,9 @@ const PostFormat = ({
                       <div className='w-[6%] hidden lg:block'>
                         {DateFormat(createdAt)}
                       </div>
-                      <div className='w-[6%] hidden lg:block'>{views}</div>
+                      <div className='w-[6%] hidden lg:block'>
+                        {views.toLocaleString()}
+                      </div>
                     </li>
                   );
                 }
