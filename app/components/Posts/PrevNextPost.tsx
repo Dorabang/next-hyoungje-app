@@ -38,8 +38,8 @@ const PrevNextPost = ({ pathname, posts, post }: PrevNextPostProps) => {
           <div>
             {prevPost && (
               <Link
-                href={`/${pathname}/${prevPost?.id}`}
-                className='text-left  flex flex-col justify-start items-start'
+                href={`/${pathname}/${prevPost.id}`}
+                className='text-left flex flex-col justify-start items-start'
               >
                 <AiOutlineLeft size={24} />
                 <p className='mt-2 text-sm'>{prevPost.title}</p>
@@ -49,7 +49,7 @@ const PrevNextPost = ({ pathname, posts, post }: PrevNextPostProps) => {
           <div>
             {nextPost && (
               <Link
-                href={`/${pathname}/${nextPost?.id}`}
+                href={`/${pathname}/${nextPost.id}`}
                 className='text-right flex flex-col justify-end items-end'
               >
                 <AiOutlineRight size={24} />
