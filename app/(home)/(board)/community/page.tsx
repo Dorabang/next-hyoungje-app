@@ -1,7 +1,12 @@
-import CommWrapper from '@/components/Posts/CommWrapper';
+import Community from '@/components/Community';
+import ContainerBox from '@/components/ContainerBox';
 
 const CommunityPage = () => {
-  return <CommWrapper />;
+  return (
+    <ContainerBox>
+      <Community />
+    </ContainerBox>
+  );
 };
 
 export default CommunityPage;
