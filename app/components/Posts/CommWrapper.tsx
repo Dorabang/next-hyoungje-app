@@ -5,8 +5,8 @@ import getPosts from '@/utils/getPosts';
 import { usePathname } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { DocumentData } from 'firebase/firestore';
-import PostFormat from '@/components/Posts/PostFormat';
 import getAdmin from '@/utils/getAdmin';
+import CommFormat from '@/components/Posts/CommFormat';
 
 const CommWrapper = () => {
   const user = useRecoilValue(authState);
@@ -62,7 +62,7 @@ const CommWrapper = () => {
   }, [pathname, selectedCategory]);
 
   return (
-    <PostFormat
+    <CommFormat
       pathname={`/${pathname[2]}`}
       isLoading={isLoading}
       posts={posts}
