@@ -25,7 +25,7 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
   }, [pathname, posts]);
 
   useEffect(() => {
-    if (!post || posts === null) {
+    if (posts !== null) {
       const postIdx = posts && posts.findIndex((item) => item.id === post.id);
 
       if (!prevPost && postIdx !== 0 && postIdx !== null) {
@@ -35,8 +35,8 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
 
       if (
         !nextPost &&
-        postIdx !== posts &&
-        posts &&
+        postIdx !== null &&
+        posts !== null &&
         posts.length - 1 &&
         postIdx !== null
       ) {
