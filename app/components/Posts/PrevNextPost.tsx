@@ -1,3 +1,4 @@
+import getPosts from '@/utils/getPosts';
 import { DocumentData } from 'firebase/firestore';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -5,11 +6,11 @@ import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 
 interface PrevNextPostProps {
   pathname: string;
-  posts: DocumentData[];
   post: DocumentData;
 }
 
-const PrevNextPost = ({ pathname, posts, post }: PrevNextPostProps) => {
+const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
+  const [posts, setPosts] = useState<DocumentData[] | null>(null);
   const [prevPost, setPrevPosts] = useState<DocumentData | null | undefined>(
     null
   );
@@ -18,17 +19,32 @@ const PrevNextPost = ({ pathname, posts, post }: PrevNextPostProps) => {
   );
 
   useEffect(() => {
-    const postIdx = post && posts.findIndex((item) => item.id === post.id);
-
-    if (!prevPost && postIdx !== 0 && postIdx !== null) {
-      const prev = posts.find((item, idx) => idx === postIdx - 1);
-      setPrevPosts(prev);
+    if (posts === null) {
+      getPosts(pathname).then((response) => setPosts(response));
     }
+  }, [pathname, posts]);
 
-    if (!nextPost && postIdx !== posts.length - 1 && postIdx !== null) {
-      const next = posts.find((item, idx) => idx === postIdx + 1);
-      setNextPosts(next);
+  useEffect(() => {
+    if (!post || posts === null) {
+      const postIdx = posts && posts.findIndex((item) => item.id === post.id);
+
+      if (!prevPost && postIdx !== 0 && postIdx !== null) {
+        const prev = posts && posts.find((item, idx) => idx === postIdx - 1);
+        setPrevPosts(prev);
+      }
+
+      if (
+        !nextPost &&
+        postIdx !== posts &&
+        posts &&
+        posts.length - 1 &&
+        postIdx !== null
+      ) {
+        const next = posts.find((item, idx) => idx === postIdx + 1);
+        setNextPosts(next);
+      }
     }
+    return;
   }, [post, posts, prevPost, nextPost]);
 
   return (

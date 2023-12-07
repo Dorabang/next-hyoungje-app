@@ -7,7 +7,6 @@ import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
 import { useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
-import Image from 'next/image';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
 import StatusOptions from '@/components/StatusOptions';
@@ -16,6 +15,7 @@ import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import DeletePost from '@/utils/deletePost';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import getPost from '@/utils/getPost';
 
 interface WildMarketDetailPageProps {
   params: { id: string };
@@ -24,7 +24,6 @@ interface WildMarketDetailPageProps {
 const WildMarketDetailPage = ({
   params: { id },
 }: WildMarketDetailPageProps) => {
-  const [posts, setPosts] = useState<DocumentData[]>([]);
   const [post, setPost] = useState<DocumentData | null>(null);
 
   const pathname = 'wild-market1';
@@ -33,11 +32,10 @@ const WildMarketDetailPage = ({
   const router = useRouter();
 
   useEffect(() => {
-    if (!post) {
-      const currentPost = posts.find((item) => item.id === id);
-      currentPost && setPost(currentPost);
+    if (post === null) {
+      getPost(pathname, id).then((response) => setPost(response[0]));
     }
-  }, [post, id, posts]);
+  }, [id, post]);
 
   const [image, setImage] = useState<string[]>();
 
@@ -57,11 +55,6 @@ const WildMarketDetailPage = ({
       router.push(`/${pathname}`);
     }
   };
-
-  useEffect(() => {
-    /* setPosts(querySnapshot); */
-    getPosts(pathname).then((response) => setPosts(response));
-  }, []);
 
   useEffect(() => {
     const getImage = (value: string) => {
@@ -224,12 +217,12 @@ const WildMarketDetailPage = ({
             border border-[#ddd] rounded-sm'
         >
           <div className='w-full'>좋아요</div>
-          {HasLikes(post.like, user)}
-          {post.like.length}
+          {HasLikes(post?.like, user)}
+          {post?.like?.length}
         </button>
       </div>
 
-      <PrevNextPost pathname={pathname} posts={posts} post={post} />
+      <PrevNextPost pathname={pathname} post={post} />
     </ContainerBox>
   );
 };
