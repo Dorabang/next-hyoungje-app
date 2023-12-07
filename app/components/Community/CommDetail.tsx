@@ -158,11 +158,7 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
         </div>
       </div>
 
-      <PrevNextPost
-        pathname={`${pathname[1]}/${pathname[2]}`}
-        posts={posts}
-        post={post}
-      />
+      <PrevNextPost pathname={`${pathname[1]}/${pathname[2]}`} post={post} />
     </ContainerBox>
   );
 };
