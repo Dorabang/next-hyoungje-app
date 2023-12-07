@@ -50,7 +50,7 @@ const PostsFormatWrapper = () => {
         const filter = response.filter(
           (item) => item.status === selectedCategory
         );
-        setPosts(filter.reverse());
+        setPosts(filter);
 
         setIsLoading(false);
       });
