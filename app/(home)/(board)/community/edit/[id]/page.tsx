@@ -86,7 +86,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     router.back();
   };
 
-  const inputWrapperClass = 'flex w-full border-b border-[#ddd] p-2';
+  const inputWrapClass = 'flex w-full border-b border-[#ddd] p-2';
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -134,7 +134,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     <ContainerBox>
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
-          <div className={`${inputWrapperClass}`}>
+          <div className={`${inputWrapClass}`}>
             <label htmlFor='phone'>제목 *</label>
             <input
               type='text'
@@ -146,7 +146,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
 
-          <div className={`${inputWrapperClass}`}>
+          <div className={`${inputWrapClass}`}>
             <p className='w-[90px] border-r border-neutral-300 cursor-default'>
               파일 첨부
             </p>
