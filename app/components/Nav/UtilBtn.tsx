@@ -19,7 +19,7 @@ const UtilBtn = () => {
     const onLogOutClick = () => {
       signOut(authService);
       setUser(null);
-      router.refresh();
+      router.push('/');
     };
 
     return (

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Container } from '@mui/material';
 
 export const FooterStyle = styled.footer`
-  margin-top: 150px;
+  margin-top: 80px;
   width: 100%;
   padding: 80px 0 50px;
   background: #333;
@@ -55,7 +55,7 @@ const Footer = () => {
     <FooterStyle>
       <Container maxWidth='xl'>
         <FooterLogo>
-          <Image src={FImg} alt='형제난원' />
+          <Image src={FImg} alt='형제난원' priority />
         </FooterLogo>
 
         <address>
