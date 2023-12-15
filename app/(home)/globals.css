@@ -31,6 +31,16 @@
     border: 1px solid #333;
     box-shadow: none;
   }
+
+  button[type='button'] {
+    color: #000;
+    transition: all 0.2s ease-in-out;
+    box-shadow: none;
+  }
+
+  button[type='button']:hover {
+    background-color: #f9f9f9;
+  }
 }
 @tailwind components;
 @tailwind utilities;
