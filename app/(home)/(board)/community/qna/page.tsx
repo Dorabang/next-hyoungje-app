@@ -1,5 +1,7 @@
+import CommWrapper from '@/components/Community/CommWrapper';
+
 const QnaPage = () => {
-  return <div>QnaPage</div>;
+  return <CommWrapper />;
 };
 
 export default QnaPage;

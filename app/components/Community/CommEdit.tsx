@@ -1,17 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
-import ContainerBox from './ContainerBox';
+import ContainerBox from '../ContainerBox';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { ImageObjProps } from '@/(home)/edit/[id]/page';
-import statusList from '@/constant/StatusLists';
 import { authState, editorState } from '@/recoil/atoms';
 import Image from 'next/image';
 import imageCompression from 'browser-image-compression';
 import uuid from 'react-uuid';
 import { AiOutlineClose } from 'react-icons/ai';
-import Editor from './Editor';
+import Editor from '../Editor';
 import { Button } from '@mui/material';
 import uploadImage from '@/utils/uploadImage';
 import { dbService, storageService } from '@/firebase';
@@ -24,15 +23,6 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   const user = useRecoilValue(authState);
 
   const [title, setTitle] = useState(post.title);
-  const [variant, setVariant] = useState(post.variant);
-  const [phone, setPhone] = useState(post.phone);
-  const [status, setStatus] = useState(post.status);
-  const [price, setPrice] = useState(post.price);
-  const [place, setPlace] = useState(post.place);
-  const [date, setDate] = useState(post.date);
-  const [height, setHeight] = useState(post.height);
-  const [width, setWidth] = useState(post.width);
-  const [amount, setAmount] = useState(post.amount);
   const [images, setImages] = useState<string[] | null>(null);
   const [imageArr, setImageArr] = useState<ImageObjProps[] | null>(null);
   const [value, setValue] = useRecoilState(editorState);
@@ -83,16 +73,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
     const newPostObj = {
       title: title,
-      status: status,
-      variant: variant,
-      phone: phone,
-      place: place,
       contents: value,
-      date: date,
-      price: price,
-      height: height,
-      width: width,
-      amount: amount,
       image: imageIdArr,
       like: [],
       comment: [],
@@ -107,13 +88,6 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     await updateDoc(docRef, newPostObj);
     setTitle('');
     setValue('');
-    setDate('');
-    setWidth(' cm');
-    setHeight(' cm');
-    setPlace('');
-    setPrice('');
-    setAmount('');
-    setStatus('');
     router.back();
   };
 
@@ -184,20 +158,6 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
           <div className={`${inputWrapperClass}`}>
-            <div className='pr-4'>
-              <select
-                id='status'
-                className='outline-none cursor-pointer'
-                onChange={(e) => setStatus(e.target.value)}
-                value={status}
-              >
-                {statusList.map((option) => (
-                  <option value={option.value} key={option.value}>
-                    {option.desc}
-                  </option>
-                ))}
-              </select>
-            </div>
             <input
               type='text'
               value={title}
@@ -205,101 +165,6 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
               placeholder='* 제목을 입력해주세요.'
               className='outline-none'
               required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='variant'>* 종류</label>
-            <input
-              name='variant'
-              type='text'
-              value={variant}
-              onChange={(e) => setVariant(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='phone'>* 연락처</label>
-            <input
-              name='phone'
-              type='text'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='place'>* 산지</label>
-            <input
-              name='place'
-              type='text'
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='date'>* 산채일</label>
-            <input
-              name='date'
-              type='date'
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='price'>* 가격</label>
-            <input
-              name='price'
-              type='text'
-              value={price.toLocaleString()}
-              onChange={(e) => setPrice(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='height'>* 키</label>
-            <input
-              name='height'
-              type='text'
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='width'>* 폭</label>
-            <input
-              name='width'
-              type='text'
-              value={width}
-              onChange={(e) => setWidth(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='amount'>촉수</label>
-            <input
-              name='amount'
-              type='text'
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className='outline-none pl-3'
             />
           </div>
 

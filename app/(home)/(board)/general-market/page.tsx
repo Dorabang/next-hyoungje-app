@@ -1,7 +1,7 @@
-import React from 'react';
+import PostsFormatWrapper from '@/components/Posts/PostsFormatWrapper';
 
 const generalMarketPage = () => {
-  return <div>generalMarketPage</div>;
+  return <PostsFormatWrapper />;
 };
 
 export default generalMarketPage;

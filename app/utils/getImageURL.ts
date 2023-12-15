@@ -9,7 +9,9 @@ const GetImageURL = async (url: string, changeImg: (value: string) => void) => {
     .then((url) => {
       return changeImg(url);
     })
-    .catch((error) => console.log('DownloadURL error: ' + error));
+    .catch((error) => {
+      // console.log('DownloadURL error: ' + error);
+    });
 
   return downloadURL;
 };

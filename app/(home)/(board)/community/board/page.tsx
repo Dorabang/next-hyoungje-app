@@ -1,5 +1,7 @@
+import CommWrapper from '@/components/Community/CommWrapper';
+
 const BoardPage = () => {
-  return <div>BoardPage</div>;
+  return <CommWrapper />;
 };
 
 export default BoardPage;

@@ -21,8 +21,12 @@ interface pagesTypes extends Array<pagesType> {}
 
 const pages: pagesTypes = [
   {
-    name: livingVegetable.name,
-    path: livingVegetable.path,
+    name: livingVegetable.depth1[0].name,
+    path: livingVegetable.depth1[0].path,
+  },
+  {
+    name: livingVegetable.depth1[1].name,
+    path: livingVegetable.depth1[1].path,
   },
   { name: generalMarketplace.name, path: generalMarketplace.path },
   { name: naturalHerbs.name, path: naturalHerbs.path },
@@ -30,7 +34,34 @@ const pages: pagesTypes = [
     name: singleLeaf.name,
     path: singleLeaf.path,
   },
-  { name: community.name, path: community.path },
+  {
+    name: community.name,
+    path: community.path,
+  },
+  {
+    name: community.depth1[0].name,
+    path: community.depth1[0].path,
+  },
+  {
+    name: community.depth1[1].name,
+    path: community.depth1[1].path,
+  },
+  {
+    name: community.depth1[2].name,
+    path: community.depth1[2].path,
+  },
+  {
+    name: community.depth1[3].name,
+    path: community.depth1[3].path,
+  },
+  {
+    name: community.depth1[4].name,
+    path: community.depth1[4].path,
+  },
+  {
+    name: community.depth1[5].name,
+    path: community.depth1[5].path,
+  },
 ];
 
 const Breadcrumbs = ({ pathname }: { pathname: string }) => {
@@ -43,7 +74,7 @@ const Breadcrumbs = ({ pathname }: { pathname: string }) => {
   const [currentPage, setCurrentPage] = useState<pagesType>();
 
   useEffect(() => {
-    const findPage = pages.filter((page: pagesType) => page.path === pathname);
+    const findPage = pages.filter((page) => page.path.includes(pathname));
 
     findPage && setCurrentPage(findPage[0]);
   }, [pathname]);

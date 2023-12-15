@@ -1,6 +1,5 @@
 'use client';
 import { useForm, Controller } from 'react-hook-form';
-import TextField from '@mui/material/TextField';
 import { Button, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { authService } from '@/firebase';
@@ -11,6 +10,7 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { CssTextField } from './styleComponents';
+import { useState } from 'react';
 
 interface Inputs {
   email: string;
@@ -19,6 +19,7 @@ interface Inputs {
 
 const LoginPage = () => {
   const router = useRouter();
+  const [error, setError] = useState<string>('');
 
   const {
     control,
@@ -37,12 +38,24 @@ const LoginPage = () => {
           password
         ).then(() => {
           alert('로그인에 성공했습니다.');
+
           router.push('/');
         });
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        const { code } = error as { code: string };
+
+        switch (code) {
+          case 'auth/wrong-password':
+            setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
+            break;
+          case 'auth/user-not-found':
+            setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
+            break;
+          case 'auth/too-many-requests':
+            setError('요청이 너무 많아 잠시 후에 로그인을 시도해주세요.');
+            break;
+        }
       });
   };
 
@@ -59,7 +72,8 @@ const LoginPage = () => {
       </Typography>
       <Stack
         spacing={2}
-        width={400}
+        width={{ xs: '100%', md: 400 }}
+        paddingX={{ xs: '12px' }}
         component={'form'}
         onSubmit={handleSubmit(onSubmit)}
         autoComplete='off'
@@ -104,6 +118,9 @@ const LoginPage = () => {
             />
           )}
         />
+        {error.length !== 0 && (
+          <p className='text-center text-sm text-rose-500'>{error}</p>
+        )}
 
         <Stack direction={'row'} spacing={1}>
           <Button type='submit' variant='contained' sx={{ width: '100%' }}>

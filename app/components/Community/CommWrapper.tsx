@@ -5,14 +5,14 @@ import getPosts from '@/utils/getPosts';
 import { usePathname } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { DocumentData } from 'firebase/firestore';
-import PostFormat from '@/components/Posts/PostFormat';
 import getAdmin from '@/utils/getAdmin';
+import CommFormat from '@/components/Community/CommFormat';
 
-const PostsFormatWrapper = () => {
+const CommWrapper = () => {
   const user = useRecoilValue(authState);
 
   const [admin, setAdmin] = useState<DocumentData | null>(null);
-  const pathname = usePathname();
+  const pathname = usePathname().trim().split('/');
 
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -38,7 +38,11 @@ const PostsFormatWrapper = () => {
   useEffect(() => {
     /* setPosts(querySnapshot); */
     if (selectedCategory === 'all') {
-      getPosts(pathname).then((response) => {
+      getPosts(`/${pathname[2]}`).then((response) => {
+        response.sort(function (a: DocumentData, b: DocumentData) {
+          return Number(b.createdAt) - Number(a.createdAt);
+        });
+
         setPosts(response);
 
         setIsLoading(false);
@@ -46,11 +50,11 @@ const PostsFormatWrapper = () => {
     }
 
     if (selectedCategory !== 'all') {
-      getPosts(pathname).then((response) => {
+      getPosts(`/${pathname[2]}`).then((response) => {
         const filter = response.filter(
           (item) => item.status === selectedCategory
         );
-        setPosts(filter);
+        setPosts(filter.reverse());
 
         setIsLoading(false);
       });
@@ -58,8 +62,8 @@ const PostsFormatWrapper = () => {
   }, [pathname, selectedCategory]);
 
   return (
-    <PostFormat
-      pathname={pathname}
+    <CommFormat
+      pathname={`/${pathname[2]}`}
       isLoading={isLoading}
       posts={posts}
       user={user}
@@ -71,4 +75,4 @@ const PostsFormatWrapper = () => {
   );
 };
 
-export default PostsFormatWrapper;
+export default CommWrapper;

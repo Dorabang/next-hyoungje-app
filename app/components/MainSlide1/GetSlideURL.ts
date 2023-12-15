@@ -1,7 +1,7 @@
 import { storageService } from '@/firebase';
 import { getDownloadURL, ref } from 'firebase/storage';
 
-const GetImageURL = async (
+const GetSlideURL = async (
   url: string,
   id: string,
   changeImg: (id: string, value: string) => void
@@ -12,7 +12,9 @@ const GetImageURL = async (
     .then((url) => {
       changeImg(id, url);
     })
-    .catch((error) => console.log('DownloadURL error: ' + error));
+    .catch((error) => {
+      // console.log('DownloadURL error: ' + error)
+    });
 };
 
-export default GetImageURL;
+export default GetSlideURL;

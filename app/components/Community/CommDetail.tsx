@@ -5,37 +5,34 @@ import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
-import StatusOptions from '@/components/StatusOptions';
-import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import DeletePost from '@/utils/deletePost';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
-import getPost from '@/utils/getPost';
+import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 
-interface WildMarketDetailPageProps {
-  params: { id: string };
+interface CommDetailPageProps {
+  id: string;
 }
 
-const WildMarketDetailPage = ({
-  params: { id },
-}: WildMarketDetailPageProps) => {
+const CommDetailPage = ({ id }: CommDetailPageProps) => {
+  const [posts, setPosts] = useState<DocumentData[]>([]);
   const [post, setPost] = useState<DocumentData | null>(null);
 
-  const pathname = 'wild-market1';
+  const pathname = usePathname().split('/');
   const user = useRecoilValue(authState);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (post === null) {
-      getPost(pathname, id).then((response) => setPost(response[0]));
+    if (!post) {
+      const currentPost = posts.find((item) => item.id === id);
+      currentPost && setPost(currentPost);
     }
-  }, [id, post]);
+  }, [post, id, posts]);
 
   const [image, setImage] = useState<string[]>();
 
@@ -51,10 +48,15 @@ const WildMarketDetailPage = ({
     if (!post) return;
 
     if (ok) {
-      DeletePost(post, user, pathname, id);
-      router.push(`/${pathname}`);
+      DeletePost(post, user, pathname[2], id);
+      router.push(`/${pathname[1]}/${pathname[2]}`);
     }
   };
+
+  useEffect(() => {
+    /* setPosts(querySnapshot); */
+    getPosts(pathname[2]).then((response) => setPosts(response));
+  }, [pathname]);
 
   useEffect(() => {
     const getImage = (value: string) => {
@@ -65,10 +67,13 @@ const WildMarketDetailPage = ({
 
     if (postImages && post.creatorId) {
       postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage)
+        GetImageURL(
+          `${pathname[2]}/${post.creatorId}/post/${id}/image`,
+          getImage
+        )
       );
     }
-  }, [postImages, post?.creatorId]);
+  }, [postImages, post?.creatorId, pathname]);
 
   if (!post) return;
 
@@ -82,19 +87,20 @@ const WildMarketDetailPage = ({
       >
         <div
           className='p-2 cursor-pointer'
-          onClick={() => router.push(`/${pathname}`)}
+          onClick={() => router.push(`/${pathname[1]}/${pathname[2]}`)}
         >
           <IoArrowBack size={18} />
         </div>
 
-        <h2 className='text-lg font-bold flex-grow'>
-          <span className='px-2'>{StatusOptions(post.status)}</span>
-          {post?.title}
-        </h2>
+        <h2 className='text-lg font-bold flex-grow'>{post?.title}</h2>
 
         {user?.uid === post.creatorId && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
-            <li onClick={() => router.push(`/${pathname}/edit/${post.id}`)}>
+            <li
+              onClick={() =>
+                router.push(`/${pathname[1]}/${pathname[2]}/edit/${post.id}`)
+              }
+            >
               편집
             </li>
             <li onClick={() => handleDeletePost(id)}>삭제</li>
@@ -118,67 +124,7 @@ const WildMarketDetailPage = ({
         </li>
       </ul>
 
-      <div className='w-full px-5 md:px-0 md:w-[1016px] mx-auto'>
-        <div className='w-full flex flex-wrap md:gap-4 justify-center'>
-          <table
-            className='w-full md:w-[500px]
-        [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-neutral-300
-        [&_th]:w-[20%]
-        sm:[&_th]:w-[15%] [&_th]:p-2
-        [&_td]:w-[80%]
-        sm:[&_td]:w-[85%] [&_td]:p-2
-        '
-          >
-            <tbody>
-              <tr>
-                <th>종류</th>
-                <td>{post.variant}</td>
-              </tr>
-              <tr>
-                <th>연락처</th>
-                <td>{post.phone}</td>
-              </tr>
-              <tr>
-                <th>산지</th>
-                <td>{post.place}</td>
-              </tr>
-              <tr>
-                <th>산채일</th>
-                <td>{DateFormat(new Date(post.date))}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <table
-            className='w-full md:w-[500px]
-              [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-neutral-300
-              [&_th]:w-[20%]
-              sm:[&_th]:w-[15%] [&_th]:p-2
-              [&_td]:w-[80%]
-              sm:[&_td]:w-[85%] [&_td]:p-2
-            '
-          >
-            <tbody>
-              <tr>
-                <th>가격</th>
-                <td>{post.price}</td>
-              </tr>
-              <tr>
-                <th>키</th>
-                <td>{post.height}</td>
-              </tr>
-              <tr>
-                <th>폭</th>
-                <td>{post.width}</td>
-              </tr>
-              <tr>
-                <th>촉수</th>
-                <td>{post.amount}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
+      <div className='w-full px-5 md:px-0 md:w-[1016px] mx-auto pb-[100px]'>
         {/* image */}
         <div className='pt-4 w-full'>
           {postImages &&
@@ -186,7 +132,7 @@ const WildMarketDetailPage = ({
             image.map((imageURL) => (
               <div
                 key={imageURL}
-                className='relative w-full md:max-w-[700px] mx-auto'
+                className='relative w-full md:max-w-[800px] mx-auto'
               >
                 <AutoHeightImageWrapper
                   src={imageURL}
@@ -210,21 +156,11 @@ const WildMarketDetailPage = ({
         >
           <ReactQuill defaultValue={post.contents} modules={modules} readOnly />
         </div>
-
-        <button
-          className='flex flex-wrap gap-1 justify-center items-center
-            mx-auto mt-8 px-2 py-2
-            border border-[#ddd] rounded-sm'
-        >
-          <div className='w-full'>좋아요</div>
-          {HasLikes(post?.like, user)}
-          {post?.like?.length}
-        </button>
       </div>
 
-      <PrevNextPost pathname={pathname} post={post} />
+      <PrevNextPost pathname={`${pathname[1]}/${pathname[2]}`} post={post} />
     </ContainerBox>
   );
 };
 
-export default WildMarketDetailPage;
+export default CommDetailPage;

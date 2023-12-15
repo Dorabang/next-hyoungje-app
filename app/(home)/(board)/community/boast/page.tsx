@@ -1,5 +1,7 @@
+import CommWrapper from '@/components/Community/CommWrapper';
+
 const BoastPage = () => {
-  return <div>BoastPage</div>;
+  return <CommWrapper />;
 };
 
 export default BoastPage;

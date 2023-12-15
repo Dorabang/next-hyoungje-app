@@ -5,10 +5,8 @@ import Link from 'next/link';
 
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ContainerBox from '@/components/ContainerBox';
-import StatusOptions from '@/components/StatusOptions';
 import PostsNotFound from '@/components/Posts/PostsNotFound';
 import PostsLoading from '@/components/Posts/PostsLoading';
-import FilterOption from '@/components/FilterOption';
 import PaginationComponets from '@/components/PaginationComponent';
 
 import DateFormat from '@/utils/DateFormat';
@@ -18,6 +16,7 @@ import { User } from 'firebase/auth';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 
 import { AiOutlineFileImage } from 'react-icons/ai';
+import { HiOutlinePencilSquare } from 'react-icons/hi2';
 import { dbService } from '@/firebase';
 
 interface PostFormatProps {
@@ -31,15 +30,13 @@ interface PostFormatProps {
   handleUpdateFilter: (status: string) => void;
 }
 
-const PostFormat = ({
+const CommFormat = ({
   pathname,
   isLoading,
   posts,
   user,
   admin,
   handleUpdatePosts,
-  selectedCategory,
-  handleUpdateFilter,
 }: PostFormatProps) => {
   const router = useRouter();
 
@@ -90,20 +87,34 @@ const PostFormat = ({
           <Breadcrumbs pathname={pathname} />
         </div>
 
-        <FilterOption
-          selectedCategory={selectedCategory}
-          handleUpdateFilter={handleUpdateFilter}
-          pathname={pathname}
-        />
+        <div
+          className='flex justify-end items-center pt-10 pb-5
+      text-gray-500 text-sm'
+        >
+          {pathname === '/notice' && admin && admin.includes(user?.uid) && (
+            <Link
+              href={`/community/edit${pathname}`}
+              className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
+            >
+              <HiOutlinePencilSquare size={18} className='mr-1' />
+              글쓰기
+            </Link>
+          )}
+          {pathname !== '/notice' && user && (
+            <Link
+              href={`/community/edit${pathname}`}
+              className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
+            >
+              <HiOutlinePencilSquare size={18} className='mr-1' />
+              글쓰기
+            </Link>
+          )}
+        </div>
 
         <ul className='w-full border-b border-neutral-500'>
           <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2'>
             <div className='w-[4%] hidden lg:block'>번호</div>
-            <div className='w-[6%] hidden lg:block'>종류</div>
-            <div className='min-w-[90px] w-[10%]'>분류</div>
             <div className='flex-grow text-left'>제목</div>
-            <div className='w-[6%] hidden md:block'>산지</div>
-            <div className='w-[6%] hidden md:block'>가격</div>
             <div className='w-[10%] hidden md:block'>작성자</div>
             <div className='w-[6%] hidden lg:block'>등록 일자</div>
             <div className='w-[6%] hidden lg:block'>조회수</div>
@@ -113,15 +124,11 @@ const PostFormat = ({
               postsSlice.map(
                 ({
                   id,
-                  variant,
-                  status,
                   title,
                   creatorId,
                   creatorName,
                   createdAt,
                   views,
-                  place,
-                  price,
                   image,
                   num,
                 }: DocumentData) => {
@@ -135,22 +142,10 @@ const PostFormat = ({
                         {num ? num : null}
                       </div>
 
-                      {/* 종류 */}
-                      <div className='w-[6%] hidden lg:block'>
-                        {variant?.length > 5
-                          ? variant.substring(0, 5) + '...'
-                          : variant}
-                      </div>
-
-                      {/* 분류 */}
-                      <div className='min-w-[90px] w-[10%] text-xs'>
-                        {StatusOptions(status)}
-                      </div>
-
                       {/* 제목 */}
                       <div className='flex-grow flex justify-between items-center'>
                         <Link
-                          href={`/wild-market1/${id}`}
+                          href={`/community${pathname}/${id}`}
                           className='flex items-center whitespace-nowrap'
                           onClick={() => handleClickViewUp(id)}
                         >
@@ -181,12 +176,6 @@ const PostFormat = ({
                         )}
                       </div>
 
-                      {/* 산지 */}
-                      <div className='w-[6%] hidden md:block'>{place}</div>
-
-                      {/* 가격 */}
-                      <div className='w-[6%] hidden md:block'>{price}</div>
-
                       {/* 작성자 */}
                       <div className='w-[10%] hidden md:block'>
                         {creatorName?.length > 8
@@ -196,9 +185,7 @@ const PostFormat = ({
                       <div className='w-[6%] hidden lg:block'>
                         {DateFormat(createdAt)}
                       </div>
-                      <div className='w-[6%] hidden lg:block'>
-                        {views.toLocaleString()}
-                      </div>
+                      <div className='w-[6%] hidden lg:block'>{views}</div>
                     </li>
                   );
                 }
@@ -215,7 +202,7 @@ const PostFormat = ({
 
         {posts && (
           <PaginationComponets
-            totalPosts={posts.length}
+            totalPosts={posts.length === 0 ? posts.length + 10 : posts.length}
             limit={limit}
             page={page}
             setPage={(value) => setPage(value)}
@@ -226,4 +213,4 @@ const PostFormat = ({
   );
 };
 
-export default PostFormat;
+export default CommFormat;

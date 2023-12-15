@@ -1,5 +1,7 @@
+import CommWrapper from '@/components/Community/CommWrapper';
+
 const WildCatchPage = () => {
-  return <div>WildCatchPage</div>;
+  return <CommWrapper />;
 };
 
 export default WildCatchPage;

@@ -22,7 +22,6 @@ import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '@/components/Editor';
 import imageCompression from 'browser-image-compression';
 import getPostsAmount from '@/utils/getPostsAmount';
-import statusList from '@/constant/StatusLists';
 
 export interface ImageObjProps {
   id: string;
@@ -37,15 +36,6 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const router = useRouter();
 
   const [title, setTitle] = useState('');
-  const [variant, setVariant] = useState('');
-  const [phone, setPhone] = useState('');
-  const [status, setStatus] = useState('sale');
-  const [price, setPrice] = useState('');
-  const [place, setPlace] = useState('');
-  const [date, setDate] = useState('');
-  const [height, setHeight] = useState(' cm');
-  const [width, setWidth] = useState(' cm');
-  const [amount, setAmount] = useState('');
   const [value, setValue] = useRecoilState(editorState);
 
   /* 이미지 id, url 정보를 담은 배열 */
@@ -73,17 +63,8 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     const newPostObj = {
       title: title,
-      status: status,
-      variant: variant,
-      phone: phone,
-      place: place,
-      contents: value,
-      date: date,
-      price: price,
-      height: height,
-      width: width,
-      amount: amount,
       image: imageIdArr,
+      contents: value,
       like: [],
       comment: [],
       views: 0,
@@ -102,17 +83,10 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     setTitle('');
     setValue('');
-    setDate('');
-    setWidth(' cm');
-    setHeight(' cm');
-    setPlace('');
-    setPrice('');
-    setAmount('');
-    setStatus('');
     router.back();
   };
 
-  const inputWrapperClass = 'flex w-full border-b border-[#ddd] p-2';
+  const inputWrapClass = 'flex w-full border-b border-[#ddd] p-2';
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -160,127 +134,19 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     <ContainerBox>
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
-          <div className={`${inputWrapperClass}`}>
-            <div className='pr-4'>
-              <select
-                id='status'
-                className='outline-none cursor-pointer'
-                onChange={(e) => setStatus(e.target.value)}
-                value={status}
-              >
-                {statusList.map((option) => (
-                  <option value={option.value} key={option.value}>
-                    {option.desc}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className={`${inputWrapClass}`}>
+            <label htmlFor='phone'>제목 *</label>
             <input
               type='text'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder='* 제목을 입력해주세요.'
-              className='outline-none'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='variant'>* 종류</label>
-            <input
-              name='variant'
-              type='text'
-              value={variant}
-              onChange={(e) => setVariant(e.target.value)}
+              placeholder='제목을 입력해주세요.'
               className='outline-none pl-3'
               required
             />
           </div>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='phone'>* 연락처</label>
-            <input
-              name='phone'
-              type='text'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='place'>* 산지</label>
-            <input
-              name='place'
-              type='text'
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='date'>* 산채일</label>
-            <input
-              name='date'
-              type='date'
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='price'>* 가격</label>
-            <input
-              name='price'
-              type='text'
-              value={price.toLocaleString()}
-              onChange={(e) => setPrice(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='height'>* 키</label>
-            <input
-              name='height'
-              type='text'
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='width'>* 폭</label>
-            <input
-              name='width'
-              type='text'
-              value={width}
-              onChange={(e) => setWidth(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='amount'>촉수</label>
-            <input
-              name='amount'
-              type='text'
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className='outline-none pl-3'
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
+          <div className={`${inputWrapClass}`}>
             <p className='w-[90px] border-r border-neutral-300 cursor-default'>
               파일 첨부
             </p>

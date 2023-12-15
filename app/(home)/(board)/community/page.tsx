@@ -1,5 +1,12 @@
+import Community from '@/components/Community';
+import ContainerBox from '@/components/ContainerBox';
+
 const CommunityPage = () => {
-  return <div>CommunityPage</div>;
+  return (
+    <ContainerBox>
+      <Community />
+    </ContainerBox>
+  );
 };
 
 export default CommunityPage;
