@@ -5,6 +5,7 @@ import { Button, Card, Stack, Typography } from '@mui/material';
 import {
   AuthError,
   User,
+  deleteUser,
   signInWithEmailAndPassword,
   signOut,
   updatePassword,
@@ -37,7 +38,8 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
   } = useForm<Inputs>();
 
   const onSubmit = async () => {
-    if (getValues('passwordCheck') !== '') {
+    setError(null);
+    if (getValues('passwordCheck') !== '' && !isEdit) {
       if (!user.email) return;
       await signInWithEmailAndPassword(
         authService,
@@ -45,18 +47,22 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
         getValues('passwordCheck')
       )
         .then((response) => {
-          setIsEdit((prev) => !prev);
-          console.log('response', response);
+          setIsEdit(response.user.uid === user.uid);
+          // console.log('response', response);
+          // console.log('user', user);
         })
         .catch((error: AuthError) => {
           const { code } = error as { code: string };
 
           switch (code) {
             case 'auth/wrong-password':
-              setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
+              setError('비밀번호를 잘못 입력하였습니다.');
               break;
             case 'auth/user-not-found':
-              setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
+              setError('비밀번호를 잘못 입력하였습니다.');
+              break;
+            case 'auth/missing-password':
+              setError('비밀번호를 입력해주세요.');
               break;
             case 'auth/too-many-requests':
               setError('요청이 너무 많아 잠시 후에 로그인을 시도해주세요.');
@@ -68,11 +74,22 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
     if (getValues('password') !== '' && isEdit) {
       await updatePassword(user, getValues('password')).then((response) => {
         console.log('response', response);
-        // alert('성공적으로 비밀번호가 변경되었습니다.');
-        // signOut(authService);
-        // router.push('/login');
+        alert('성공적으로 비밀번호가 변경되었습니다. 로그인 후, 이용해주세요.');
+        signOut(authService);
+        router.push('/login');
       });
     }
+  };
+
+  const handleDeleteUser = async () => {
+    const ok = confirm(
+      `탈퇴하시겠습니까?\n(이 전에 작성한 게시물 및 댓글은 삭제되지 않습니다. 탈퇴 후에는 형제난원의 서비스를 제한적으로 사용하실 수 있습니다.)`
+    );
+
+    if (ok && user) {
+      await deleteUser(user).then(() => router.push('/'));
+    }
+    return;
   };
 
   return (
@@ -113,6 +130,8 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
                   component='p'
                   sx={{ paddingBottom: 2 }}
                 >
+                  계정관련 수정을 원하실 경우,
+                  <br />
                   비밀번호를 인증해주세요.
                 </Typography>
                 <Stack spacing={1} sx={{ position: 'relative' }}>
@@ -120,8 +139,8 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
                     autoComplete={'new-password'}
                     label='비밀번호'
                     type={showPw ? 'text' : 'password'}
-                    error={Boolean(errors.passwordCheck)}
-                    helperText={errors.passwordCheck?.message}
+                    error={error !== null}
+                    helperText={error}
                     {...field}
                   />
                   <div
@@ -131,16 +150,6 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
                     {showPw ? <IoMdEyeOff size={18} /> : <IoMdEye size={18} />}
                   </div>
                 </Stack>
-
-                {error && (
-                  <Typography
-                    component={'p'}
-                    variant='body1'
-                    sx={{ color: '#ddd' }}
-                  >
-                    {error}
-                  </Typography>
-                )}
                 <Button type='submit'>확인</Button>
               </>
             )}
@@ -237,6 +246,17 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
                 </Stack>
               )}
             />
+
+            <Stack direction={'row'}>
+              <Button
+                type='button'
+                onClick={handleDeleteUser}
+                variant='text'
+                sx={{ width: '100%' }}
+              >
+                회원 탈퇴
+              </Button>
+            </Stack>
 
             <Stack direction={'row'}>
               <Button type='submit' variant='contained' sx={{ width: '100%' }}>
