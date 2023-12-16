@@ -2,7 +2,7 @@ import ContainerBox from '@/components/ContainerBox';
 import mvDesktop from '@/assets/main_visual_pc.jpg';
 import mvTablet from '@/assets/main_visual_tablet.jpg';
 import mvMobile from '@/assets/main_visual_mobile.jpg';
-import MainSlide1 from '@/components/MainSlide1';
+import MainSlide from '@/components/Main/MainSlide';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 export default function Home() {
@@ -31,7 +31,7 @@ export default function Home() {
         />
       </div>
       <ContainerBox>
-        <MainSlide1 />
+        <MainSlide />
       </ContainerBox>
       <ContainerBox>Slider 2</ContainerBox>
       <ContainerBox>Slider 3</ContainerBox>
