@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { noto_serif_kr } from '../NotoSerif';
+import { noto_serif_kr } from '../../NotoSerif';
 import Slide from './Slide';
 
-const MainSlide1 = () => {
+const MainSlide = () => {
   return (
     <div className='relative flex justify-between flex-wrap pt-5 xl:pt-[50px]'>
       <div className='w-full xl:w-[25%] mx-3 xl:mx-0'>
@@ -36,4 +36,4 @@ const MainSlide1 = () => {
   );
 };
 
-export default MainSlide1;
+export default MainSlide;
