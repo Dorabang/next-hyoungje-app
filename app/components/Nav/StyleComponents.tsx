@@ -12,6 +12,20 @@ export const btnStyle = {
   },
 };
 
+export const mgnbBtnStyle = {
+  color: '#666',
+  fontSize: 18,
+  width: '100%',
+  justifyContent: 'start',
+  fontFamily: 'Noto Sans KR',
+  padding: '10px 20px',
+  fontWeight: '400',
+  ':hover': {
+    color: '#333',
+    background: '#fafafa',
+  },
+};
+
 export const authBtnStyle = {
   color: '#999',
   fontSize: 15,
