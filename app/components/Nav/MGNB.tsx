@@ -1,14 +1,14 @@
 'use client';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { LightTooltip, mgnbBtnStyle } from './StyleComponents';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
-import { pages } from './index';
 import { User } from 'firebase/auth';
 import { Box, Button, MenuItem, MenuList } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { btnStyle } from './StyleComponents';
 import { AiOutlineClose } from 'react-icons/ai';
+import { PagesRoutes } from '@/constant/PagesRoutes';
 
 interface MGNBProps {
   setIsOpen: (value: boolean) => void;
@@ -30,7 +30,7 @@ const MGNB = ({ setIsOpen }: MGNBProps) => {
           </Box>
         </Box>
 
-        {pages.map((item) => {
+        {PagesRoutes.map((item) => {
           return !user ? (
             !item.members && (
               <LightTooltip key={item.name} title={''}>
@@ -38,9 +38,12 @@ const MGNB = ({ setIsOpen }: MGNBProps) => {
                   <Button
                     onClick={() =>
                       item.depth.length === 0
-                        ? router.push(item.path)
+                        ? () => {
+                            setIsOpen(false);
+                            router.push(item.path);
+                          }
                         : setSubMenu((prev) =>
-                            prev === item.name ? null : item.name
+                            prev === item.name ? null : item.name,
                           )
                     }
                     sx={mgnbBtnStyle}
