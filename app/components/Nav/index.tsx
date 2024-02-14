@@ -28,9 +28,6 @@ import { User } from 'firebase/auth';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 
-/* constants */
-import { routes } from './Constants';
-
 /* utils */
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
 
@@ -39,43 +36,8 @@ import logoImg from '@/assets/common/logo.png';
 import UtilBtn from './UtilBtn';
 import MGNB from './MGNB';
 import { AiOutlineMenu } from 'react-icons/ai';
-import ContainerBox from '../ContainerBox';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
-
-const {
-  livingVegetable,
-  generalMarketplace,
-  naturalHerbs,
-  singleLeaf,
-  community,
-} = routes;
-
-interface pagesType {
-  name: string;
-  path: string;
-  members?: boolean;
-  depth: { name?: string; path?: string }[];
-}
-[];
-
-interface pagesTypes extends Array<pagesType> {}
-
-export const pages: pagesTypes = [
-  {
-    name: livingVegetable.name,
-    path: livingVegetable.path,
-    depth: livingVegetable.depth1,
-  },
-  { name: generalMarketplace.name, path: generalMarketplace.path, depth: [] },
-  { name: naturalHerbs.name, path: naturalHerbs.path, depth: [] },
-  {
-    name: singleLeaf.name,
-    path: singleLeaf.path,
-    members: singleLeaf.members,
-    depth: [],
-  },
-  { name: community.name, path: community.path, depth: community.depth1 },
-];
+import { PagesRoutes } from '@/constant/PagesRoutes';
 
 const LogoButton = (props: MUIStyledCommonProps) => {
   return (
@@ -156,6 +118,7 @@ const Nav = () => {
               display: 'flex',
               justifyContent: { xs: 'center', lg: 'space-between' },
               position: 'relative',
+              padding: { xs: '0', md: '0 16px' },
             }}
           >
             <LogoButton
@@ -183,7 +146,7 @@ const Nav = () => {
                   justifyContent: 'center',
                 }}
               >
-                {pages.map((item) => {
+                {PagesRoutes.map((item) => {
                   return !user ? (
                     !item.members && (
                       <LightTooltip
