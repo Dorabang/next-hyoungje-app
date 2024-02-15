@@ -1,40 +1,27 @@
-import ContainerBox from '@/components/ContainerBox';
-import mvDesktop from '@/assets/main_visual_pc.jpg';
-import mvTablet from '@/assets/main_visual_tablet.jpg';
-import mvMobile from '@/assets/main_visual_mobile.jpg';
-import MainSlide from '@/components/Main/MainSlide';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import ContainerBox from "@/components/ContainerBox";
+import MainSlide from "@/components/Main/MainSlide";
+import MainVisual from "@/components/Main/MainVisual";
 
 export default function Home() {
   return (
     <main>
-      <div className='border-b border-grayColor-200'>
-        <AutoHeightImageWrapper
-          src={mvDesktop}
-          alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
-          className='hidden lg:block'
-          priority
-        />
+      <MainVisual />
 
-        <AutoHeightImageWrapper
-          src={mvTablet}
-          alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
-          className='hidden sm:block lg:hidden'
-          priority
-        />
-
-        <AutoHeightImageWrapper
-          src={mvMobile}
-          alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
-          className='block sm:hidden'
-          priority
-        />
-      </div>
       <ContainerBox>
-        <MainSlide />
+        <MainSlide
+          path="wild-market1"
+          title="산채품 장터"
+          subTitle="현재 판매 중인 산채품"
+        />
+        {/* <MainSlide
+          path="natural-herb"
+          title="자연산 약초"
+          subTitle="깊은 맛, 자연 그대로를 느낄 수 있는"
+          variant="center"
+          slidesPerView={5}
+          speed={2000}
+        /> */}
       </ContainerBox>
-      <ContainerBox>Slider 2</ContainerBox>
-      <ContainerBox>Slider 3</ContainerBox>
     </main>
   );
 }

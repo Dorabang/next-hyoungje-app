@@ -20,20 +20,32 @@ interface ImageObjProps {
   imageURL: string;
 }
 
-const Slide = ({ pathname }: { pathname: string }) => {
+const Slide = ({
+  pathname,
+  slidesPerView,
+  speed,
+}: {
+  pathname: string;
+  slidesPerView: number;
+  speed: number;
+}) => {
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
   const [downloadURL, setDownloadURL] = useState<ImageObjProps[] | null>(null);
 
   useEffect(() => {
     getPosts(pathname).then((response) => {
+      if (!response) return;
       const imagePost = response.filter(
         (item) =>
-          item?.image && item?.image?.length !== 0 && item.status === 'sale'
+          item?.image && item?.image?.length !== 0 && item.status === 'sale',
       );
-      const latestPost = imagePost.slice(0, 5);
+      const latestPost = imagePost.slice(
+        0,
+        slidesPerView === 2 ? 5 : slidesPerView * 2,
+      );
       setPosts(latestPost);
     });
-  }, [pathname]);
+  }, [pathname, slidesPerView]);
 
   const getImage = (postId: string, value: string) => {
     setDownloadURL((prev) =>
@@ -41,7 +53,7 @@ const Slide = ({ pathname }: { pathname: string }) => {
         ? prev.filter((item) => item.imageURL.includes(postId))
           ? [...prev, { id: postId, imageURL: value }]
           : prev
-        : [{ id: postId, imageURL: value }]
+        : [{ id: postId, imageURL: value }],
     );
   };
 
@@ -54,7 +66,7 @@ const Slide = ({ pathname }: { pathname: string }) => {
         GetImageURL(
           `${pathname}/${post.creatorId}/post/${newImgArr}/image`,
           post?.id,
-          getImage
+          getImage,
         );
       });
   }, [pathname, posts]);
@@ -63,48 +75,65 @@ const Slide = ({ pathname }: { pathname: string }) => {
     <Swiper
       spaceBetween={20}
       centeredSlides={true}
-      speed={1500}
-      loop={true}
-      autoplay={{
-        delay: 3000,
-        disableOnInteraction: false,
-      }}
+      speed={speed}
+      loop={posts === null ? false : true}
+      autoplay={
+        posts === null
+          ? false
+          : {
+              delay: 3000,
+              disableOnInteraction: false,
+            }
+      }
       breakpoints={{
         640: {
-          slidesPerView: 2,
-          spaceBetween: 20,
+          slidesPerView: slidesPerView,
+          loopedSlides: slidesPerView,
         },
       }}
       modules={[Autoplay]}
       className='w-full'
     >
-      {posts &&
-        posts.map(({ id, creatorId, title }) => {
+      {posts !== null ? (
+        posts.map(({ id, creatorId }) => {
           return (
             <SwiperSlide key={id} className='w-[50%]'>
               {downloadURL &&
-                downloadURL.map(
-                  (img) =>
-                    img.id === id && (
-                      <Link
-                        href={`/${pathname}/${id}`}
-                        key={img.id}
-                        className='relative block w-full h-[250px] xl:h-[420px]'
-                      >
-                        <Image
-                          src={img.imageURL}
-                          alt={`${creatorId} 업로드 이미지`}
-                          fill
-                          sizes='100%'
-                          className='object-cover'
-                          priority
-                        />
-                      </Link>
-                    )
-                )}
+                downloadURL.map((img) => (
+                  <Link
+                    href={`/${pathname}/${id}`}
+                    key={img.id}
+                    className={`relative block w-full ${
+                      slidesPerView !== 2
+                        ? 'h-[300px]'
+                        : 'h-[250px] xl:h-[420px] '
+                    }`}
+                  >
+                    <Image
+                      src={img.imageURL}
+                      alt={`${creatorId} 업로드 이미지`}
+                      fill
+                      sizes='100%'
+                      className='object-cover'
+                      priority
+                    />
+                  </Link>
+                ))}
             </SwiperSlide>
           );
-        })}
+        })
+      ) : (
+        <div className='flex gap-5 w-[150%] overflow-hidden justify-center'>
+          {Array.from(Array(3), (_, k) => (
+            <div
+              key={k}
+              className={`relative w-full animate-pulse bg-grayColor-200 ${
+                slidesPerView !== 2 ? 'h-[300px]' : 'h-[250px] xl:h-[420px] '
+              }`}
+            ></div>
+          ))}
+        </div>
+      )}
     </Swiper>
   );
 };

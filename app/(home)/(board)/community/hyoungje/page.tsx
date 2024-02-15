@@ -1,31 +1,27 @@
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
-import ContainerBox from '@/components/ContainerBox';
-import { noto_serif_kr } from '@/components/NotoSerif';
-import mvDesktop from '@/assets/main_visual_pc.jpg';
-import Breadcrumbs from '@/components/Breadcrumbs';
+import AutoHeightImageWrapper from "@/components/AutoHeightImageWrapper";
+import ContainerBox from "@/components/ContainerBox";
+import { noto_serif_kr } from "@/components/NotoSerif";
+import mvDesktop from "@/assets/main_visual_pc.jpg";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import MainVisual from "@/components/Main/MainVisual";
 
 const HyoungjePage = () => {
   return (
     <ContainerBox>
-      <Breadcrumbs pathname='/hyoungje' />
-      <div className='border-t border-grayColor-200 mt-2 mb-10'></div>
+      <Breadcrumbs pathname="/hyoungje" />
+      <div className="border-t border-grayColor-200 mt-2 mb-10"></div>
       <div
         className={`flex flex-col gap-4
         w-full md:w-[1000px] px-3 md:px-0 mx-auto
         leading-10
         ${noto_serif_kr.className}`}
       >
-        <div className='pb-5'>
-          <AutoHeightImageWrapper
-            src={mvDesktop}
-            alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
-            className='hidden lg:block'
-            priority
-          />
+        <div className="pb-5">
+          <MainVisual />
         </div>
         <p>형제난원을 찾아주셔서 감사드립니다.</p>
 
-        <p className=''>
+        <p>
           20여년 넘게 오로지 취미 생활을 해오다 개인적인 사정으로 인해 하던 일을
           접으면서 업이 되었네요.
           <br />
@@ -40,11 +36,11 @@ const HyoungjePage = () => {
           회원 여러분들이 그런 사이트로 이끌어 주시길 부탁드립니다. 감사합니다.
         </p>
 
-        <p className='text-right pb-5'>- 운영자 박 기룡</p>
+        <p className="text-right pb-5">- 운영자 박 기룡</p>
 
         <hr />
 
-        <p className='pt-5'>{`<오시는길>`}</p>
+        <p className="pt-5">{`<오시는길>`}</p>
 
         <p>
           경상남도 진주시 금곡면 인담리 700.

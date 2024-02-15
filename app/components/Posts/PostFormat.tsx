@@ -150,7 +150,7 @@ const PostFormat = ({
                       {/* 제목 */}
                       <div className='flex-grow flex justify-between items-center'>
                         <Link
-                          href={`/wild-market1/${id}`}
+                          href={`${pathname}/${id}`}
                           className='flex items-center whitespace-nowrap'
                           onClick={() => handleClickViewUp(id)}
                         >
