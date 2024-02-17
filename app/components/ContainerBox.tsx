@@ -1,7 +1,13 @@
 import { Container } from '@mui/material';
 import React from 'react';
 
-const ContainerBox = ({ children }: { children: React.ReactNode }) => {
+const ContainerBox = ({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
     <Container
       maxWidth='xl'
@@ -9,7 +15,7 @@ const ContainerBox = ({ children }: { children: React.ReactNode }) => {
         padding: { xs: '24px 10px', xl: '24px 0' },
       }}
     >
-      {children}
+      <div className={`${className}`}>{children}</div>
     </Container>
   );
 };

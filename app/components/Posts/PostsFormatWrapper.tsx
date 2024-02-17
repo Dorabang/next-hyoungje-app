@@ -58,18 +58,7 @@ const PostsFormatWrapper = () => {
     }
   }, [pathname, selectedCategory]);
 
-  return (
-    <PostFormat
-      pathname={pathname}
-      isLoading={isLoading}
-      posts={posts}
-      user={user}
-      admin={admin}
-      handleUpdatePosts={handleUpdatePosts}
-      selectedCategory={selectedCategory}
-      handleUpdateFilter={handleUpdateFilter}
-    />
-  );
+  return <PostFormat />;
 };
 
 export default PostsFormatWrapper;

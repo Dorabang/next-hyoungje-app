@@ -9,7 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
-import StatusOptions from '@/components/StatusOptions';
+import StatusOptions from '@/components/statusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
