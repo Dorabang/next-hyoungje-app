@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { authState } from '@/recoil/atoms';
-import getPosts from '@/utils/getPosts';
+import { getPosts } from '@/apis/posts';
 import { usePathname } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { DocumentData } from 'firebase/firestore';
@@ -39,11 +39,12 @@ const CommWrapper = () => {
     /* setPosts(querySnapshot); */
     if (selectedCategory === 'all') {
       getPosts(`/${pathname[2]}`).then((response) => {
-        response.sort(function (a: DocumentData, b: DocumentData) {
-          return Number(b.createdAt) - Number(a.createdAt);
-        });
+        response &&
+          response.sort(function (a: DocumentData, b: DocumentData) {
+            return Number(b.createdAt) - Number(a.createdAt);
+          });
 
-        setPosts(response);
+        response && setPosts(response);
 
         setIsLoading(false);
       });
@@ -51,8 +52,9 @@ const CommWrapper = () => {
 
     if (selectedCategory !== 'all') {
       getPosts(`/${pathname[2]}`).then((response) => {
+        if (!response) return;
         const filter = response.filter(
-          (item) => item.status === selectedCategory
+          (item) => item.status === selectedCategory,
         );
         setPosts(filter.reverse());
 

@@ -15,7 +15,8 @@ const getPosts = async (pathname: string) => {
 
   const q = query(
     postRef,
-    where('image', '==', true),
+    where('image', '!=', false),
+    orderBy('image', 'asc'),
     orderBy('createdAt', 'desc'),
     limit(5),
   );
@@ -23,7 +24,7 @@ const getPosts = async (pathname: string) => {
   const querySnapshot = await getDocs(q);
 
   querySnapshot.forEach((doc) => {
-    post.push({ id: doc.id, ...doc.data() });
+    return post.push({ id: doc.id, ...doc.data() });
   });
 
   /* 

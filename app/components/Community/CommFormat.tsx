@@ -10,7 +10,7 @@ import PostsLoading from '@/components/Posts/PostsLoading';
 import PaginationComponets from '@/components/PaginationComponent';
 
 import DateFormat from '@/utils/DateFormat';
-import DeletePost from '@/utils/deletePost';
+import { deletePost } from '@/apis/posts';
 
 import { User } from 'firebase/auth';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
@@ -63,7 +63,7 @@ const CommFormat = ({
     if (!post) return;
 
     if (ok) {
-      DeletePost(post, user, pathname, id);
+      deletePost(post, user, pathname, id);
       const deletePosts = posts.filter((item) => item.id !== id);
       handleUpdatePosts(deletePosts);
     }
@@ -188,7 +188,7 @@ const CommFormat = ({
                       <div className='w-[6%] hidden lg:block'>{views}</div>
                     </li>
                   );
-                }
+                },
               )
             ) : (
               /* 게시물 데이터가 없을 때 */

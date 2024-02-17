@@ -1,6 +1,6 @@
 'use client';
 import Edit from '@/components/Edit';
-import getPosts from '@/utils/getPosts';
+import { getPosts } from '@/apis/posts';
 import { DocumentData } from 'firebase/firestore';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -14,7 +14,7 @@ const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
 
   useEffect(() => {
     if (posts.length === 0) {
-      getPosts(pathname[1]).then((response) => setPosts(response));
+      getPosts(pathname[1]).then((response) => response && setPosts(response));
     }
   }, [posts.length, pathname]);
 
