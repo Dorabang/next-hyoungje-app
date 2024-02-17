@@ -1,5 +1,4 @@
 'use client';
-import getPosts from '@/utils/getPosts';
 import { useEffect, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';
@@ -13,7 +12,7 @@ import StatusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
-import DeletePost from '@/utils/deletePost';
+import { deletePost } from '@/apis/posts';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import getPost from '@/utils/getPost';
 
@@ -51,7 +50,7 @@ const WildMarketDetailPage = ({
     if (!post) return;
 
     if (ok) {
-      DeletePost(post, user, pathname, id);
+      deletePost(post, user, pathname, id);
       router.push(`/${pathname}`);
     }
   };
@@ -59,13 +58,13 @@ const WildMarketDetailPage = ({
   useEffect(() => {
     const getImage = (value: string) => {
       return setImage((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value]
+        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
       );
     };
 
     if (postImages && post.creatorId) {
       postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage)
+        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
       );
     }
   }, [postImages, post?.creatorId]);

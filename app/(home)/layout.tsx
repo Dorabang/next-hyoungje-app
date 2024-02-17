@@ -22,7 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='ko'>
-      <body className={noto_sans_kr.className}>
+      <body
+        className={`${noto_sans_kr.className} scrollbar scrollbar-thumb-grayColor-300 scrollbar-track-grayColor-100`}
+      >
         <RecoilRootWrapper>
           <Nav />
           {children}

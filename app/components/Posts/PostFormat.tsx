@@ -12,7 +12,7 @@ import FilterOption from '@/components/FilterOption';
 import PaginationComponets from '@/components/PaginationComponent';
 
 import DateFormat from '@/utils/DateFormat';
-import DeletePost from '@/utils/deletePost';
+import { deletePost } from '@/apis/posts';
 
 import { User } from 'firebase/auth';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
@@ -66,7 +66,7 @@ const PostFormat = ({
     if (!post) return;
 
     if (ok) {
-      DeletePost(post, user, pathname, id);
+      deletePost(post, user, pathname, id);
       const deletePosts = posts.filter((item) => item.id !== id);
       handleUpdatePosts(deletePosts);
     }
@@ -150,7 +150,7 @@ const PostFormat = ({
                       {/* 제목 */}
                       <div className='flex-grow flex justify-between items-center'>
                         <Link
-                          href={`/wild-market1/${id}`}
+                          href={`${pathname}/${id}`}
                           className='flex items-center whitespace-nowrap'
                           onClick={() => handleClickViewUp(id)}
                         >
@@ -201,7 +201,7 @@ const PostFormat = ({
                       </div>
                     </li>
                   );
-                }
+                },
               )
             ) : (
               /* 게시물 데이터가 없을 때 */
