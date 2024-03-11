@@ -1,7 +1,7 @@
 import PostFormat from '@/components/Posts/PostFormat';
 
-const generalMarketPage = () => {
+const GeneralMarketPage = () => {
   return <PostFormat />;
 };
 
-export default generalMarketPage;
+export default GeneralMarketPage;

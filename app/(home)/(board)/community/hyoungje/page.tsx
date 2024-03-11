@@ -1,7 +1,5 @@
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import ContainerBox from '@/components/ContainerBox';
 import { noto_serif_kr } from '@/components/NotoSerif';
-import mvDesktop from '@/assets/main_visual_pc.jpg';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import MainVisual from '@/components/Main/MainVisual';
 

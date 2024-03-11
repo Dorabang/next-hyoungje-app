@@ -1,7 +1,7 @@
 import PostFormat from '@/components/Posts/PostFormat';
 
-const naturalHerbPage = () => {
+const NaturalHerbPage = () => {
   return <PostFormat />;
 };
 
-export default naturalHerbPage;
+export default NaturalHerbPage;

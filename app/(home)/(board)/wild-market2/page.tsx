@@ -1,7 +1,7 @@
 import PostFormat from '@/components/Posts/PostFormat';
 
-const Living2Page = () => {
+const WildMarket2Page = () => {
   return <PostFormat />;
 };
 
-export default Living2Page;
+export default WildMarket2Page;
