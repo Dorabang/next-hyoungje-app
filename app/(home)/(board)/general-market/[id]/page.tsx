@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
-import StatusOptions from '@/components/statusOptions';
+import statusOptions from '@/components/statusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
@@ -89,7 +89,7 @@ const WildMarketDetailPage = ({
         </div>
 
         <h2 className='text-lg font-bold flex-grow'>
-          <span className='px-2'>{StatusOptions(post.status)}</span>
+          <span className='px-2'>{statusOptions(post.status)}</span>
           {post?.title}
         </h2>
 
