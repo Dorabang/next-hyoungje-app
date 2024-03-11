@@ -1,7 +1,8 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { routes } from "@/constant/Routes";
-import Link from "next/link";
+'use client';
+import { useEffect, useMemo, useState } from 'react';
+import { routes } from '@/constant/Routes';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const {
   livingVegetable,
@@ -64,30 +65,36 @@ const pages: pagesTypes = [
   },
 ];
 
-const Breadcrumbs = ({ pathname }: { pathname: string }) => {
-  /**
-   * @pathname 을 props로 받아와 route에서 동일한 path를 필터링
-   *
-   * @return pathname과 동일한 path를 routes에서 찾아 breadcrumbs를 반환
-   */
-
+/**
+ * @pathname 을 props로 받아와 route에서 동일한 path를 필터링
+ *
+ * @return pathname과 동일한 path를 routes에서 찾아 breadcrumbs를 반환
+ */
+const Breadcrumbs = () => {
+  const pathname = usePathname().trim().split('/');
   const [currentPage, setCurrentPage] = useState<pagesType>();
 
   useEffect(() => {
-    const findPage = pages.filter((page) => page.path.includes(pathname));
+    const findPage = pages.filter((page) =>
+      pathname[2]
+        ? page.path.includes(pathname[2])
+        : page.path.includes(pathname[1]),
+    );
 
     findPage && setCurrentPage(findPage[0]);
   }, [pathname]);
 
+  const memoizedCurrentPage = useMemo(() => currentPage, [currentPage]);
+
   return (
-    <ul className="flex gap-2 py-2 text-gray-500 text-sm">
-      <li className="hover:underline">
-        <Link href="/">Home</Link>
+    <ul className='flex gap-2 py-2 text-gray-500 text-sm'>
+      <li className='hover:underline'>
+        <Link href='/'>Home</Link>
       </li>
-      <li className="cursor-default">{">"}</li>
-      <li className="hover:underline">
-        <Link href={currentPage?.path ? currentPage?.path : "/"}>
-          {currentPage?.name}
+      <li className='cursor-default'>{'>'}</li>
+      <li className='hover:underline'>
+        <Link href={memoizedCurrentPage?.path || '/'}>
+          {memoizedCurrentPage?.name}
         </Link>
       </li>
     </ul>

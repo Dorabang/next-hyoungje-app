@@ -1,5 +1,4 @@
 'use client';
-import { getPosts } from '@/apis/posts';
 import { useEffect, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';
@@ -9,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
-import StatusOptions from '@/components/StatusOptions';
+import statusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
@@ -91,7 +90,7 @@ const WildMarketDetailPage = ({
         </div>
 
         <h2 className='text-lg font-bold flex-grow'>
-          <span className='px-2'>{StatusOptions(post.status)}</span>
+          <span className='px-2'>{statusOptions(post.status)}</span>
           {post?.title}
         </h2>
 
@@ -147,7 +146,7 @@ const WildMarketDetailPage = ({
               </tr>
               <tr>
                 <th>산채일</th>
-                <td>{DateFormat(new Date(post.date))}</td>
+                <td>{DateFormat(post.date)}</td>
               </tr>
             </tbody>
           </table>

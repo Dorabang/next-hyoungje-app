@@ -1,7 +1,7 @@
-import PostsFormatWrapper from '@/components/Posts/PostsFormatWrapper';
+import PostFormat from '@/components/Posts/PostFormat';
 
-const generalMarketPage = () => {
-  return <PostsFormatWrapper />;
+const GeneralMarketPage = () => {
+  return <PostFormat />;
 };
 
-export default generalMarketPage;
+export default GeneralMarketPage;

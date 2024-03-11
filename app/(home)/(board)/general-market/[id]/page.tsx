@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
-import StatusOptions from '@/components/StatusOptions';
+import statusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
@@ -23,12 +23,11 @@ interface WildMarketDetailPageProps {
 const WildMarketDetailPage = ({
   params: { id },
 }: WildMarketDetailPageProps) => {
-  const [post, setPost] = useState<DocumentData | null>(null);
-
-  const pathname = usePathname().split('/');
-  const user = useRecoilValue(authState);
-
   const router = useRouter();
+  const pathname = usePathname().split('/');
+
+  const [post, setPost] = useState<DocumentData | null>(null);
+  const user = useRecoilValue(authState);
 
   useEffect(() => {
     if (post === null) {
@@ -38,7 +37,7 @@ const WildMarketDetailPage = ({
 
   const [image, setImage] = useState<string[]>();
 
-  const postImages = post && post?.image;
+  const postImages = post?.image;
 
   const modules = {
     toolbar: { container: [] },
@@ -58,7 +57,7 @@ const WildMarketDetailPage = ({
   useEffect(() => {
     const getImage = (value: string) => {
       return setImage((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
+        prev ? (!prev.includes(value) ? [...prev, value] : prev) : [value],
       );
     };
 
@@ -90,7 +89,7 @@ const WildMarketDetailPage = ({
         </div>
 
         <h2 className='text-lg font-bold flex-grow'>
-          <span className='px-2'>{StatusOptions(post.status)}</span>
+          <span className='px-2'>{statusOptions(post.status)}</span>
           {post?.title}
         </h2>
 
@@ -146,7 +145,7 @@ const WildMarketDetailPage = ({
               </tr>
               <tr>
                 <th>산채일</th>
-                <td>{DateFormat(new Date(post.date))}</td>
+                <td>{DateFormat(post.date)}</td>
               </tr>
             </tbody>
           </table>
