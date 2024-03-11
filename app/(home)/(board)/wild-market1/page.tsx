@@ -1,7 +1,7 @@
-import PostsFormatWrapper from '@/components/Posts/PostsFormatWrapper';
+import PostFormat from '@/components/Posts/PostFormat';
 
 const Living1Page = () => {
-  return <PostsFormatWrapper />;
+  return <PostFormat />;
 };
 
 export default Living1Page;

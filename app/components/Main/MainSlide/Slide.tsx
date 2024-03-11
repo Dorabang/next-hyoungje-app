@@ -9,7 +9,7 @@ import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
 import { useEffect, useState } from 'react';
-import { getSlidePosts } from '@/apis/posts';
+import { getSlidePosts } from '@/apis/slides';
 import { DocumentData } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';

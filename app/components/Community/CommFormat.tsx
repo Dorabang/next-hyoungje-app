@@ -57,10 +57,10 @@ const CommFormat = ({
   }, [posts, offset]);
 
   const handleDeletePost = (id: string) => {
-    const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
+    const post = posts?.find((item) => item.id === id);
+    if (!post || !posts) return;
 
-    const post = posts && posts.find((item) => item.id === id);
-    if (!post) return;
+    const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
     if (ok) {
       deletePost(post, user, pathname, id);
@@ -84,14 +84,14 @@ const CommFormat = ({
     <ContainerBox>
       <div className='text-sm'>
         <div className='flex justify-between'>
-          <Breadcrumbs pathname={pathname} />
+          <Breadcrumbs />
         </div>
 
         <div
           className='flex justify-end items-center pt-10 pb-5
       text-gray-500 text-sm'
         >
-          {pathname === '/notice' && admin && admin.includes(user?.uid) && (
+          {pathname === '/notice' && admin?.includes(user?.uid) && (
             <Link
               href={`/community/edit${pathname}`}
               className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'

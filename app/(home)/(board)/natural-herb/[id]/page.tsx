@@ -1,5 +1,4 @@
 'use client';
-import { getPosts } from '@/apis/posts';
 import { useEffect, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';

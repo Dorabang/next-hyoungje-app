@@ -1,15 +1,16 @@
+'use client';
 import React, { useEffect, useMemo, useState } from 'react';
 import Board from '../Board';
 import { DocumentData } from 'firebase/firestore';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import ContainerBox from '../ContainerBox';
 import FilterOption from '../FilterOption';
-import getPosts from '@/utils/getPosts';
+import { getPosts } from '@/apis/posts';
 import Breadcrumbs from '../Breadcrumbs';
 import PaginationComponets from '../PaginationComponent';
 
 const PostFormat = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -22,29 +23,28 @@ const PostFormat = () => {
 
   useEffect(() => {
     /* setPosts(querySnapshot); */
-    if (selectedCategory === 'all') {
-      getPosts(pathname).then((response) => {
-        response && setPosts(response);
+    const sortedPosts = async () => {
+      if (selectedCategory === 'all') {
+        const response = await getPosts(pathname);
+        setPosts(response);
 
-        setIsLoading(false);
-      });
-    }
+        return setIsLoading(false);
+      } else {
+        const response = await getPosts(pathname);
 
-    if (selectedCategory !== 'all') {
-      getPosts(pathname).then((response) => {
-        if (!response) return;
         const filter = response.filter(
           (item) => item.status === selectedCategory,
         );
         setPosts(filter);
 
-        setIsLoading(false);
-      });
-    }
+        return setIsLoading(false);
+      }
+    };
+    sortedPosts();
   }, [pathname, selectedCategory]);
 
-  const [postsSlice, setPageSlice] = useState<DocumentData[]>([]);
-
+  /* Pagination */
+  const [postsSlice, setPostsSlice] = useState<DocumentData[]>([]);
   const [page, setPage] = useState(1);
   const limit = 15;
   const offset = (page - 1) * limit;
@@ -57,10 +57,8 @@ const PostFormat = () => {
   }, [posts]);
 
   useEffect(() => {
-    if (posts) {
-      let result = posts.slice(offset, offset + limit);
-      setPageSlice(result);
-    }
+    const result = posts?.slice(offset, offset + limit);
+    result && setPostsSlice(result);
   }, [posts, offset]);
 
   return (
@@ -75,9 +73,14 @@ const PostFormat = () => {
         pathname={pathname}
       />
 
-      <Board data={postsSlice} isLoading={isLoading}>
+      <Board isLoading={isLoading}>
         <Board.Headers />
-        <Board.Bodys isLoading={isLoading} />
+        <Board.Bodys
+          type={path.includes('community') ? 'community' : 'etc'}
+          isLoading={isLoading}
+          posts={postsSlice}
+          editPosts={(value) => setPosts(value)}
+        />
       </Board>
 
       <PaginationComponets
