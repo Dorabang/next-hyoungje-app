@@ -129,7 +129,15 @@ export const Bodys = ({
       /* 게시물 데이터 로딩 중 */
       <PostsLoading />
     );
-  }, []);
+  }, [
+    handleClickViewUp,
+    handleDeletePost,
+    isLoading,
+    pathname,
+    posts,
+    type,
+    user,
+  ]);
 
   return <>{BodyContent}</>;
 };

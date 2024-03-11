@@ -143,7 +143,7 @@ const WildMarketDetailPage = ({
               </tr>
               <tr>
                 <th>산채일</th>
-                <td>{DateFormat(new Date(post.date))}</td>
+                <td>{DateFormat(post.date)}</td>
               </tr>
             </tbody>
           </table>
