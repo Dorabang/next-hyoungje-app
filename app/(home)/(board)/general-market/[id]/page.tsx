@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
-import statusOptions from '@/components/statusOptions';
+import statusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
