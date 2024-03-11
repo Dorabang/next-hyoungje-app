@@ -1,6 +1,6 @@
 import { DocumentData } from 'firebase/firestore';
 import React from 'react';
-import statusOptions from '../statusOptions';
+import statusOptions from '@/components/statusOptions';
 import Link from 'next/link';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { User } from 'firebase/auth';

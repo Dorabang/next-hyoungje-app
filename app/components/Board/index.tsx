@@ -105,41 +105,33 @@ export const Bodys = ({
     }
   };
 
-  const BodyContent = useMemo(() => {
-    !isLoading ? (
-      posts && posts?.length !== 0 ? (
-        posts.map((post) => {
-          return (
-            <PostList
-              key={post.id}
-              type={type}
-              pathname={pathname}
-              post={post}
-              user={user}
-              handleDeletePost={handleDeletePost}
-              handleClickViewUp={handleClickViewUp}
-            />
-          );
-        })
+  return (
+    <>
+      {!isLoading ? (
+        posts && posts?.length !== 0 ? (
+          posts.map((post) => {
+            return (
+              <PostList
+                key={post.id}
+                type={type}
+                pathname={pathname}
+                post={post}
+                user={user}
+                handleDeletePost={handleDeletePost}
+                handleClickViewUp={handleClickViewUp}
+              />
+            );
+          })
+        ) : (
+          /* 게시물 데이터가 없을 때 */
+          <PostsNotFound />
+        )
       ) : (
-        /* 게시물 데이터가 없을 때 */
-        <PostsNotFound />
-      )
-    ) : (
-      /* 게시물 데이터 로딩 중 */
-      <PostsLoading />
-    );
-  }, [
-    handleClickViewUp,
-    handleDeletePost,
-    isLoading,
-    pathname,
-    posts,
-    type,
-    user,
-  ]);
-
-  return <>{BodyContent}</>;
+        /* 게시물 데이터 로딩 중 */
+        <PostsLoading />
+      )}
+    </>
+  );
 };
 
 Board.Headers = Headers;
