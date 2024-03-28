@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
+import { noto_serif_kr } from '@/components/NotoSerif';
 /* mui */
 import {
   AppBar,
@@ -160,6 +160,7 @@ const Nav = () => {
                                 <MenuItem
                                   key={item2.name}
                                   onClick={() => router.push(`${item2.path}`)}
+                                  className={`${noto_serif_kr.className}`}
                                 >
                                   {item2.name}
                                 </MenuItem>
@@ -171,6 +172,7 @@ const Nav = () => {
                         <Button
                           onClick={() => router.push(item.path)}
                           sx={btnStyle}
+                          className={`${noto_serif_kr.className}`}
                         >
                           {item.name}
                         </Button>
@@ -188,6 +190,7 @@ const Nav = () => {
                               <MenuItem
                                 key={item2.name}
                                 onClick={() => router.push(`${item2.path}`)}
+                                className={`${noto_serif_kr.className}`}
                               >
                                 {item2.name}
                               </MenuItem>
@@ -199,6 +202,7 @@ const Nav = () => {
                       <Button
                         onClick={() => router.push(item.path)}
                         sx={btnStyle}
+                        className={`${noto_serif_kr.className}`}
                       >
                         {item.name}
                       </Button>

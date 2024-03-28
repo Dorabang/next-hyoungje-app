@@ -7,14 +7,16 @@ import { IoArrowBack } from 'react-icons/io5';
 import { useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
-import GetImageURL from '@/utils/getImageURL';
+import GetImageURL from '@/apis/getImageURL';
 import statusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
-import { DocumentData } from 'firebase/firestore';
+import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import { deletePost } from '@/apis/posts';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
-import getPost from '@/utils/getPost';
+import getPost from '@/apis/getPost';
+import { dbService } from '@/firebase';
+import { updatedViews } from '@/apis/updatedViews';
 
 interface WildMarketDetailPageProps {
   params: { id: string };
@@ -32,7 +34,10 @@ const WildMarketDetailPage = ({
 
   useEffect(() => {
     if (post === null) {
-      getPost(pathname, id).then((response) => setPost(response[0]));
+      getPost(pathname, id).then((response) => {
+        updatedViews(response[0], pathname);
+        setPost({ ...response[0], views: response[0].views + 1 });
+      });
     }
   }, [id, post]);
 

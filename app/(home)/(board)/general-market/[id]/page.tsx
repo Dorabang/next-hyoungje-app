@@ -7,14 +7,14 @@ import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
-import GetImageURL from '@/utils/getImageURL';
+import GetImageURL from '@/apis/getImageURL';
 import statusOptions from '@/components/StatusOptions';
 import HasLikes from '@/utils/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import { deletePost } from '@/apis/posts';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
-import getPost from '@/utils/getPost';
+import getPost from '@/apis/getPost';
 
 interface WildMarketDetailPageProps {
   params: { id: string };
