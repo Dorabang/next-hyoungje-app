@@ -8,7 +8,7 @@ import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
-import GetImageURL from '@/utils/getImageURL';
+import GetImageURL from '@/apis/getImageURL';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import { deletePost } from '@/apis/posts';

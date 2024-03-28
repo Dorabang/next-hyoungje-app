@@ -13,9 +13,9 @@ import uuid from 'react-uuid';
 import { AiOutlineClose } from 'react-icons/ai';
 import Editor from './Editor';
 import { Button } from '@mui/material';
-import uploadImage from '@/utils/uploadImage';
+import uploadImage from '@/apis/uploadImage';
 import { dbService, storageService } from '@/firebase';
-import GetImageURL from '@/utils/getImageURL';
+import GetImageURL from '@/apis/getImageURL';
 import { deleteObject, ref } from 'firebase/storage';
 
 const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
@@ -44,13 +44,13 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   useEffect(() => {
     const getImage = (value: string) => {
       return setImages((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value]
+        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
       );
     };
 
     if (postImages && post.creatorId) {
       postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage)
+        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
       );
     }
   }, [postImages, post.creatorId, pathname]);
@@ -67,7 +67,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     imageArr?.map(async (value) => {
       await uploadImage(
         `${pathname}/${user.uid}/post/${value.id}/image`,
-        value.imageUrl
+        value.imageUrl,
       );
     });
 
@@ -78,8 +78,8 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
         ? [...newImageArr, ...postImages]
         : [...postImages]
       : newImageArr
-      ? [...newImageArr]
-      : null;
+        ? [...newImageArr]
+        : null;
 
     const newPostObj = {
       title: title,
@@ -137,7 +137,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
             const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
 
             setImageArr((prev) =>
-              prev !== null ? [...prev, imageObj] : [imageObj]
+              prev !== null ? [...prev, imageObj] : [imageObj],
             );
           });
         })
@@ -166,7 +166,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
         const deleteImageRef = ref(
           storageService,
-          `${pathname}/${user.uid}/post/${id}/image`
+          `${pathname}/${user.uid}/post/${id}/image`,
         );
 
         await deleteObject(deleteImageRef);

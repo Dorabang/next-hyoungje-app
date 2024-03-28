@@ -10,6 +10,7 @@ export const FooterStyle = styled.footer`
   padding: 80px 0 50px;
   background: #333;
   text-align: center;
+  font-size: 14px;
 
   address,
   p {

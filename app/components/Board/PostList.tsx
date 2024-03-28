@@ -1,11 +1,12 @@
 import { DocumentData } from 'firebase/firestore';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import statusOptions from '@/components/StatusOptions';
 import Link from 'next/link';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
+import getAdmin from '@/apis/getAdmin';
 
 interface PostListProps {
   type?: 'etc' | 'community';
@@ -13,7 +14,6 @@ interface PostListProps {
   post: DocumentData;
   user: User | null;
   handleDeletePost: (id: string) => void;
-  handleClickViewUp: (id: string) => void;
 }
 
 const PostList = ({
@@ -22,7 +22,6 @@ const PostList = ({
   post,
   user,
   handleDeletePost,
-  handleClickViewUp,
 }: PostListProps) => {
   const router = useRouter();
 
@@ -42,6 +41,20 @@ const PostList = ({
     num,
   } = post;
 
+  const [admin, setAdmin] = useState<DocumentData | null>(null);
+
+  useEffect(() => {
+    if (!admin) {
+      const getAdminData = async () => {
+        if (user) {
+          const response = await getAdmin(user.uid);
+          setAdmin(response);
+        }
+      };
+      getAdminData();
+    }
+  }, [admin, user]);
+
   return (
     <li
       key={id}
@@ -52,27 +65,27 @@ const PostList = ({
 
       {/* 종류 */}
       {type === 'etc' ? (
-        <div className='w-[6%] hidden lg:block'>
-          {variant?.length > 5 ? variant.substring(0, 5) + '...' : variant}
-        </div>
+        <>
+          <div className='w-[6%] hidden lg:block'>
+            {variant?.length > 5 ? variant.substring(0, 5) + '...' : variant}
+          </div>
+          {/* 분류 */}
+          <div className='min-w-[90px] w-[10%] text-xs'>
+            {statusOptions(status)}
+          </div>
+        </>
       ) : null}
-
-      {/* 분류 */}
-      <div className='min-w-[90px] w-[10%] text-xs'>
-        {statusOptions(status)}
-      </div>
 
       {/* 제목 */}
       <div className='flex-grow flex justify-between items-center'>
         <Link
           href={`${pathname}/${id}`}
           className='flex items-center whitespace-nowrap'
-          onClick={() => handleClickViewUp(id)}
         >
           {image && image?.length !== 0 && (
             <AiOutlineFileImage className='mr-2' />
           )}
-          {title}{' '}
+          {title}
         </Link>
         {((user && user.uid === creatorId) ||
           (admin && admin.includes(user?.uid))) && (

@@ -16,12 +16,12 @@ import {
 } from 'firebase/firestore';
 import uuid from 'react-uuid';
 import { useRouter } from 'next/navigation';
-import uploadImage from '@/utils/uploadImage';
+import uploadImage from '@/apis/uploadImage';
 import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '@/components/Editor';
 import imageCompression from 'browser-image-compression';
-import getPostsAmount from '@/utils/getPostsAmount';
+import getPostsAmount from '@/apis/getPostsAmount';
 import statusList from '@/constant/StatusLists';
 
 export interface ImageObjProps {

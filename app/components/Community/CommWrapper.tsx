@@ -5,7 +5,7 @@ import { getPosts } from '@/apis/posts';
 import { usePathname } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { DocumentData } from 'firebase/firestore';
-import getAdmin from '@/utils/getAdmin';
+import getAdmin from '@/apis/getAdmin';
 import CommFormat from '@/components/Community/CommFormat';
 
 const CommWrapper = () => {

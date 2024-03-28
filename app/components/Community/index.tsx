@@ -5,57 +5,81 @@ import { DocumentData } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import BoardForm from './BoardForm';
 
+interface communityState {
+  board: DocumentData[];
+  notice: DocumentData[];
+  boast: DocumentData[];
+  qna: DocumentData[];
+}
+
+interface communityLoadingState {
+  board: boolean;
+  notice: boolean;
+  boast: boolean;
+  qna: boolean;
+}
+
 const Community = () => {
-  const [board, setBoard] = useState<DocumentData[] | null>(null);
-  const [notice, setNotice] = useState<DocumentData[] | null>(null);
-  const [boast, setBoast] = useState<DocumentData[] | null>(null);
-  const [qna, setQna] = useState<DocumentData[] | null>(null);
+  const [community, setCommunity] = useState<communityState>({
+    board: [],
+    notice: [],
+    boast: [],
+    qna: [],
+  });
+  const [isLoading, setIsLoading] = useState<communityLoadingState>({
+    board: true,
+    notice: true,
+    boast: true,
+    qna: true,
+  });
 
   useEffect(() => {
-    getPosts('board').then((posts) => posts && setBoard(posts));
-  }, []);
+    const communityList = ['board', 'notice', 'boast', 'qna'];
 
-  useEffect(() => {
-    getPosts('notice').then((posts) => posts && setNotice(posts));
-  }, []);
-
-  useEffect(() => {
-    getPosts('boast').then((posts) => posts && setBoast(posts));
-  }, []);
-
-  useEffect(() => {
-    getPosts('qna').then((posts) => posts && setQna(posts));
+    communityList.forEach(async (category) => {
+      const response = await getPosts(category);
+      setCommunity((prev) => ({ ...prev, [category]: response }));
+      setIsLoading((prev) => ({ ...prev, [category]: false }));
+    });
   }, []);
 
   return (
     <React.Fragment>
-      <div className='flex gap-6'>
-        <div className='w-1/2 border-r border-grayColor-200 pr-6'>
-          {qna && (
-            <BoardForm data={qna} title='문의사항' path='/community/qna' />
-          )}
+      <div className='flex pt-10 flex-wrap justify-between'>
+        <div className='lg:w-[calc((100%-24px)/2)] w-full border-r-none lg:border-r border-grayColor-200 pr-0 lg:pr-6'>
+          <BoardForm
+            data={community.qna}
+            title='문의사항'
+            path='/community/qna'
+            isLoading={isLoading.qna}
+          />
         </div>
-        <div className='w-1/2'>
-          {notice && (
-            <BoardForm
-              data={notice}
-              title='공지사항'
-              path='/community/notice'
-            />
-          )}
+        <div className='lg:w-[calc((100%-24px)/2)] w-full'>
+          <BoardForm
+            data={community.notice}
+            title='공지사항'
+            path='/community/notice'
+            isLoading={isLoading.notice}
+          />
         </div>
       </div>
 
-      <div className=''>
-        {board && (
-          <BoardForm data={board} title='자유게시판' path='/community/board' />
-        )}
+      <div className='border-t-none lg:border-t border-grayColor-200 pt-10'>
+        <BoardForm
+          data={community.board}
+          title='자유게시판'
+          path='/community/board'
+          isLoading={isLoading.board}
+        />
       </div>
 
       <div className=''>
-        {boast && (
-          <BoardForm data={boast} title='난자랑' path='/community/boast' />
-        )}
+        <BoardForm
+          data={community.boast}
+          title='난자랑'
+          path='/community/boast'
+          isLoading={isLoading.boast}
+        />
       </div>
     </React.Fragment>
   );

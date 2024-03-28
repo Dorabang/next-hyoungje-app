@@ -9,6 +9,5 @@ export interface BoardProps {
 
 export interface PostContextType {
   user: User | null;
-  admin: DocumentData | null;
   pathname: string;
 }
