@@ -50,7 +50,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   /* 이미지 id, url 정보를 담은 배열 */
   const [selectedImage, setSelectedImage] = useState<ImageObjProps[] | null>(
-    null
+    null,
   );
 
   const handleSubmit = async () => {
@@ -60,7 +60,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     selectedImage?.map(async (value) => {
       await uploadImage(
         `${id}/${user.uid}/post/${value.id}/image`,
-        value.imageUrl
+        value.imageUrl,
       );
     });
 
@@ -68,7 +68,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
 
     const postAmount: DocumentData | undefined = await getPostsAmount(
-      `postsAmount/${id}`
+      `postsAmount/${id}`,
     );
 
     const newPostObj = {
@@ -134,12 +134,12 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
 
             setSelectedImage((prev) =>
-              prev !== null ? [...prev, imageObj] : [imageObj]
+              prev !== null ? [...prev, imageObj] : [imageObj],
             );
           });
         })
         .catch((error) => {
-          // console.log(error);
+          console.log('🚀 ~ onFileChange ~ error:', error);
         });
     }
   };
@@ -149,7 +149,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       return setSelectedImage(null);
     } else {
       const modifyImageArr = selectedImage.filter(
-        (imageObj) => imageObj.id !== id
+        (imageObj) => imageObj.id !== id,
       );
 
       return setSelectedImage(modifyImageArr);

@@ -1,5 +1,5 @@
-const StatusOptions = (
-  status: 'sale' | 'sold-out' | 'reservation' | string
+const statusOptions = (
+  status: 'sale' | 'sold-out' | 'reservation' | string,
 ) => {
   let value;
 
@@ -29,4 +29,4 @@ const StatusOptions = (
   );
 };
 
-export default StatusOptions;
+export default statusOptions;

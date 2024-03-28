@@ -1,7 +1,7 @@
-import PostsFormatWrapper from '@/components/Posts/PostsFormatWrapper';
+import PostFormat from '@/components/Posts/PostFormat';
 
-const Living2Page = () => {
-  return <PostsFormatWrapper />;
+const WildMarket2Page = () => {
+  return <PostFormat />;
 };
 
-export default Living2Page;
+export default WildMarket2Page;

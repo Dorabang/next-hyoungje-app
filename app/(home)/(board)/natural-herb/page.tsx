@@ -1,7 +1,7 @@
-import PostsFormatWrapper from '@/components/Posts/PostsFormatWrapper';
+import PostFormat from '@/components/Posts/PostFormat';
 
-const naturalHerbPage = () => {
-  return <PostsFormatWrapper />;
+const NaturalHerbPage = () => {
+  return <PostFormat />;
 };
 
-export default naturalHerbPage;
+export default NaturalHerbPage;

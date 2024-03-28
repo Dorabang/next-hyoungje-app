@@ -4,7 +4,7 @@ import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
@@ -25,16 +25,16 @@ const WildMarketDetailPage = ({
 }: WildMarketDetailPageProps) => {
   const [post, setPost] = useState<DocumentData | null>(null);
 
-  const pathname = 'wild-market1';
+  const pathname = usePathname().split('/');
   const user = useRecoilValue(authState);
 
   const router = useRouter();
 
   useEffect(() => {
     if (post === null) {
-      getPost(pathname, id).then((response) => setPost(response[0]));
+      getPost(pathname[1], id).then((response) => setPost(response[0]));
     }
-  }, [id, post]);
+  }, [id, post, pathname]);
 
   const [image, setImage] = useState<string[]>();
 
@@ -50,8 +50,8 @@ const WildMarketDetailPage = ({
     if (!post) return;
 
     if (ok) {
-      deletePost(post, user, pathname, id);
-      router.push(`/${pathname}`);
+      deletePost(post, user, pathname[1], id);
+      router.push(`/${pathname[1]}`);
     }
   };
 
@@ -64,10 +64,13 @@ const WildMarketDetailPage = ({
 
     if (postImages && post.creatorId) {
       postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
+        GetImageURL(
+          `${pathname[1]}/${post.creatorId}/post/${id}/image`,
+          getImage,
+        ),
       );
     }
-  }, [postImages, post?.creatorId]);
+  }, [postImages, post?.creatorId, pathname]);
 
   if (!post) return;
 
@@ -81,7 +84,7 @@ const WildMarketDetailPage = ({
       >
         <div
           className='p-2 cursor-pointer'
-          onClick={() => router.push(`/${pathname}`)}
+          onClick={() => router.push(`/${pathname[1]}`)}
         >
           <IoArrowBack size={18} />
         </div>
@@ -93,7 +96,7 @@ const WildMarketDetailPage = ({
 
         {user?.uid === post.creatorId && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
-            <li onClick={() => router.push(`/${pathname}/edit/${post.id}`)}>
+            <li onClick={() => router.push(`/${pathname[1]}/edit/${post.id}`)}>
               편집
             </li>
             <li onClick={() => handleDeletePost(id)}>삭제</li>
@@ -221,7 +224,7 @@ const WildMarketDetailPage = ({
         </button>
       </div>
 
-      <PrevNextPost pathname={pathname} post={post} />
+      <PrevNextPost pathname={pathname[1]} post={post} />
     </ContainerBox>
   );
 };

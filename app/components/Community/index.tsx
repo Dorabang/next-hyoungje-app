@@ -1,6 +1,6 @@
 'use client';
 
-import getPosts from '@/utils/getPosts';
+import { getPosts } from '@/apis/posts';
 import { DocumentData } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import BoardForm from './BoardForm';
@@ -12,19 +12,19 @@ const Community = () => {
   const [qna, setQna] = useState<DocumentData[] | null>(null);
 
   useEffect(() => {
-    getPosts('board').then((posts) => setBoard(posts));
+    getPosts('board').then((posts) => posts && setBoard(posts));
   }, []);
 
   useEffect(() => {
-    getPosts('notice').then((posts) => setNotice(posts));
+    getPosts('notice').then((posts) => posts && setNotice(posts));
   }, []);
 
   useEffect(() => {
-    getPosts('boast').then((posts) => setBoast(posts));
+    getPosts('boast').then((posts) => posts && setBoast(posts));
   }, []);
 
   useEffect(() => {
-    getPosts('qna').then((posts) => setQna(posts));
+    getPosts('qna').then((posts) => posts && setQna(posts));
   }, []);
 
   return (

@@ -1,18 +1,35 @@
 import { dbService } from '@/firebase';
-import { DocumentData, collection, getDocs } from 'firebase/firestore';
+import {
+  DocumentData,
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore';
 
 const getPosts = async (pathname: string) => {
   let post: DocumentData[] = [];
-  const querySnapshot = await getDocs(collection(dbService, `${pathname}`));
+  const postRef = collection(dbService, `${pathname}`);
+
+  const q = query(
+    postRef,
+    where('image', '!=', false),
+    orderBy('image', 'asc'),
+    orderBy('createdAt', 'desc'),
+    limit(5),
+  );
+
+  const querySnapshot = await getDocs(q);
+
   querySnapshot.forEach((doc) => {
-    post.push({ id: doc.id, ...doc.data() });
+    return post.push({ id: doc.id, ...doc.data() });
   });
 
-  post.sort(function (a: DocumentData, b: DocumentData) {
-    return Number(b.createdAt) - Number(a.createdAt);
-  });
+  if (post.length > 0) return post;
 
-  return post;
+  return;
 };
 
 export default getPosts;

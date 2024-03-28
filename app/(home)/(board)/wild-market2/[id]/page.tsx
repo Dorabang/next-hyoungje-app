@@ -25,7 +25,7 @@ const WildMarketDetailPage = ({
 }: WildMarketDetailPageProps) => {
   const [post, setPost] = useState<DocumentData | null>(null);
 
-  const pathname = 'wild-market1';
+  const pathname = 'wild-market2';
   const user = useRecoilValue(authState);
 
   const router = useRouter();

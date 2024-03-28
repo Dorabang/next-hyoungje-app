@@ -1,5 +1,5 @@
 'use client';
-import getPosts from '@/utils/getPosts';
+import { getPosts } from '@/apis/posts';
 import { useEffect, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';
@@ -11,7 +11,7 @@ import ReactQuill from 'react-quill';
 import GetImageURL from '@/utils/getImageURL';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
-import DeletePost from '@/utils/deletePost';
+import { deletePost } from '@/apis/posts';
 import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 
 interface CommDetailPageProps {
@@ -48,20 +48,20 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
     if (!post) return;
 
     if (ok) {
-      DeletePost(post, user, pathname[2], id);
+      deletePost(post, user, pathname[2], id);
       router.push(`/${pathname[1]}/${pathname[2]}`);
     }
   };
 
   useEffect(() => {
     /* setPosts(querySnapshot); */
-    getPosts(pathname[2]).then((response) => setPosts(response));
+    getPosts(pathname[2]).then((response) => response && setPosts(response));
   }, [pathname]);
 
   useEffect(() => {
     const getImage = (value: string) => {
       return setImage((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value]
+        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
       );
     };
 
@@ -69,8 +69,8 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
       postImages.map((id: string) =>
         GetImageURL(
           `${pathname[2]}/${post.creatorId}/post/${id}/image`,
-          getImage
-        )
+          getImage,
+        ),
       );
     }
   }, [postImages, post?.creatorId, pathname]);

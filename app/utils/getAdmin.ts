@@ -8,7 +8,7 @@ const getAdmin = async () => {
     admin.push({ ...doc.data() });
   });
 
-  return admin;
+  return admin[0].user;
 };
 
 export default getAdmin;

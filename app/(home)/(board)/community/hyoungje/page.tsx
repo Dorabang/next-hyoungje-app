@@ -1,13 +1,12 @@
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import ContainerBox from '@/components/ContainerBox';
 import { noto_serif_kr } from '@/components/NotoSerif';
-import mvDesktop from '@/assets/main_visual_pc.jpg';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import MainVisual from '@/components/Main/MainVisual';
 
 const HyoungjePage = () => {
   return (
     <ContainerBox>
-      <Breadcrumbs pathname='/hyoungje' />
+      <Breadcrumbs />
       <div className='border-t border-grayColor-200 mt-2 mb-10'></div>
       <div
         className={`flex flex-col gap-4
@@ -16,25 +15,20 @@ const HyoungjePage = () => {
         ${noto_serif_kr.className}`}
       >
         <div className='pb-5'>
-          <AutoHeightImageWrapper
-            src={mvDesktop}
-            alt='산채인을 위한 산채품 전문 직거래 장터, 형제 난원'
-            className='hidden lg:block'
-            priority
-          />
+          <MainVisual />
         </div>
         <p>형제난원을 찾아주셔서 감사드립니다.</p>
 
-        <p className=''>
-          20여년 넘게 오로지 취미 생활을 해오다 개인적인 사정으로 인해 하던 일을
-          접으면서 업이 되었네요.
+        <p>
+          20여년 넘게 오로지 취미 생활을 해오다 개인적인 사정으로 인해서 하던
+          일을 접으면서 업이 되었네요.
           <br />
           소비자와 산채인을 위한 전문 직거래 장터를 개장하게 되었습니다.
           <br />
-          이제 시작하는 장터고 많이 부족하지만 회원 여러분들의 도움 부탁드리며
-          꾸준히 배우도록 하겠습니다.
+          이제 시작하는 장터이고, 많이 부족하지만 회원 여러분들의 도움
+          부탁드리며 꾸준히 배우도록 하겠습니다.
           <br />
-          끝으로 소비자와 판매자가 믿고 사고 팔 수 있는사이트가 되도록 최선을
+          끝으로 소비자와 판매자가 믿고 사고팔 수 있는 사이트가 되도록 최선을
           다하겠습니다.
           <br />
           회원 여러분들이 그런 사이트로 이끌어 주시길 부탁드립니다. 감사합니다.

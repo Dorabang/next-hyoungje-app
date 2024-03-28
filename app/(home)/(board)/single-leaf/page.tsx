@@ -1,11 +1,11 @@
 'use client';
+import PostFormat from '@/components/Posts/PostFormat';
 import useRedirect from '@/hooks/useRedirect';
-import PostsFormatWrapper from '@/components/Posts/PostsFormatWrapper';
 
 const SingleLeafPage = () => {
   useRedirect();
 
-  return <PostsFormatWrapper />;
+  return <PostFormat />;
 };
 
 export default SingleLeafPage;

@@ -10,7 +10,7 @@ import PostsLoading from '@/components/Posts/PostsLoading';
 import PaginationComponets from '@/components/PaginationComponent';
 
 import DateFormat from '@/utils/DateFormat';
-import DeletePost from '@/utils/deletePost';
+import { deletePost } from '@/apis/posts';
 
 import { User } from 'firebase/auth';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
@@ -57,13 +57,13 @@ const CommFormat = ({
   }, [posts, offset]);
 
   const handleDeletePost = (id: string) => {
+    const post = posts?.find((item) => item.id === id);
+    if (!post || !posts) return;
+
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
-    const post = posts && posts.find((item) => item.id === id);
-    if (!post) return;
-
     if (ok) {
-      DeletePost(post, user, pathname, id);
+      deletePost(post, user, pathname, id);
       const deletePosts = posts.filter((item) => item.id !== id);
       handleUpdatePosts(deletePosts);
     }
@@ -84,14 +84,14 @@ const CommFormat = ({
     <ContainerBox>
       <div className='text-sm'>
         <div className='flex justify-between'>
-          <Breadcrumbs pathname={pathname} />
+          <Breadcrumbs />
         </div>
 
         <div
           className='flex justify-end items-center pt-10 pb-5
       text-gray-500 text-sm'
         >
-          {pathname === '/notice' && admin && admin.includes(user?.uid) && (
+          {pathname === '/notice' && admin?.includes(user?.uid) && (
             <Link
               href={`/community/edit${pathname}`}
               className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
@@ -188,7 +188,7 @@ const CommFormat = ({
                       <div className='w-[6%] hidden lg:block'>{views}</div>
                     </li>
                   );
-                }
+                },
               )
             ) : (
               /* 게시물 데이터가 없을 때 */

@@ -1,4 +1,4 @@
-import getPosts from '@/utils/getPosts';
+import { getPosts } from '@/apis/posts';
 import { DocumentData } from 'firebase/firestore';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -12,15 +12,15 @@ interface PrevNextPostProps {
 const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
   const [prevPost, setPrevPosts] = useState<DocumentData | null | undefined>(
-    null
+    null,
   );
   const [nextPost, setNextPosts] = useState<DocumentData | null | undefined>(
-    null
+    null,
   );
 
   useEffect(() => {
     if (posts === null) {
-      getPosts(pathname).then((response) => setPosts(response));
+      getPosts(pathname).then((response) => response && setPosts(response));
     }
   }, [pathname, posts]);
 
