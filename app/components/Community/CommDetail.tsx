@@ -13,13 +13,13 @@ import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import { deletePost } from '@/apis/posts';
 import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
+import getPost from '@/apis/getPost';
 
 interface CommDetailPageProps {
   id: string;
 }
 
 const CommDetailPage = ({ id }: CommDetailPageProps) => {
-  const [posts, setPosts] = useState<DocumentData[]>([]);
   const [post, setPost] = useState<DocumentData | null>(null);
 
   const pathname = usePathname().split('/');
@@ -29,14 +29,18 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
 
   useEffect(() => {
     if (!post) {
-      const currentPost = posts.find((item) => item.id === id);
-      currentPost && setPost(currentPost);
+      const getCurrentPost = async () => {
+        const response = await getPost(pathname[2], id);
+        console.log('🚀 ~ getCurrentPost ~ response:', response);
+        setPost(response[0]);
+      };
+      getCurrentPost();
     }
-  }, [post, id, posts]);
+  }, [post, id, pathname]);
 
   const [image, setImage] = useState<string[]>();
 
-  const postImages = post && post?.image;
+  const postImages = post?.image;
 
   const modules = {
     toolbar: { container: [] },
@@ -52,11 +56,6 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
       router.push(`/${pathname[1]}/${pathname[2]}`);
     }
   };
-
-  useEffect(() => {
-    /* setPosts(querySnapshot); */
-    getPosts(pathname[2]).then((response) => response && setPosts(response));
-  }, [pathname]);
 
   useEffect(() => {
     const getImage = (value: string) => {

@@ -2,6 +2,7 @@ import ContainerBox from '@/components/ContainerBox';
 import { noto_serif_kr } from '@/components/NotoSerif';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import MainVisual from '@/components/Main/MainVisual';
+import Maps from '@/components/Map';
 
 const HyoungjePage = () => {
   return (
@@ -39,7 +40,7 @@ const HyoungjePage = () => {
         <hr />
 
         <p className='pt-5'>{`<오시는길>`}</p>
-
+        <Maps />
         <p>
           경상남도 진주시 금곡면 인담리 700.
           <br />

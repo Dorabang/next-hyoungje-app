@@ -21,6 +21,7 @@ const Editor = () => {
         [{ size: [] }],
         ['bold', 'italic', 'underline', 'strike', 'blockquote'],
         [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+        ['video'],
       ],
     },
     clipboard: {

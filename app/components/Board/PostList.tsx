@@ -41,14 +41,14 @@ const PostList = ({
     num,
   } = post;
 
-  const [admin, setAdmin] = useState<DocumentData | null>(null);
+  const [admin, setAdmin] = useState<boolean>(false);
 
   useEffect(() => {
     if (!admin) {
       const getAdminData = async () => {
         if (user) {
           const response = await getAdmin(user.uid);
-          setAdmin(response);
+          response && setAdmin(response);
         }
       };
       getAdminData();
@@ -87,8 +87,7 @@ const PostList = ({
           )}
           {title}
         </Link>
-        {((user && user.uid === creatorId) ||
-          (admin && admin.includes(user?.uid))) && (
+        {(user?.uid === creatorId || admin) && (
           <div className='text-gray-400 text-xs flex [&_span]:px-1 ml-4'>
             <span
               className='hover:text-gray-700 cursor-pointer'

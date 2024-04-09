@@ -1,13 +1,11 @@
 import CommDetailPage from '@/components/Community/CommDetail';
 
-interface WildMarketDetailPageProps {
+interface NoticeDetailPageProps {
   params: { id: string };
 }
 
-const WildMarketDetailPage = ({
-  params: { id },
-}: WildMarketDetailPageProps) => {
+const NoticeDetailPage = ({ params: { id } }: NoticeDetailPageProps) => {
   return <CommDetailPage id={id} />;
 };
 
-export default WildMarketDetailPage;
+export default NoticeDetailPage;

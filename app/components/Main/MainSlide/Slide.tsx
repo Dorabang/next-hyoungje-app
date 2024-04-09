@@ -24,6 +24,7 @@ const Slide = ({
   speed: number;
 }) => {
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
+  console.log('🚀 ~ posts:', posts);
 
   useEffect(() => {
     const getPosts = async () => {

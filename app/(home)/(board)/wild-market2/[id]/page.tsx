@@ -9,7 +9,7 @@ import DateFormat from '@/utils/DateFormat';
 import ReactQuill from 'react-quill';
 import GetImageURL from '@/apis/getImageURL';
 import statusOptions from '@/components/StatusOptions';
-import HasLikes from '@/utils/HasLikes';
+import HasLikes from '@/components/HasLikes';
 import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import { deletePost } from '@/apis/posts';

@@ -15,24 +15,30 @@ import PrevNextPost from '@/components/Posts/PrevNextPost';
 import { deletePost } from '@/apis/posts';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import getPost from '@/apis/getPost';
+import { updatedViews } from '@/apis/updatedViews';
+import getAdmin from '@/apis/getAdmin';
+import { updatedLike } from '@/apis/like';
 
-interface WildMarketDetailPageProps {
-  params: { id: string };
+interface DetailPageProps {
+  id: string;
 }
 
-const WildMarketDetailPage = ({
-  params: { id },
-}: WildMarketDetailPageProps) => {
-  const [post, setPost] = useState<DocumentData | null>(null);
-
-  const pathname = usePathname().split('/');
+const PostDetail = ({ id }: DetailPageProps) => {
+  const router = useRouter();
   const user = useRecoilValue(authState);
 
-  const router = useRouter();
+  const [post, setPost] = useState<DocumentData | null>(null);
+  const [admin, setAdmin] = useState<boolean>(false);
+
+  const path = usePathname().split('/');
+  const pathname = path[3] ? path[2] : path[1];
 
   useEffect(() => {
     if (post === null) {
-      getPost(pathname[1], id).then((response) => setPost(response[0]));
+      getPost(pathname, id).then((response) => {
+        updatedViews(response[0], pathname);
+        setPost({ ...response[0], views: response[0].views + 1 });
+      });
     }
   }, [id, post, pathname]);
 
@@ -50,10 +56,47 @@ const WildMarketDetailPage = ({
     if (!post) return;
 
     if (ok) {
-      deletePost(post, user, pathname[1], id);
-      router.push(`/${pathname[1]}`);
+      deletePost(post, user, pathname, id);
+      router.push(`/${pathname}`);
     }
   };
+
+  const handleUpdatedLikes = async () => {
+    if (!user?.uid || !post) return;
+
+    const conditions =
+      post.like && post.like?.filter((id: string) => id === user.uid) > 0;
+
+    const updatedPost: DocumentData = conditions
+      ? {
+          ...post,
+          like: [...post.like.filter((id: string) => id !== user.uid)],
+        }
+      : { ...post, like: [...post.like, user?.uid] };
+
+    const likeData = {
+      updateData: updatedPost.like,
+      postId: post.id,
+      pathname: pathname,
+    };
+
+    const result = await updatedLike(likeData);
+    if (result) {
+      setPost((prev) => ({ ...prev, like: updatedPost }));
+    }
+  };
+
+  useEffect(() => {
+    if (!admin) {
+      const getAdminData = async () => {
+        if (user) {
+          const response = await getAdmin(user.uid);
+          response && setAdmin(response);
+        }
+      };
+      getAdminData();
+    }
+  }, [admin, user]);
 
   useEffect(() => {
     const getImage = (value: string) => {
@@ -64,13 +107,10 @@ const WildMarketDetailPage = ({
 
     if (postImages && post.creatorId) {
       postImages.map((id: string) =>
-        GetImageURL(
-          `${pathname[1]}/${post.creatorId}/post/${id}/image`,
-          getImage,
-        ),
+        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
       );
     }
-  }, [postImages, post?.creatorId, pathname]);
+  }, [postImages, pathname, post?.creatorId]);
 
   if (!post) return;
 
@@ -84,7 +124,9 @@ const WildMarketDetailPage = ({
       >
         <div
           className='p-2 cursor-pointer'
-          onClick={() => router.push(`/${pathname[1]}`)}
+          onClick={() =>
+            router.push(path[2] ? `/${path[1]}/${path[2]}` : `/${pathname}`)
+          }
         >
           <IoArrowBack size={18} />
         </div>
@@ -94,18 +136,32 @@ const WildMarketDetailPage = ({
           {post?.title}
         </h2>
 
-        {user?.uid === post.creatorId && (
+        {(user?.uid === post.creatorId || admin) && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
-            <li onClick={() => router.push(`/${pathname[1]}/edit/${post.id}`)}>
+            <li
+              onClick={() =>
+                router.push(
+                  path[2]
+                    ? `/${path[1]}/${path[2]}/edit/${post.id}`
+                    : `/${pathname}/edit/${post.id}`,
+                )
+              }
+              className='hover:text-gray-900'
+            >
               편집
             </li>
-            <li onClick={() => handleDeletePost(id)}>삭제</li>
+            <li
+              onClick={() => handleDeletePost(id)}
+              className='hover:text-gray-900'
+            >
+              삭제
+            </li>
           </ul>
         )}
       </div>
 
       {/* post info */}
-      <ul className='flex gap-4 pt-2 pb-6 justify-end text-sm text-gray-500'>
+      <ul className='flex gap-4 pt-2 pb-6 justify-end items-center text-sm text-gray-500'>
         <li>
           <span className='pr-2 font-semibold'>작성자</span>
           {post.creatorName}
@@ -116,7 +172,16 @@ const WildMarketDetailPage = ({
         </li>
         <li>
           <span className='pr-2 font-semibold'>조회수</span>
-          {post.views}
+          {post.views.toLocaleString()}
+        </li>
+        <li>
+          <button
+            onClick={() => handleUpdatedLikes()}
+            className='flex gap-2 items-center'
+          >
+            <HasLikes pathname={pathname} userId={user?.uid} postId={post.id} />
+            {Number(post.like.length ?? 0).toLocaleString()}
+          </button>
         </li>
       </ul>
 
@@ -212,21 +277,11 @@ const WildMarketDetailPage = ({
         >
           <ReactQuill defaultValue={post.contents} modules={modules} readOnly />
         </div>
-
-        <button
-          className='flex flex-wrap gap-1 justify-center items-center
-            mx-auto mt-8 px-2 py-2
-            border border-[#ddd] rounded-sm'
-        >
-          <div className='w-full'>좋아요</div>
-          {HasLikes(post?.like, user)}
-          {post?.like?.length}
-        </button>
       </div>
 
-      <PrevNextPost pathname={pathname[1]} post={post} />
+      <PrevNextPost pathname={pathname} post={post} />
     </ContainerBox>
   );
 };
 
-export default WildMarketDetailPage;
+export default PostDetail;

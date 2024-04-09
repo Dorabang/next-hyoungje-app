@@ -1,13 +1,12 @@
 'use client';
 import { createContext, useContext } from 'react';
-import { DocumentData, doc, updateDoc } from 'firebase/firestore';
+import { DocumentData } from 'firebase/firestore';
 import { BoardProps, PostContextType } from './types';
 import { authState } from '@/recoil/atoms';
 import { useRecoilValue } from 'recoil';
 import { usePathname } from 'next/navigation';
 import PostsLoading from '../Posts/PostsLoading';
 import PostsNotFound from '../Posts/PostsNotFound';
-import { dbService } from '@/firebase';
 import { deletePost } from '@/apis/posts';
 import PostList from './PostList';
 

@@ -47,10 +47,12 @@ const BoardForm = ({
               >
                 <div className='w-[10%]'>{creatorName}</div>
                 <div className='flex-grow text-left'>
-                  {image && image?.length !== 0 && (
-                    <AiOutlineFileImage className='mr-2' />
-                  )}
-                  {title}
+                  <Link href={`${path}/${id}`}>
+                    {image && image?.length !== 0 && (
+                      <AiOutlineFileImage className='mr-2' />
+                    )}
+                    {title}
+                  </Link>
                 </div>
                 <div className='w-[10%]'>{DateFormat(createdAt)}</div>
                 <div className='w-[10%]'>{views}</div>

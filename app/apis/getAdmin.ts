@@ -3,28 +3,28 @@ import {
   DocumentData,
   collection,
   getDocs,
-  orderBy,
+  limit,
   query,
   where,
 } from 'firebase/firestore';
 
 const getAdmin = async (userId: string) => {
-  let post: DocumentData[] = [];
+  let admin: DocumentData[] = [];
   const adminRef = collection(dbService, 'admin');
 
-  const q = query(adminRef, where('user', '!=', userId));
+  const q = query(adminRef, where('user', '==', userId), limit(1));
 
   try {
-    const docSnap = await getDocs(q);
-  } catch (err) {}
+    const adminSnap = await getDocs(q);
+    adminSnap.forEach((doc) => {
+      admin.push({ ...doc.data() });
+    });
 
-  let admin: DocumentData[] = [];
-  const querySnapshot = await getDocs(collection(dbService, 'admin'));
-  querySnapshot.forEach((doc) => {
-    admin.push({ ...doc.data() });
-  });
-
-  return admin[0].user;
+    if (admin.length !== 0) return true;
+    return false;
+  } catch (err) {
+    console.log('🚀 ~ getAdmin ~ err:', err);
+  }
 };
 
 export default getAdmin;
