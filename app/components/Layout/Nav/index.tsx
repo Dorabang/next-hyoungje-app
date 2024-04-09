@@ -45,9 +45,9 @@ const LogoButton = (props: MUIStyledCommonProps) => {
       <Link href='/'>
         <Stack
           sx={{
-            width: 150,
+            width: 100,
             mr: 2,
-            minWidth: 140,
+            minWidth: 70,
             height: 64,
             position: 'relative',
           }}
@@ -57,7 +57,7 @@ const LogoButton = (props: MUIStyledCommonProps) => {
             alt='형제난원'
             fill
             sizes='100%'
-            style={{ objectFit: 'cover' }}
+            style={{ objectFit: 'contain' }}
           />
         </Stack>
       </Link>

@@ -36,8 +36,8 @@ export const FooterStyle = styled.footer`
 `;
 
 export const FooterLogo = styled.div`
-  width: 14.534%;
-  min-width: 180px;
+  width: 120px;
+  min-width: 80px;
   margin: 0 auto;
   padding-bottom: 30px;
   transform: translateX(-15px);
@@ -64,7 +64,7 @@ const Footer = () => {
           <br /> Tel. 010-8856-1195 / E-mail. cjs863@daum.net /
           <br /> 사업자등록번호 605-92-39533
         </address>
-        <p>{'\u00A9'} 형제난원 all copyright.</p>
+        <p>{'\u00A9'} (주)형제난원 all copyright.</p>
       </Container>
     </FooterStyle>
   );

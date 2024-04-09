@@ -1,15 +1,15 @@
-import { authService } from "@/firebase";
-import { authState } from "@/recoil/atoms";
-import { Box, Button } from "@mui/material";
-import { signOut } from "firebase/auth";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useMemo } from "react";
-import { useRecoilState } from "recoil";
-import { authBtnStyle } from "./StyleComponents";
-import { routes } from "../../constant/Routes";
+import { authService } from '@/firebase';
+import { authState } from '@/recoil/atoms';
+import { Box, Button } from '@mui/material';
+import { signOut } from 'firebase/auth';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
+import { useRecoilState } from 'recoil';
+import { authBtnStyle } from './StyleComponents';
+import { routes } from '../../../constant/Routes';
 
-import defaultProfile from "@/assets/defaultProfile.jpg";
+import defaultProfile from '@/assets/defaultProfile.jpg';
 
 const UtilBtn = () => {
   const [user, setUser] = useRecoilState(authState);
@@ -19,7 +19,7 @@ const UtilBtn = () => {
     const onLogOutClick = () => {
       signOut(authService);
       setUser(null);
-      router.push("/");
+      router.push('/');
     };
 
     return (
@@ -30,16 +30,16 @@ const UtilBtn = () => {
               onClick={() => router.push(routes.myPage.path)}
               sx={authBtnStyle}
             >
-              <div className="flex gap-[6px] items-center">
-                <div className="relative mt-[1px] w-6 h-6 rounded-full overflow-hidden">
+              <div className='flex gap-[6px] items-center'>
+                <div className='relative mt-[1px] w-6 h-6 rounded-full overflow-hidden'>
                   <Image
                     src={user.photoURL ? user.photoURL : defaultProfile}
                     alt={`${user.displayName} 업로드 이미지`}
                     fill
-                    sizes="100%"
+                    sizes='100%'
                   />
                 </div>
-                <p className="normal-case">{user.displayName}</p>
+                <p className='normal-case'>{user.displayName}</p>
               </div>
             </Button>
             <Button onClick={onLogOutClick} sx={authBtnStyle}>
