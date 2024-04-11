@@ -174,7 +174,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
           <span className='pr-2 font-semibold'>조회수</span>
           {post.views.toLocaleString()}
         </li>
-        <li>
+        {/* <li>
           <button
             onClick={() => handleUpdatedLikes()}
             className='flex gap-2 items-center'
@@ -182,7 +182,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
             <HasLikes pathname={pathname} userId={user?.uid} postId={post.id} />
             {Number(post.like.length ?? 0).toLocaleString()}
           </button>
-        </li>
+        </li> */}
       </ul>
 
       <div className='w-full px-5 md:px-0 md:w-[1016px] mx-auto'>
