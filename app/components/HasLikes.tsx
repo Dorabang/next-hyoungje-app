@@ -11,17 +11,15 @@ interface HasLikesProps {
 
 const HasLikes = ({ pathname, userId, postId }: HasLikesProps) => {
   const [hasLikes, setHasLikes] = useState(false);
-  console.log('🚀 ~ HasLikes ~ hasLikes:', hasLikes);
 
   useEffect(() => {
     const getLikeArr = async () => {
       if (!userId) return;
       const result = await hasLike({ pathname, userId, postId });
-      console.log('🚀 ~ getLikeArr ~ result:', result);
       setHasLikes(result);
     };
     getLikeArr();
-  }, [pathname, userId]);
+  }, [pathname, userId, postId]);
 
   return hasLikes && userId ? (
     <LiaHeartSolid size={20} className='text-[#BF1E2E]' />

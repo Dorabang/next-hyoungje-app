@@ -5,8 +5,8 @@ interface DetailPageProps {
   params: { id: string };
 }
 
-const NaturalHerbDetailPage = ({ params: { id } }: DetailPageProps) => {
+const SingleLeafDetailPage = ({ params: { id } }: DetailPageProps) => {
   return <PostDetail id={id} />;
 };
 
-export default NaturalHerbDetailPage;
+export default SingleLeafDetailPage;
