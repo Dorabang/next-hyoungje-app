@@ -52,7 +52,6 @@ export const hasLike = async (data: HasLikeProps) => {
     likeSnap.forEach((doc) => {
       like.push({ ...doc.data() });
     });
-    console.log('🚀 ~ hasLike ~ like:', like);
 
     if (like.length !== 0) return true;
     return false;

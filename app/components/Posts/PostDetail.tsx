@@ -28,6 +28,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
   const user = useRecoilValue(authState);
 
   const [post, setPost] = useState<DocumentData | null>(null);
+  console.log('🚀 ~ PostDetail ~ post:', post);
   const [admin, setAdmin] = useState<boolean>(false);
 
   const path = usePathname().split('/');
@@ -36,7 +37,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
   useEffect(() => {
     if (post === null) {
       getPost(pathname, id).then((response) => {
-        updatedViews(response[0], pathname);
+        updatedViews({ ...response[0], id: id }, pathname);
         setPost({ ...response[0], views: response[0].views + 1 });
       });
     }
@@ -64,25 +65,24 @@ const PostDetail = ({ id }: DetailPageProps) => {
   const handleUpdatedLikes = async () => {
     if (!user?.uid || !post) return;
 
-    const conditions =
-      post.like && post.like?.filter((id: string) => id === user.uid) > 0;
+    const hasLike =
+      post?.like.filter((id: string) => id === user.uid).length > 0;
 
-    const updatedPost: DocumentData = conditions
-      ? {
-          ...post,
-          like: [...post.like.filter((id: string) => id !== user.uid)],
-        }
-      : { ...post, like: [...post.like, user?.uid] };
+    const updatedLikeList: DocumentData = hasLike
+      ? [...post.like.filter((id: string) => id !== user.uid)]
+      : post?.like.length !== 0
+        ? [...post.like, user?.uid]
+        : [user?.uid];
 
     const likeData = {
-      updateData: updatedPost.like,
+      updateData: updatedLikeList,
       postId: post.id,
       pathname: pathname,
     };
 
     const result = await updatedLike(likeData);
     if (result) {
-      setPost((prev) => ({ ...prev, like: updatedPost }));
+      setPost((prev) => ({ ...prev, like: updatedLikeList }));
     }
   };
 
@@ -174,7 +174,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
           <span className='pr-2 font-semibold'>조회수</span>
           {post.views.toLocaleString()}
         </li>
-        {/* <li>
+        <li>
           <button
             onClick={() => handleUpdatedLikes()}
             className='flex gap-2 items-center'
@@ -182,7 +182,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
             <HasLikes pathname={pathname} userId={user?.uid} postId={post.id} />
             {Number(post.like.length ?? 0).toLocaleString()}
           </button>
-        </li> */}
+        </li>
       </ul>
 
       <div className='w-full px-5 md:px-0 md:w-[1016px] mx-auto'>
@@ -247,7 +247,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
         </div>
 
         {/* image */}
-        <div className='pt-4 w-full'>
+        <div className='pt-8 w-full'>
           {postImages &&
             image &&
             image.map((imageURL) => (
@@ -258,6 +258,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
                 <AutoHeightImageWrapper
                   src={imageURL}
                   alt={`${post.creatorName} 업로드 이미지`}
+                  priority
                 />
               </div>
             ))}
@@ -272,7 +273,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
           [&_.ql-container.ql-snow]:border-none
           [&_.ql-container]:text-base
           [&_.ql-editor]:p-0
-          pt-4
+          pt-8
         '
         >
           <ReactQuill defaultValue={post.contents} modules={modules} readOnly />
