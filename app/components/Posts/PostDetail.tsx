@@ -125,7 +125,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
         <div
           className='p-2 cursor-pointer'
           onClick={() =>
-            router.push(path[2] ? `/${path[1]}/${path[2]}` : `/${pathname}`)
+            router.push(path[3] ? `/${path[2]}/${path[3]}` : `/${pathname}`)
           }
         >
           <IoArrowBack size={18} />
