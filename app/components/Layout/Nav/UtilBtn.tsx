@@ -23,9 +23,15 @@ const UtilBtn = () => {
     };
 
     return (
-      <Box sx={{ flexGrow: 0 }}>
+      <Box sx={{ flexGrow: 0, gap: '4px' }}>
         {user ? (
           <>
+            <Button
+              onClick={() => router.push(routes.bookmark.path)}
+              sx={authBtnStyle}
+            >
+              {routes.bookmark.name}
+            </Button>
             <Button
               onClick={() => router.push(routes.myPage.path)}
               sx={authBtnStyle}
