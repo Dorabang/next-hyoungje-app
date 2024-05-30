@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
+import { noto_serif_kr } from '@/components/NotoSerif';
 /* mui */
 import {
   AppBar,
@@ -45,9 +45,9 @@ const LogoButton = (props: MUIStyledCommonProps) => {
       <Link href='/'>
         <Stack
           sx={{
-            width: 150,
+            width: 100,
             mr: 2,
-            minWidth: 140,
+            minWidth: 70,
             height: 64,
             position: 'relative',
           }}
@@ -57,7 +57,7 @@ const LogoButton = (props: MUIStyledCommonProps) => {
             alt='형제난원'
             fill
             sizes='100%'
-            style={{ objectFit: 'cover' }}
+            style={{ objectFit: 'contain' }}
           />
         </Stack>
       </Link>
@@ -123,10 +123,7 @@ const Nav = () => {
           >
             <LogoButton
               sx={{
-                display: { xs: 'none', md: 'flex' },
-                transform: { xs: 'translateX(-50%)', lg: 'translateX(0)' },
-                position: { xs: 'absolute', lg: 'static' },
-                left: '50%',
+                display: { xs: 'none', lg: 'flex' },
               }}
             />
 
@@ -160,6 +157,7 @@ const Nav = () => {
                                 <MenuItem
                                   key={item2.name}
                                   onClick={() => router.push(`${item2.path}`)}
+                                  className={`${noto_serif_kr.className}`}
                                 >
                                   {item2.name}
                                 </MenuItem>
@@ -171,6 +169,7 @@ const Nav = () => {
                         <Button
                           onClick={() => router.push(item.path)}
                           sx={btnStyle}
+                          className={`${noto_serif_kr.className}`}
                         >
                           {item.name}
                         </Button>
@@ -188,6 +187,7 @@ const Nav = () => {
                               <MenuItem
                                 key={item2.name}
                                 onClick={() => router.push(`${item2.path}`)}
+                                className={`${noto_serif_kr.className}`}
                               >
                                 {item2.name}
                               </MenuItem>
@@ -199,6 +199,7 @@ const Nav = () => {
                       <Button
                         onClick={() => router.push(item.path)}
                         sx={btnStyle}
+                        className={`${noto_serif_kr.className}`}
                       >
                         {item.name}
                       </Button>
@@ -214,16 +215,16 @@ const Nav = () => {
             <Box
               sx={{
                 width: '100%',
-                display: { xs: 'flex', md: 'none' },
+                display: { xs: 'flex', lg: 'none' },
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}
             >
               <LogoButton
                 sx={{
-                  flexGrow: 1,
-                  display: 'flex',
-                  justifyContent: 'center',
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
                 }}
               />
 
@@ -238,7 +239,7 @@ const Nav = () => {
         </Container>
       </AppBar>
 
-      {isOpen ? <MGNB setIsOpen={(value) => setIsOpen(value)} /> : null}
+      <MGNB isOpen={isOpen} setIsOpen={(value) => setIsOpen(value)} />
     </>
   );
 };

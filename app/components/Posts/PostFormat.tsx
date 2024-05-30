@@ -74,7 +74,9 @@ const PostFormat = () => {
       />
 
       <Board isLoading={isLoading}>
-        <Board.Headers />
+        <Board.Headers
+          type={path.includes('community') ? 'community' : 'etc'}
+        />
         <Board.Bodys
           type={path.includes('community') ? 'community' : 'etc'}
           isLoading={isLoading}

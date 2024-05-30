@@ -1,0 +1,33 @@
+.customOverlay {
+  position: relative;
+  background: white;
+  border-radius: 0.4em;
+}
+
+.customOverlay:after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 6px 8px 0 8px;
+  border-color: #fff transparent;
+  display: block;
+  width: 0;
+  z-index: 1;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.customOverlay:before {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 6px 8px 0 8px;
+  border-color: #ddd transparent;
+  display: block;
+  width: 0;
+  z-index: 0;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+}

@@ -2,6 +2,7 @@ import ContainerBox from '@/components/ContainerBox';
 import { noto_serif_kr } from '@/components/NotoSerif';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import MainVisual from '@/components/Main/MainVisual';
+import Maps from '@/components/Map';
 
 const HyoungjePage = () => {
   return (
@@ -10,7 +11,7 @@ const HyoungjePage = () => {
       <div className='border-t border-grayColor-200 mt-2 mb-10'></div>
       <div
         className={`flex flex-col gap-4
-        w-full md:w-[1000px] px-3 md:px-0 mx-auto
+        w-full px-3 md:px-0 mx-auto
         leading-10
         ${noto_serif_kr.className}`}
       >
@@ -39,7 +40,7 @@ const HyoungjePage = () => {
         <hr />
 
         <p className='pt-5'>{`<오시는길>`}</p>
-
+        <Maps />
         <p>
           경상남도 진주시 금곡면 인담리 700.
           <br />

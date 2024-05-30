@@ -1,7 +1,7 @@
-import CommWrapper from '@/components/Community/CommWrapper';
+import PostFormat from '@/components/Posts/PostFormat';
 
 const WildCatchPage = () => {
-  return <CommWrapper />;
+  return <PostFormat />;
 };
 
 export default WildCatchPage;
