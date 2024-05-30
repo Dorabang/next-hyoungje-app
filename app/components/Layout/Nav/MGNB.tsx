@@ -8,6 +8,7 @@ import { Box, Button, MenuItem, MenuList } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { PagesRoutes } from '@/constant/PagesRoutes';
+import UtilBtn from './UtilBtn';
 
 interface MGNBProps {
   isOpen: boolean;
@@ -23,26 +24,68 @@ const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
       className={`${isOpen ? 'fixed top-0 left-0 lg:hidden w-screen h-screen bg-black/30 z-50' : ''}`}
     >
       <div
-        className={`absolute h-full transition-all delay-100 ease-in-out bg-white flex flex-col items-start p-4 ${isOpen ? 'left-0 w-4/5' : '-left-full w-0'}`}
+        className={`absolute h-full transition-all delay-100 ease-in-out bg-white flex flex-col items-start justify-between p-4 ${isOpen ? 'left-0 w-4/5' : '-left-full w-0'}`}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'end',
-            width: '100%',
-          }}
-        >
+        <div>
           <Box
-            sx={{ padding: '8px', width: 'auto', cursor: 'pointer' }}
-            onClick={() => setIsOpen(false)}
+            sx={{
+              display: 'flex',
+              justifyContent: 'end',
+              width: '100%',
+            }}
           >
-            <AiOutlineClose size={24} />
+            <Box
+              sx={{ padding: '8px', width: 'auto', cursor: 'pointer' }}
+              onClick={() => setIsOpen(false)}
+            >
+              <AiOutlineClose size={24} />
+            </Box>
           </Box>
-        </Box>
 
-        {PagesRoutes.map((item) => {
-          return !user ? (
-            !item.members && (
+          {PagesRoutes.map((item) => {
+            return !user ? (
+              !item.members && (
+                <LightTooltip key={item.name} title={''}>
+                  <Fragment>
+                    <Button
+                      onClick={() => {
+                        if (item.depth.length === 0) {
+                          router.push(item.path);
+                          return setIsOpen(false);
+                        }
+                        setSubMenu((prev) =>
+                          prev === item.name ? null : item.name,
+                        );
+                      }}
+                      sx={mgnbBtnStyle}
+                    >
+                      {item.name}
+                    </Button>
+                    {item.depth.length === 0
+                      ? null
+                      : subMenu !== null &&
+                        subMenu === item.name && (
+                          <MenuList
+                            sx={{ width: '100%', background: '#fafafa' }}
+                          >
+                            {subMenu === item.name &&
+                              item.depth?.map((item2) => (
+                                <MenuItem
+                                  key={item2.name}
+                                  onClick={() => {
+                                    router.push(`${item2.path}`);
+                                    setIsOpen(false);
+                                  }}
+                                >
+                                  {item2.name}
+                                </MenuItem>
+                              ))}
+                          </MenuList>
+                        )}
+                  </Fragment>
+                </LightTooltip>
+              )
+            ) : (
               <LightTooltip key={item.name} title={''}>
                 <Fragment>
                   <Button
@@ -51,6 +94,7 @@ const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
                         router.push(item.path);
                         return setIsOpen(false);
                       }
+
                       setSubMenu((prev) =>
                         prev === item.name ? null : item.name,
                       );
@@ -80,48 +124,12 @@ const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
                       )}
                 </Fragment>
               </LightTooltip>
-            )
-          ) : (
-            <LightTooltip key={item.name} title={''}>
-              <Fragment>
-                <Button
-                  onClick={() => {
-                    if (item.depth.length === 0) {
-                      router.push(item.path);
-                      return setIsOpen(false);
-                    }
-
-                    setSubMenu((prev) =>
-                      prev === item.name ? null : item.name,
-                    );
-                  }}
-                  sx={mgnbBtnStyle}
-                >
-                  {item.name}
-                </Button>
-                {item.depth.length === 0
-                  ? null
-                  : subMenu !== null &&
-                    subMenu === item.name && (
-                      <MenuList sx={{ width: '100%', background: '#fafafa' }}>
-                        {subMenu === item.name &&
-                          item.depth?.map((item2) => (
-                            <MenuItem
-                              key={item2.name}
-                              onClick={() => {
-                                router.push(`${item2.path}`);
-                                setIsOpen(false);
-                              }}
-                            >
-                              {item2.name}
-                            </MenuItem>
-                          ))}
-                      </MenuList>
-                    )}
-              </Fragment>
-            </LightTooltip>
-          );
-        })}
+            );
+          })}
+        </div>
+        <div className='w-full flex justify-end'>
+          <UtilBtn />
+        </div>
       </div>
     </div>
   );

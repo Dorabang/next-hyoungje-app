@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { noto_serif_kr } from '@/components/NotoSerif';
 /* mui */
 import {
   AppBar,
@@ -20,6 +18,7 @@ import { LightTooltip, btnStyle } from './StyleComponents';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Fragment, useEffect, useState } from 'react';
 
 /* firebase */
 import { User } from 'firebase/auth';
@@ -29,38 +28,37 @@ import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 
 /* utils */
+import { noto_serif_kr } from '@/components/NotoSerif';
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
-
-/* image */
-import logoImg from '@/assets/common/logo.png';
 import UtilBtn from './UtilBtn';
 import MGNB from './MGNB';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { PagesRoutes } from '@/constant/PagesRoutes';
+
+/* image */
+import logoImg from '@/assets/common/logo.png';
 
 const LogoButton = (props: MUIStyledCommonProps) => {
   return (
     <Box {...props}>
-      <Link href='/'>
-        <Stack
-          sx={{
-            width: 100,
-            mr: 2,
-            minWidth: 70,
-            height: 64,
-            position: 'relative',
-          }}
-        >
+      <Stack
+        sx={{
+          width: 100,
+          minWidth: 70,
+          height: 64,
+          position: 'relative',
+        }}
+      >
+        <Link href='/'>
           <Image
             src={logoImg}
             alt='형제난원'
             fill
             sizes='100%'
-            style={{ objectFit: 'contain' }}
+            className='object-contain'
           />
-        </Stack>
-      </Link>
+        </Link>
+      </Stack>
     </Box>
   );
 };
@@ -70,7 +68,6 @@ const Nav = () => {
   const user = useRecoilValue<User | null>(authState);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { lockScroll, openScroll } = useBodyScrollLock();
 
   const router = useRouter();
 
@@ -99,7 +96,7 @@ const Nav = () => {
   }, [isOpen]);
 
   return (
-    <>
+    <Fragment>
       <AppBar
         position={isScrolled ? 'fixed' : 'static'}
         sx={{
@@ -218,6 +215,7 @@ const Nav = () => {
                 display: { xs: 'flex', lg: 'none' },
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                position: 'relative',
               }}
             >
               <LogoButton
@@ -240,7 +238,7 @@ const Nav = () => {
       </AppBar>
 
       <MGNB isOpen={isOpen} setIsOpen={(value) => setIsOpen(value)} />
-    </>
+    </Fragment>
   );
 };
 
