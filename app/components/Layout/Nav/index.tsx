@@ -123,10 +123,7 @@ const Nav = () => {
           >
             <LogoButton
               sx={{
-                display: { xs: 'none', md: 'flex' },
-                transform: { xs: 'translateX(-50%)', lg: 'translateX(0)' },
-                position: { xs: 'absolute', lg: 'static' },
-                left: '50%',
+                display: { xs: 'none', lg: 'flex' },
               }}
             />
 
@@ -218,16 +215,16 @@ const Nav = () => {
             <Box
               sx={{
                 width: '100%',
-                display: { xs: 'flex', md: 'none' },
+                display: { xs: 'flex', lg: 'none' },
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}
             >
               <LogoButton
                 sx={{
-                  flexGrow: 1,
-                  display: 'flex',
-                  justifyContent: 'center',
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
                 }}
               />
 
@@ -242,7 +239,7 @@ const Nav = () => {
         </Container>
       </AppBar>
 
-      {isOpen ? <MGNB setIsOpen={(value) => setIsOpen(value)} /> : null}
+      <MGNB isOpen={isOpen} setIsOpen={(value) => setIsOpen(value)} />
     </>
   );
 };

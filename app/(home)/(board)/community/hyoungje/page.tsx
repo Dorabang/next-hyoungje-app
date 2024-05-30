@@ -11,7 +11,7 @@ const HyoungjePage = () => {
       <div className='border-t border-grayColor-200 mt-2 mb-10'></div>
       <div
         className={`flex flex-col gap-4
-        w-full md:w-[1000px] px-3 md:px-0 mx-auto
+        w-full px-3 md:px-0 mx-auto
         leading-10
         ${noto_serif_kr.className}`}
       >

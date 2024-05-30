@@ -6,22 +6,32 @@ import { authState } from '@/recoil/atoms';
 import { User } from 'firebase/auth';
 import { Box, Button, MenuItem, MenuList } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { btnStyle } from './StyleComponents';
 import { AiOutlineClose } from 'react-icons/ai';
 import { PagesRoutes } from '@/constant/PagesRoutes';
 
 interface MGNBProps {
+  isOpen: boolean;
   setIsOpen: (value: boolean) => void;
 }
-const MGNB = ({ setIsOpen }: MGNBProps) => {
+const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
   const user = useRecoilValue<User | null>(authState);
   const router = useRouter();
   const [subMenu, setSubMenu] = useState<null | string>(null);
 
   return (
-    <div className='fixed top-0 left-0 md:hidden w-screen h-screen bg-black/30 z-50'>
-      <div className='absolute right-0 h-full w-4/5 bg-white flex flex-col items-start p-4'>
-        <Box sx={{ display: 'flex', justifyContent: 'end', width: '100%' }}>
+    <div
+      className={`${isOpen ? 'fixed top-0 left-0 lg:hidden w-screen h-screen bg-black/30 z-50' : ''}`}
+    >
+      <div
+        className={`absolute h-full transition-all delay-100 ease-in-out bg-white flex flex-col items-start p-4 ${isOpen ? 'left-0 w-4/5' : '-left-full w-0'}`}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'end',
+            width: '100%',
+          }}
+        >
           <Box
             sx={{ padding: '8px', width: 'auto', cursor: 'pointer' }}
             onClick={() => setIsOpen(false)}
@@ -36,16 +46,15 @@ const MGNB = ({ setIsOpen }: MGNBProps) => {
               <LightTooltip key={item.name} title={''}>
                 <Fragment>
                   <Button
-                    onClick={() =>
-                      item.depth.length === 0
-                        ? () => {
-                            setIsOpen(false);
-                            router.push(item.path);
-                          }
-                        : setSubMenu((prev) =>
-                            prev === item.name ? null : item.name,
-                          )
-                    }
+                    onClick={() => {
+                      if (item.depth.length === 0) {
+                        router.push(item.path);
+                        return setIsOpen(false);
+                      }
+                      setSubMenu((prev) =>
+                        prev === item.name ? null : item.name,
+                      );
+                    }}
                     sx={mgnbBtnStyle}
                   >
                     {item.name}
@@ -73,8 +82,43 @@ const MGNB = ({ setIsOpen }: MGNBProps) => {
               </LightTooltip>
             )
           ) : (
-            <LightTooltip key={item.name} title={item.name}>
-              <Button sx={btnStyle}>{item.name}</Button>
+            <LightTooltip key={item.name} title={''}>
+              <Fragment>
+                <Button
+                  onClick={() => {
+                    if (item.depth.length === 0) {
+                      router.push(item.path);
+                      return setIsOpen(false);
+                    }
+
+                    setSubMenu((prev) =>
+                      prev === item.name ? null : item.name,
+                    );
+                  }}
+                  sx={mgnbBtnStyle}
+                >
+                  {item.name}
+                </Button>
+                {item.depth.length === 0
+                  ? null
+                  : subMenu !== null &&
+                    subMenu === item.name && (
+                      <MenuList sx={{ width: '100%', background: '#fafafa' }}>
+                        {subMenu === item.name &&
+                          item.depth?.map((item2) => (
+                            <MenuItem
+                              key={item2.name}
+                              onClick={() => {
+                                router.push(`${item2.path}`);
+                                setIsOpen(false);
+                              }}
+                            >
+                              {item2.name}
+                            </MenuItem>
+                          ))}
+                      </MenuList>
+                    )}
+              </Fragment>
             </LightTooltip>
           );
         })}

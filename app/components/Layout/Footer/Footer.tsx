@@ -64,7 +64,7 @@ const Footer = () => {
           <br /> Tel. 010-8856-1195 / E-mail. cjs863@daum.net /
           <br /> 사업자등록번호 605-92-39533
         </address>
-        <p>{'\u00A9'} (주)형제난원 all copyright.</p>
+        <p>{'\u00A9'} (구)형제난원 all copyright.</p>
       </Container>
     </FooterStyle>
   );
