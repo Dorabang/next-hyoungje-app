@@ -3,7 +3,7 @@ import { User } from 'firebase/auth';
 import { useState, Fragment } from 'react';
 import InputComment from './InputComment';
 import { useGetComments } from '@/hooks/queries/useComments';
-import PostsLoading from '../Posts/PostsLoading';
+import Loading from '../Loading';
 
 export interface CommentsType {
   id: string;
@@ -65,7 +65,7 @@ const Comments = ({
       )}
       <ul className='w-full pt-5'>
         {isLoading ? (
-          <div>로딩 중...</div>
+          <Loading />
         ) : (
           data?.map(
             ({ id, comment, createdAt, updatedAt, nickname, userId }) => (
