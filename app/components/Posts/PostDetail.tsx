@@ -1,23 +1,25 @@
 'use client';
 import { useEffect, useState } from 'react';
-import ContainerBox from '@/components/ContainerBox';
+import ReactQuill from 'react-quill';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
-import { usePathname, useRouter } from 'next/navigation';
-import DateFormat from '@/utils/DateFormat';
-import ReactQuill from 'react-quill';
-import GetImageURL from '@/apis/getImageURL';
-import statusOptions from '@/components/StatusOptions';
-import HasLikes from '@/components/HasLikes';
 import { DocumentData } from 'firebase/firestore';
-import PrevNextPost from '@/components/Posts/PrevNextPost';
-import { deletePost } from '@/apis/posts';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import { usePathname, useRouter } from 'next/navigation';
+
+import { updatedLike } from '@/apis/like';
+import GetImageURL from '@/apis/getImageURL';
 import getPost from '@/apis/getPost';
+import { deletePost } from '@/apis/posts';
 import { updatedViews } from '@/apis/updatedViews';
 import getAdmin from '@/apis/getAdmin';
-import { updatedLike } from '@/apis/like';
+import DateFormat from '@/utils/DateFormat';
+import ContainerBox from '@/components/ContainerBox';
+import statusOptions from '@/components/StatusOptions';
+import HasLikes from '@/components/HasLikes';
+import PrevNextPost from '@/components/Posts/PrevNextPost';
+import Comments from '../Comment/Comments';
+import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 interface DetailPageProps {
   id: string;
@@ -28,7 +30,6 @@ const PostDetail = ({ id }: DetailPageProps) => {
   const user = useRecoilValue(authState);
 
   const [post, setPost] = useState<DocumentData | null>(null);
-  console.log('🚀 ~ PostDetail ~ post:', post);
   const [admin, setAdmin] = useState<boolean>(false);
 
   const path = usePathname().split('/');
@@ -273,12 +274,21 @@ const PostDetail = ({ id }: DetailPageProps) => {
           [&_.ql-container.ql-snow]:border-none
           [&_.ql-container]:text-base
           [&_.ql-editor]:p-0
+          [&_.ql-video]:relative
+          [&_.ql-video]:pb-[56.25%]
+          [&_.ql-video]:h-0
+          [&_.ql-video]:overflow-hidden
+          [&_#player]:absolute
+          [&_#player]:top-0
+          [&_#player]:left-0
           pt-8
         '
         >
           <ReactQuill defaultValue={post.contents} modules={modules} readOnly />
         </div>
       </div>
+
+      <Comments pathname={`${pathname}/${id}`} user={user} />
 
       <PrevNextPost pathname={pathname} post={post} />
     </ContainerBox>
