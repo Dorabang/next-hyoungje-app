@@ -5,7 +5,7 @@ interface QnADetailPageProps {
 }
 
 const QnADetailPage = ({ params: { id } }: QnADetailPageProps) => {
-  return <CommDetailPage id={id} />;
+  return <CommDetailPage postId={id} />;
 };
 
 export default QnADetailPage;

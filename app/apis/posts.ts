@@ -57,12 +57,8 @@ export const getPost = async (pathname: string, postId: string) => {
   const docSnapshot = await getDoc(docRef);
 
   const res = docSnapshot.data();
-  const contents = res?.contents
-    .replace('<iframe', `<div class=\'ql-video-warpper\'><iframe`)
-    .replace('</iframe>', `</iframe></div>`);
-
   if (res) {
-    return { ...res, contents } as PostProps;
+    return { id: docSnapshot.id, ...res } as PostProps;
   }
 };
 

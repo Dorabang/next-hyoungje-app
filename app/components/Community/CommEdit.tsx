@@ -17,7 +17,13 @@ import { dbService, storageService } from '@/firebase';
 import GetImageURL from '@/apis/getImageURL';
 import { deleteObject, ref } from 'firebase/storage';
 
-const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
+const CommEdit = ({
+  post,
+  pathname,
+}: {
+  post: DocumentData;
+  pathname: string;
+}) => {
   const router = useRouter();
 
   const user = useRecoilValue(authState);
@@ -157,9 +163,11 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
           <div className={`${inputWrapperClass}`}>
+            <label htmlFor='title'>* 제목</label>
             <input
               type='text'
               value={title}
+              name='title'
               onChange={(e) => setTitle(e.target.value)}
               placeholder='* 제목을 입력해주세요.'
               className='outline-none'
@@ -171,7 +179,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
             <p className='w-[90px] border-r border-neutral-300 cursor-default'>
               파일 첨부
             </p>
-            <div className='flex flex-wrap pl-3'>
+            <div className='flex flex-col pl-3'>
               <label
                 htmlFor='addFile'
                 className='py-1 w-[100px_!important] text-center cursor-pointer
@@ -190,7 +198,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
                 />
               </label>
               {(images || imageArr) && (
-                <ul className='w-full py-4 flex gap-2'>
+                <ul className='w-full py-4 flex flex-wrap gap-2'>
                   {images &&
                     images.map((item) => (
                       <li key={item}>
@@ -264,4 +272,4 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   );
 };
 
-export default Edit;
+export default CommEdit;

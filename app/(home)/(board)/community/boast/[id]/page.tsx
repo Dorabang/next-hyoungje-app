@@ -5,7 +5,7 @@ interface CommunityDetailPageProps {
 }
 
 const BoastDetailPage = ({ params: { id } }: CommunityDetailPageProps) => {
-  return <CommDetailPage id={id} />;
+  return <CommDetailPage postId={id} />;
 };
 
 export default BoastDetailPage;
