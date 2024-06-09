@@ -6,7 +6,7 @@ interface DetailPageProps {
 }
 
 const SingleLeafDetailPage = ({ params: { id } }: DetailPageProps) => {
-  return <PostDetail id={id} />;
+  return <PostDetail postId={id} />;
 };
 
 export default SingleLeafDetailPage;

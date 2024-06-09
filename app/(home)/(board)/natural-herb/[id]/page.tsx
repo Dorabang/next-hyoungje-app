@@ -6,7 +6,7 @@ interface DetailPageProps {
 }
 
 const NaturalHerbDetailPage = ({ params: { id } }: DetailPageProps) => {
-  return <PostDetail id={id} />;
+  return <PostDetail postId={id} />;
 };
 
 export default NaturalHerbDetailPage;

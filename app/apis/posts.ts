@@ -12,6 +12,29 @@ import {
 } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 
+export interface PostProps {
+  image: string[] | null;
+  creatorId: string;
+  creatorName: string;
+  createdAt: number;
+  updatedAt: number;
+  title: string;
+  amount: number;
+  date: string;
+  height: string;
+  id: string;
+  like: string[];
+  num: number;
+  phone: string;
+  place: string;
+  price: string;
+  status: 'sale' | 'sold-out' | 'reservation';
+  variant: string;
+  views: number;
+  width: string;
+  contents: string;
+}
+
 export const getPosts = async (pathname: string) => {
   let post: DocumentData[] = [];
   const postRef = collection(dbService, `${pathname}`);
@@ -28,15 +51,17 @@ export const getPosts = async (pathname: string) => {
 };
 
 export const getPost = async (pathname: string, postId: string) => {
-  let post: DocumentData[] = [];
-  const docRef = doc(dbService, pathname, postId);
+  const docRef = doc(dbService, `${pathname}/${postId}`);
   const docSnapshot = await getDoc(docRef);
 
-  if (docSnapshot.exists()) {
-    post.push(docSnapshot.data());
-  }
+  const res = docSnapshot.data();
+  const contents = res?.contents
+    .replace('<iframe', `<div class=\'ql-video-warpper\'><iframe`)
+    .replace('</iframe>', `</iframe></div>`);
 
-  return post;
+  if (res) {
+    return { ...res, contents } as PostProps;
+  }
 };
 
 export const deletePost = async (

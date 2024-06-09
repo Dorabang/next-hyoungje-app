@@ -8,7 +8,7 @@ interface WildMarketDetailPageProps {
 const WildMarketDetailPage = ({
   params: { id },
 }: WildMarketDetailPageProps) => {
-  return <PostDetail id={id} />;
+  return <PostDetail postId={id} />;
 };
 
 export default WildMarketDetailPage;
