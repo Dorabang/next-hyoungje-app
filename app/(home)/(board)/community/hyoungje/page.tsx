@@ -8,7 +8,7 @@ const HyoungjePage = () => {
   return (
     <ContainerBox>
       <Breadcrumbs />
-      <div className='border-t border-grayColor-200 mt-2 mb-10'></div>
+      <div className='border-t border-grayColor-200 mt-2 mb-10' />
       <div
         className={`flex flex-col gap-4
         w-full px-3 md:px-0 mx-auto
