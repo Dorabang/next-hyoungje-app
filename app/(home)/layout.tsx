@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import Script from 'next/script';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import RecoilRootWrapper from '@/components/RecoilRootWrapper';
 import QueryClientWrapper from '@/components/QueryClientWrapper';
 import './globals.css';
@@ -28,15 +27,13 @@ export default function RootLayout({
       <body
         className={`${noto_sans_kr.className} scrollbar scrollbar-thumb-grayColor-300 scrollbar-track-grayColor-100`}
       >
-        <AppRouterCacheProvider>
-          <QueryClientWrapper>
-            <RecoilRootWrapper>
-              <Nav />
-              {children}
-              <Footer />
-            </RecoilRootWrapper>
-          </QueryClientWrapper>
-        </AppRouterCacheProvider>
+        <QueryClientWrapper>
+          <RecoilRootWrapper>
+            <Nav />
+            {children}
+            <Footer />
+          </RecoilRootWrapper>
+        </QueryClientWrapper>
         <Script
           type='text/javascript'
           strategy='afterInteractive'
