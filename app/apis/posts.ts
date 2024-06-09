@@ -9,6 +9,8 @@ import {
   getDoc,
   doc,
   deleteDoc,
+  limit,
+  where,
 } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 
@@ -85,4 +87,44 @@ export const deletePost = async (
 
   const postRef = doc(dbService, pathname, id);
   await deleteDoc(postRef);
+};
+
+export const getPrevPost = async (pathname: string, postNum: number) => {
+  let prevPost: DocumentData = {};
+  const collectionRef = collection(dbService, pathname);
+
+  const q = query(
+    collectionRef,
+    where('num', '<', postNum),
+    orderBy('num', 'desc'),
+    limit(1),
+  );
+
+  const querySnapshot = await getDocs(q);
+  if (querySnapshot.docs.length === 0) return null;
+
+  querySnapshot.forEach((doc) => {
+    return (prevPost = { id: doc.id, ...doc.data() });
+  });
+
+  return prevPost;
+};
+export const getNextPost = async (pathname: string, postNum: number) => {
+  let nextPost: DocumentData | null = null;
+  const collectionRef = collection(dbService, pathname);
+
+  const q = query(
+    collectionRef,
+    where('num', '>', postNum),
+    orderBy('num', 'asc'),
+    limit(1),
+  );
+
+  const querySnapshot = await getDocs(q);
+  if (querySnapshot.docs.length === 0) return null;
+  querySnapshot.forEach((doc) => {
+    return (nextPost = { id: doc.id, ...doc.data() });
+  });
+
+  return nextPost;
 };
