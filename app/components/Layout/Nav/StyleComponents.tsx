@@ -5,8 +5,9 @@ export const btnStyle = {
   fontSize: '18px',
   padding: '10px 20px',
   fontWeight: '500',
-  backgroundColor: 'transparent',
+  backgroundColor: 'transparent !important',
   '&:hover': {
+    backgroundColor: 'rgba(255,255,255,.2) !important',
     color: '#000 !important',
   },
 };
@@ -18,13 +19,14 @@ export const mgnbBtnStyle = {
 };
 
 export const authBtnStyle = {
-  color: '#999',
+  color: '#666 !important',
   fontSize: 15,
   padding: '10px',
   fontWeight: '400',
+  backgroundColor: 'transparent !important',
   '&:hover': {
-    color: '#333',
-    background: '#fafafa',
+    color: '#333 !important',
+    background: 'rgba(255,255,255,.2) !important',
   },
 };
 
@@ -32,8 +34,9 @@ export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#fefefe',
+    backgroundColor: 'rgba(255,255,255,0.75)',
     color: 'rgba(0, 0, 0)',
-    top: '24px',
+    marginTop: '22px !important',
+    backdropFilter: 'blur(10px) !important',
   },
 }));

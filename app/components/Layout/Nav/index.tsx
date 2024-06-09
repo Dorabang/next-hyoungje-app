@@ -97,6 +97,7 @@ const Nav = () => {
 
   return (
     <Fragment>
+      <div className={`h-[80px] ${isScrolled ? 'block' : 'hidden'}`} />
       <AppBar
         position={isScrolled ? 'fixed' : 'static'}
         sx={{
@@ -146,9 +147,7 @@ const Nav = () => {
                       <LightTooltip
                         key={item.name}
                         title={
-                          item.depth.length === 0 ? (
-                            ''
-                          ) : (
+                          item.depth.length === 0 ? null : (
                             <MenuList>
                               {item.depth?.map((item2) => (
                                 <MenuItem
@@ -176,9 +175,7 @@ const Nav = () => {
                     <LightTooltip
                       key={item.name}
                       title={
-                        item.depth.length === 0 ? (
-                          ''
-                        ) : (
+                        item.depth.length === 0 ? null : (
                           <MenuList>
                             {item.depth?.map((item2) => (
                               <MenuItem
