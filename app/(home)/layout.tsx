@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
+import Script from 'next/script';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import RecoilRootWrapper from '@/components/RecoilRootWrapper';
+import QueryClientWrapper from '@/components/QueryClientWrapper';
+import './globals.css';
 import Nav from '@/components/Layout/Nav';
 import Footer from '@/components/Layout/Footer/Footer';
-import './globals.css';
-import RecoilRootWrapper from '@/components/RecoilRootWrapper';
-import Script from 'next/script';
-import QueryClientWrapper from '@/components/QueryClientWrapper';
 
 const noto_sans_kr = Noto_Sans_KR({
   weight: ['400', '500', '700'],
@@ -27,13 +28,15 @@ export default function RootLayout({
       <body
         className={`${noto_sans_kr.className} scrollbar scrollbar-thumb-grayColor-300 scrollbar-track-grayColor-100`}
       >
-        <QueryClientWrapper>
-          <RecoilRootWrapper>
-            <Nav />
-            {children}
-            <Footer />
-          </RecoilRootWrapper>
-        </QueryClientWrapper>
+        <AppRouterCacheProvider>
+          <QueryClientWrapper>
+            <RecoilRootWrapper>
+              <Nav />
+              {children}
+              <Footer />
+            </RecoilRootWrapper>
+          </QueryClientWrapper>
+        </AppRouterCacheProvider>
         <Script
           type='text/javascript'
           strategy='afterInteractive'

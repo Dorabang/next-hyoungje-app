@@ -1,7 +1,6 @@
 'use client';
 import { useForm, Controller } from 'react-hook-form';
 import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
 import { authService, dbService } from '@/firebase';
 import { ErrorMessage } from '@hookform/error-message';
 import { useRouter } from 'next/navigation';
@@ -14,6 +13,7 @@ import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import imageCompression from 'browser-image-compression';
 import { addDoc, collection } from 'firebase/firestore';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import { Stack } from '@mui/system';
 
 interface Inputs {
   email: string;
