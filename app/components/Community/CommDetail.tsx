@@ -1,5 +1,5 @@
 'use client';
-import { getPosts } from '@/apis/posts';
+import { getPost } from '@/apis/posts';
 import { useEffect, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import { useRecoilValue } from 'recoil';
@@ -13,7 +13,6 @@ import { DocumentData } from 'firebase/firestore';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import { deletePost } from '@/apis/posts';
 import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
-import getPost from '@/apis/getPost';
 
 interface CommDetailPageProps {
   id: string;
@@ -31,8 +30,7 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
     if (!post) {
       const getCurrentPost = async () => {
         const response = await getPost(pathname[2], id);
-        console.log('🚀 ~ getCurrentPost ~ response:', response);
-        setPost(response[0]);
+        response && setPost(response);
       };
       getCurrentPost();
     }

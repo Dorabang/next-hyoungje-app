@@ -76,7 +76,6 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       contents: value,
       image: imageIdArr,
       like: [],
-      comment: [],
       views: 0,
       creatorName: user?.displayName,
       creatorId: user?.uid,
