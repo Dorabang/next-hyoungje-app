@@ -36,6 +36,7 @@ export default function RootLayout({
         </QueryClientWrapper>
         <Script
           type='text/javascript'
+          strategy='afterInteractive'
           src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false`}
         />
       </body>
