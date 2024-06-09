@@ -1,35 +1,30 @@
 import { dbService } from '@/firebase';
-import {
-  DocumentData,
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
+import { DocumentData, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 interface LikeProps {
   updateData: DocumentData;
-  postId: DocumentData | null;
-  pathname: string;
-}
-
-interface HasLikeProps {
+  postId: string | null;
   pathname: string;
   userId?: string;
+  updateBookmark: DocumentData;
+}
+
+export interface HasLikeProps {
+  pathname: string;
   postId: string;
 }
 
 export const updatedLike = async (data: LikeProps) => {
-  const { updateData, postId, pathname } = data;
+  const { updateData, postId, pathname, userId, updateBookmark } = data;
 
-  if (!postId) return;
+  if (!postId || !userId) return;
 
   try {
     const postRef = doc(dbService, `${pathname}/${postId}`);
+    const userRef = doc(dbService, `users/${userId}`);
 
     await updateDoc(postRef, { like: updateData });
+    await updateDoc(userRef, { like: updateBookmark });
     return true;
   } catch (e) {
     console.log('🚀 ~ disabledLike ~ e:', e);
@@ -38,25 +33,14 @@ export const updatedLike = async (data: LikeProps) => {
 };
 
 export const hasLike = async (data: HasLikeProps) => {
-  const { userId, pathname, postId } = data;
+  const { pathname, postId } = data;
+  let like;
 
-  if (!userId) return false;
+  const likeRef = doc(dbService, `${pathname}/${postId}`);
+  const likeSnapshot = await getDoc(likeRef);
+  if (likeSnapshot.exists()) {
+    like = likeSnapshot.data().like;
 
-  let like: DocumentData[] = [];
-  const likeRef = collection(dbService, `${pathname}`);
-
-  const q = query(likeRef, where('like', '==', userId));
-
-  try {
-    const likeSnap = await getDocs(q);
-    likeSnap.forEach((doc) => {
-      like.push({ ...doc.data() });
-    });
-
-    if (like.length !== 0) return true;
-    return false;
-  } catch (err) {
-    console.log('🚀 ~ getAdmin ~ err:', err);
-    return false;
+    return like;
   }
 };

@@ -1,30 +1,63 @@
 'use client';
-import { hasLike } from '@/apis/like';
-import { useEffect, useState } from 'react';
+import getUser from '@/apis/getUser';
+import { updatedLike } from '@/apis/like';
+import useHasLikes from '@/hooks/queries/useHasLikes';
+import { DocumentData } from 'firebase/firestore';
 import { LiaHeartSolid, LiaHeart } from 'react-icons/lia';
 
 interface HasLikesProps {
-  pathname: string;
   userId?: string;
+  pathname: string;
   postId: string;
 }
 
-const HasLikes = ({ pathname, userId, postId }: HasLikesProps) => {
-  const [hasLikes, setHasLikes] = useState(false);
+const HasLikes = ({ userId, postId, pathname }: HasLikesProps) => {
+  const { data, refetch } = useHasLikes({ pathname, postId });
 
-  useEffect(() => {
-    const getLikeArr = async () => {
-      if (!userId) return;
-      const result = await hasLike({ pathname, userId, postId });
-      setHasLikes(result);
+  const handleUpdatedLikes = async () => {
+    if (!userId || !data) return;
+
+    const hasLike = data?.filter((id: string) => id === userId).length > 0;
+
+    const bookmark = (await getUser(userId))?.like;
+
+    const updatedBookmarkList =
+      bookmark.filter((post: string) => post.includes(postId)).length > 0
+        ? [...bookmark.filter((item: string) => !item.includes(postId))]
+        : bookmark.length !== 0
+          ? [...bookmark, `${pathname}/${postId}`]
+          : [`${pathname}/${postId}`];
+
+    const updatedLikeList: DocumentData = hasLike
+      ? [...data.filter((id: string) => id !== userId)]
+      : data?.length !== 0
+        ? [...data, userId]
+        : [userId];
+
+    const likeData = {
+      updateData: updatedLikeList,
+      postId: postId,
+      pathname: pathname,
+      userId: userId,
+      updateBookmark: updatedBookmarkList,
     };
-    getLikeArr();
-  }, [pathname, userId, postId]);
 
-  return hasLikes && userId ? (
-    <LiaHeartSolid size={20} className='text-[#BF1E2E]' />
-  ) : (
-    <LiaHeart size={20} />
+    const result = await updatedLike(likeData);
+    if (result) return refetch();
+  };
+
+  return (
+    <button
+      onClick={() => handleUpdatedLikes()}
+      className={`flex gap-2 items-center ${userId ? 'cursor-pointer' : ''}`}
+    >
+      {data?.filter((item: string) => item === userId).length > 0 ? (
+        <LiaHeartSolid size={20} className='text-[#BF1E2E]' />
+      ) : (
+        <LiaHeart size={20} />
+      )}
+      {data?.length}
+    </button>
   );
 };
 
