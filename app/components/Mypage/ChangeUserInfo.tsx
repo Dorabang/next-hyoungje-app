@@ -44,12 +44,10 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
       await signInWithEmailAndPassword(
         authService,
         user.email,
-        getValues('passwordCheck')
+        getValues('passwordCheck'),
       )
         .then((response) => {
           setIsEdit(response.user.uid === user.uid);
-          // console.log('response', response);
-          // console.log('user', user);
         })
         .catch((error: AuthError) => {
           const { code } = error as { code: string };
@@ -83,7 +81,7 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
 
   const handleDeleteUser = async () => {
     const ok = confirm(
-      `탈퇴하시겠습니까?\n(이 전에 작성한 게시물 및 댓글은 삭제되지 않습니다. 탈퇴 후에는 형제난원의 서비스를 제한적으로 사용하실 수 있습니다.)`
+      `탈퇴하시겠습니까?\n(이 전에 작성한 게시물 및 댓글은 삭제되지 않습니다. 탈퇴 후에는 형제난원의 서비스를 제한적으로 사용하실 수 있습니다.)`,
     );
 
     if (ok && user) {
@@ -93,7 +91,14 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
   };
 
   return (
-    <Card variant='outlined' sx={{ padding: { md: '30px 50px' } }}>
+    <Card
+      variant='outlined'
+      sx={{
+        padding: '30px 50px',
+        width: { sm: '100%', md: '500px' },
+        marginX: 'auto',
+      }}
+    >
       <Typography
         align='center'
         paddingBottom={4}

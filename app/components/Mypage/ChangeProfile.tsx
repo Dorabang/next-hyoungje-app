@@ -107,7 +107,14 @@ const ChangeProfile = ({ user }: { user: User }) => {
   if (!user) return;
 
   return (
-    <Card variant='outlined' sx={{ padding: { md: '30px 50px' } }}>
+    <Card
+      variant='outlined'
+      sx={{
+        padding: '30px 50px',
+        width: { sm: '100%', md: '500px' },
+        marginX: 'auto',
+      }}
+    >
       <Typography
         align='center'
         paddingBottom={4}
@@ -131,8 +138,8 @@ const ChangeProfile = ({ user }: { user: User }) => {
           <p className='text-neutral-700'>프로필 이미지</p>
           <label className='cursor-pointer'>
             <div
-              className='h-40 w-40 rounded-full overflow-hidden relative
-          hover:opacity-70 transition-opacity
+              className='h-32 w-32 flex justify-center items-center rounded-full overflow-hidden
+          hover:opacity-70 transition-opacity border boder-grayColor-100
           '
             >
               <AutoHeightImageWrapper
