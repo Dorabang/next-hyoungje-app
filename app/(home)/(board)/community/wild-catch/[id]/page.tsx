@@ -1,13 +1,11 @@
 import CommDetailPage from '@/components/Community/CommDetail';
 
-interface WildMarketDetailPageProps {
+interface WildCatchDetailPageProps {
   params: { id: string };
 }
 
-const WildMarketDetailPage = ({
-  params: { id },
-}: WildMarketDetailPageProps) => {
-  return <CommDetailPage id={id} />;
+const WildCatchDetailPage = ({ params: { id } }: WildCatchDetailPageProps) => {
+  return <CommDetailPage postId={id} />;
 };
 
-export default WildMarketDetailPage;
+export default WildCatchDetailPage;

@@ -9,10 +9,10 @@ import { authState } from '@/recoil/atoms';
 import { dbService } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { User, updateProfile } from 'firebase/auth';
-import uploadImage from '@/utils/uploadImage';
+import uploadImage from '@/apis/uploadImage';
 import imageCompression from 'browser-image-compression';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import getUser from '@/utils/getUser';
+import getUser from '@/apis/getUser';
 
 interface Inputs {
   displayName: string;
@@ -32,7 +32,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
   useEffect(() => {
     if (user) {
       getUser(user.uid).then(
-        (response) => response && setValue('phone', response?.phoneNumber)
+        (response) => response && setValue('phone', response?.phoneNumber),
       );
     }
   }, [user, setValue]);
@@ -83,7 +83,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
         {
           phoneNumber: phone,
         },
-        { merge: true }
+        { merge: true },
       ).then(() => alert('수정이 완료되었습니다.'));
     }
 
@@ -96,10 +96,10 @@ const ChangeProfile = ({ user }: { user: User }) => {
           await setDoc(
             displayNameRef,
             { displayName: displayName },
-            { merge: true }
+            { merge: true },
           );
           alert('수정이 완료되었습니다.');
-        }
+        },
       );
     }
   };

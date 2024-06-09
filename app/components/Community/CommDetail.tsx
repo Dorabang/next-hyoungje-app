@@ -1,42 +1,63 @@
 'use client';
-import { getPosts } from '@/apis/posts';
 import { useEffect, useState } from 'react';
-import ContainerBox from '@/components/ContainerBox';
-import { useRecoilValue } from 'recoil';
-import { authState } from '@/recoil/atoms';
-import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
-import DateFormat from '@/utils/DateFormat';
+import { useRecoilValue } from 'recoil';
 import ReactQuill from 'react-quill';
-import GetImageURL from '@/utils/getImageURL';
-import { DocumentData } from 'firebase/firestore';
-import PrevNextPost from '@/components/Posts/PrevNextPost';
+import { IoArrowBack } from 'react-icons/io5';
+import { authState } from '@/recoil/atoms';
+
 import { deletePost } from '@/apis/posts';
+import { getImageURL } from '@/apis/images';
+import { updatedViews } from '@/apis/updatedViews';
+import getAdmin from '@/apis/getAdmin';
+import { useGetPost } from '@/hooks/queries/usePosts';
+import DateFormat from '@/utils/DateFormat';
+import ContainerBox from '@/components/ContainerBox';
+import PrevNextPost from '@/components/Posts/PrevNextPost';
 import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
+import Loading from '../Loading';
+import HasLikes from '../HasLikes';
+import Comments from '../Comment/Comments';
 
 interface CommDetailPageProps {
-  id: string;
+  postId: string;
 }
 
-const CommDetailPage = ({ id }: CommDetailPageProps) => {
-  const [posts, setPosts] = useState<DocumentData[]>([]);
-  const [post, setPost] = useState<DocumentData | null>(null);
-
-  const pathname = usePathname().split('/');
+const CommDetailPage = ({ postId }: CommDetailPageProps) => {
+  const router = useRouter();
   const user = useRecoilValue(authState);
 
-  const router = useRouter();
+  const [admin, setAdmin] = useState<boolean>(false);
+
+  const path = usePathname().split('/');
+  const pathname = path[2];
+  const { data, isLoading } = useGetPost(pathname, postId);
+  const [image, setImage] = useState<string[] | null>(null);
 
   useEffect(() => {
-    if (!post) {
-      const currentPost = posts.find((item) => item.id === id);
-      currentPost && setPost(currentPost);
+    const updatePostView = async () => {
+      if (data) {
+        await updatedViews(data.views, `${pathname}/${postId}`);
+      }
+    };
+    updatePostView();
+  }, [data, pathname, postId]);
+
+  useEffect(() => {
+    if (image === null && data) {
+      const imgId = data.image;
+      imgId?.forEach(async (img: string) => {
+        const url = await getImageURL(pathname, data.creatorId, img);
+        setImage((prev) =>
+          prev !== null
+            ? prev.includes(url)
+              ? [...prev]
+              : [...prev, url]
+            : [url],
+        );
+      });
     }
-  }, [post, id, posts]);
-
-  const [image, setImage] = useState<string[]>();
-
-  const postImages = post && post?.image;
+  }, [image, data, pathname]);
 
   const modules = {
     toolbar: { container: [] },
@@ -45,37 +66,39 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
   const handleDeletePost = (id: string) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
-    if (!post) return;
+    if (!data) return;
 
     if (ok) {
-      deletePost(post, user, pathname[2], id);
-      router.push(`/${pathname[1]}/${pathname[2]}`);
+      deletePost(data, user, pathname, id);
+      router.push(`/community/${pathname}`);
     }
   };
 
   useEffect(() => {
-    /* setPosts(querySnapshot); */
-    getPosts(pathname[2]).then((response) => response && setPosts(response));
-  }, [pathname]);
-
-  useEffect(() => {
-    const getImage = (value: string) => {
-      return setImage((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
-      );
-    };
-
-    if (postImages && post.creatorId) {
-      postImages.map((id: string) =>
-        GetImageURL(
-          `${pathname[2]}/${post.creatorId}/post/${id}/image`,
-          getImage,
-        ),
-      );
+    if (!admin) {
+      const getAdminData = async () => {
+        if (user) {
+          const response = await getAdmin(user.uid);
+          response && setAdmin(response);
+        }
+      };
+      getAdminData();
     }
-  }, [postImages, post?.creatorId, pathname]);
+  }, [admin, user]);
 
-  if (!post) return;
+  if (isLoading)
+    return (
+      <ContainerBox className='py-20'>
+        <Loading />
+      </ContainerBox>
+    );
+
+  if (!data)
+    return (
+      <ContainerBox className='py-20'>
+        삭제된 게시물이거나 찾을 수 없는 게시물입니다.
+      </ContainerBox>
+    );
 
   return (
     <ContainerBox>
@@ -87,23 +110,23 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
       >
         <div
           className='p-2 cursor-pointer'
-          onClick={() => router.push(`/${pathname[1]}/${pathname[2]}`)}
+          onClick={() => router.push(`/community}/${pathname}`)}
         >
           <IoArrowBack size={18} />
         </div>
 
-        <h2 className='text-lg font-bold flex-grow'>{post?.title}</h2>
+        <h2 className='text-lg font-bold flex-grow'>{data.title}</h2>
 
-        {user?.uid === post.creatorId && (
+        {(user?.uid === data.creatorId || admin) && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
             <li
               onClick={() =>
-                router.push(`/${pathname[1]}/${pathname[2]}/edit/${post.id}`)
+                router.push(`/community/${pathname}/edit/${postId}`)
               }
             >
               편집
             </li>
-            <li onClick={() => handleDeletePost(id)}>삭제</li>
+            <li onClick={() => handleDeletePost(postId)}>삭제</li>
           </ul>
         )}
       </div>
@@ -112,34 +135,41 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
       <ul className='flex gap-4 pt-2 pb-6 justify-end text-sm text-gray-500'>
         <li>
           <span className='pr-2 font-semibold'>작성자</span>
-          {post.creatorName}
+          {data.creatorName}
         </li>
         <li>
           <span className='pr-2 font-semibold'>등록일자</span>
-          {DateFormat(post.createdAt)}
+          {DateFormat(data.createdAt)}
         </li>
         <li>
           <span className='pr-2 font-semibold'>조회수</span>
-          {post.views}
+          {data.views + 1}
+        </li>
+        <li>
+          <HasLikes postId={postId} userId={user?.uid} pathname={pathname} />
         </li>
       </ul>
 
       <div className='w-full px-5 md:px-0 md:w-[1016px] mx-auto pb-[100px]'>
         {/* image */}
         <div className='pt-4 w-full'>
-          {postImages &&
-            image &&
-            image.map((imageURL) => (
-              <div
-                key={imageURL}
-                className='relative w-full md:max-w-[800px] mx-auto'
-              >
-                <AutoHeightImageWrapper
-                  src={imageURL}
-                  alt={`${post.creatorName} 업로드 이미지`}
-                />
-              </div>
-            ))}
+          {data.image ? (
+            image !== null ? (
+              image.map((imageURL) => (
+                <div
+                  key={imageURL}
+                  className='relative w-full md:max-w-[800px] mx-auto'
+                >
+                  <AutoHeightImageWrapper
+                    src={imageURL}
+                    alt={`${data.creatorName} 업로드 이미지`}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className='w-full h-[400px] bg-grayColor-100 animate-pulse' />
+            )
+          ) : null}
         </div>
 
         {/* contents */}
@@ -151,14 +181,22 @@ const CommDetailPage = ({ id }: CommDetailPageProps) => {
           [&_.ql-container.ql-snow]:border-none
           [&_.ql-container]:text-base
           [&_.ql-editor]:p-0
+          [&_.ql-video-wrapper]:aspect-video
+          [&_.ql-video]:block
+          [&_.ql-video]:w-full
+          [&_.ql-video]:h-full
+          md:[&_.ql-video]:min-h-[500px]
+          [&_.ql-video]:min-h-[300px]
           pt-4
         '
         >
-          <ReactQuill defaultValue={post.contents} modules={modules} readOnly />
+          <ReactQuill defaultValue={data.contents} modules={modules} readOnly />
         </div>
       </div>
 
-      <PrevNextPost pathname={`${pathname[1]}/${pathname[2]}`} post={post} />
+      <Comments pathname={`${pathname}/${postId}`} user={user} />
+
+      <PrevNextPost pathname={pathname} post={data} />
     </ContainerBox>
   );
 };

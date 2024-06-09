@@ -1,20 +1,17 @@
 'use client';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { DocumentData, doc, updateDoc } from 'firebase/firestore';
+import { createContext, useContext } from 'react';
+import { DocumentData } from 'firebase/firestore';
 import { BoardProps, PostContextType } from './types';
 import { authState } from '@/recoil/atoms';
 import { useRecoilValue } from 'recoil';
 import { usePathname } from 'next/navigation';
-import getAdmin from '@/utils/getAdmin';
 import PostsLoading from '../Posts/PostsLoading';
 import PostsNotFound from '../Posts/PostsNotFound';
-import { dbService } from '@/firebase';
 import { deletePost } from '@/apis/posts';
 import PostList from './PostList';
 
 const defaultPostContext: PostContextType = {
   user: null,
-  admin: null,
   pathname: '/',
 };
 
@@ -23,23 +20,11 @@ export const PostContext = createContext(defaultPostContext);
 export const usePostContext = () => useContext(PostContext);
 
 const Board = ({ children }: BoardProps) => {
-  const [admin, setAdmin] = useState<DocumentData | null>(null);
-
   const pathname = usePathname();
   const user = useRecoilValue(authState);
 
-  useEffect(() => {
-    if (!admin) {
-      const getAdminData = async () => {
-        const response = await getAdmin();
-        setAdmin(response);
-      };
-      getAdminData();
-    }
-  }, [admin]);
-
   return (
-    <PostContext.Provider value={{ user, pathname, admin }}>
+    <PostContext.Provider value={{ user, pathname }}>
       <ul className='w-full border-b border-neutral-500'>{children}</ul>
     </PostContext.Provider>
   );
@@ -50,9 +35,11 @@ const Headers = ({ type = 'etc' }: { type?: 'community' | 'etc' }) => {
     <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400'>
       <div className='w-[4%] hidden lg:block'>번호</div>
       {type === 'etc' ? (
-        <div className='w-[6%] hidden lg:block'>종류</div>
+        <>
+          <div className='w-[6%] hidden lg:block'>종류</div>
+          <div className='min-w-[90px] w-[10%]'>분류</div>
+        </>
       ) : null}
-      <div className='min-w-[90px] w-[10%]'>분류</div>
       <div className='flex-grow text-left'>제목</div>
       {type === 'etc' ? (
         <>
@@ -93,18 +80,6 @@ export const Bodys = ({
       editPosts(deletePosts);
     }
   };
-
-  const handleClickViewUp = async (id: string) => {
-    const post = posts && posts.find((item) => item.id === id);
-
-    if (post) {
-      const newPostObj = { ...post, views: post.views + 1 };
-      const docRef = doc(dbService, `${pathname}/${post.id}`);
-
-      await updateDoc(docRef, newPostObj);
-    }
-  };
-
   return (
     <>
       {!isLoading ? (
@@ -118,7 +93,6 @@ export const Bodys = ({
                 post={post}
                 user={user}
                 handleDeletePost={handleDeletePost}
-                handleClickViewUp={handleClickViewUp}
               />
             );
           })
