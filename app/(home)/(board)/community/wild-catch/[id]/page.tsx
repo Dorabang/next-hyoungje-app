@@ -5,7 +5,7 @@ interface WildCatchDetailPageProps {
 }
 
 const WildCatchDetailPage = ({ params: { id } }: WildCatchDetailPageProps) => {
-  return <CommDetailPage id={id} />;
+  return <CommDetailPage postId={id} />;
 };
 
 export default WildCatchDetailPage;

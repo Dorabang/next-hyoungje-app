@@ -1,4 +1,4 @@
-import { getPosts } from '@/apis/posts';
+import { getNextPost, getPrevPost } from '@/apis/posts';
 import { DocumentData } from 'firebase/firestore';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -10,7 +10,6 @@ interface PrevNextPostProps {
 }
 
 const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
-  const [posts, setPosts] = useState<DocumentData[] | null>(null);
   const [prevPost, setPrevPosts] = useState<DocumentData | null | undefined>(
     null,
   );
@@ -19,33 +18,14 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
   );
 
   useEffect(() => {
-    if (posts === null) {
-      getPosts(pathname).then((response) => response && setPosts(response));
-    }
-  }, [pathname, posts]);
-
-  useEffect(() => {
-    if (posts !== null) {
-      const postIdx = posts && posts.findIndex((item) => item.id === post.id);
-
-      if (!prevPost && postIdx !== 0 && postIdx !== null) {
-        const prev = posts && posts.find((item, idx) => idx === postIdx - 1);
-        setPrevPosts(prev);
-      }
-
-      if (
-        !nextPost &&
-        postIdx !== null &&
-        posts !== null &&
-        posts.length - 1 &&
-        postIdx !== null
-      ) {
-        const next = posts.find((item, idx) => idx === postIdx + 1);
-        setNextPosts(next);
-      }
-    }
-    return;
-  }, [post, posts, prevPost, nextPost]);
+    const getPrevNext = async () => {
+      const prev = await getPrevPost(pathname, post.num);
+      setPrevPosts(prev);
+      const next = await getNextPost(pathname, post.num);
+      setNextPosts(next);
+    };
+    getPrevNext();
+  }, [pathname, post.num]);
 
   return (
     <>
@@ -55,10 +35,15 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
             {prevPost && (
               <Link
                 href={`/${pathname}/${prevPost.id}`}
-                className='text-left flex flex-col justify-start items-start'
+                className='text-left flex gap-1 justify-start items-center text-sm transition-colors text-grayColor-300 hover:text-grayColor-400 active:text-grayColor-400'
               >
-                <AiOutlineLeft size={24} />
-                <p className='mt-2 text-sm'>{prevPost.title}</p>
+                <AiOutlineLeft size={20} />
+                <p>
+                  이전 글 ・{' '}
+                  {prevPost.title.length > 7
+                    ? prevPost.title.substr(0, 7) + '...'
+                    : prevPost.title}
+                </p>
               </Link>
             )}
           </div>
@@ -66,10 +51,15 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
             {nextPost && (
               <Link
                 href={`/${pathname}/${nextPost.id}`}
-                className='text-right flex flex-col justify-end items-end'
+                className='text-right flex gap-1 justify-end items-center text-sm transition-colors text-grayColor-300 hover:text-grayColor-400 active:text-grayColor-400'
               >
-                <AiOutlineRight size={24} />
-                <p className='mt-2 text-sm'>{nextPost.title}</p>
+                <p>
+                  {nextPost.title.length > 7
+                    ? nextPost.title.substr(0, 7) + '...'
+                    : nextPost.title}{' '}
+                  ・ 다음 글
+                </p>
+                <AiOutlineRight size={20} />
               </Link>
             )}
           </div>

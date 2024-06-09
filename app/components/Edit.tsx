@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { MouseEvent, use, useEffect, useState } from 'react';
 import ContainerBox from './ContainerBox';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
@@ -15,10 +15,11 @@ import Editor from './Editor';
 import { Button } from '@mui/material';
 import uploadImage from '@/apis/uploadImage';
 import { dbService, storageService } from '@/firebase';
-import GetImageURL from '@/apis/getImageURL';
 import { deleteObject, ref } from 'firebase/storage';
+import { getImageURL } from '@/apis/images';
 
 const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
+  console.log('🚀 ~ Edit ~ post:', post);
   const router = useRouter();
 
   const user = useRecoilValue(authState);
@@ -39,21 +40,18 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
   const contents = post.contents;
 
-  const postImages = post && post?.image;
+  const postImages = post && post.image;
 
   useEffect(() => {
-    const getImage = (value: string) => {
-      return setImages((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
-      );
-    };
-
-    if (postImages && post.creatorId) {
-      postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
-      );
+    if (postImages) {
+      postImages.forEach(async (img: string) => {
+        const url = await getImageURL(pathname, post.creatorId, img);
+        setImages((prev) =>
+          prev ? (!prev?.includes(url) ? [...prev, url] : prev) : [url],
+        );
+      });
     }
-  }, [postImages, post.creatorId, pathname]);
+  }, [postImages, pathname, post.creatorId]);
 
   useEffect(() => {
     setValue(contents);
@@ -61,7 +59,8 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
   const inputWrapperClass = 'flex w-full border-b border-grayColor-200 p-2';
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!user) return;
 
     imageArr?.map(async (value) => {
@@ -83,25 +82,21 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
     const newPostObj = {
       title: title,
+      contents: value,
       status: status,
       variant: variant,
       phone: phone,
       place: place,
-      contents: value,
       date: date,
       price: price,
-      height: height,
-      width: width,
-      amount: amount,
+      ...(pathname.includes('market') && {
+        height: height,
+        width: width,
+        amount: amount,
+      }),
       image: imageIdArr,
-      like: [],
-      comment: [],
-      views: 0,
-      creatorName: user?.displayName,
-      creatorId: user?.uid,
       updatedAt: Date.now(),
     };
-
     const docRef = doc(dbService, `${pathname}/${post.id}`);
 
     await updateDoc(docRef, newPostObj);
@@ -116,6 +111,8 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     setStatus('');
     router.back();
   };
+  console.log('🚀 ~ handleSubmit ~ post.id:', post.id);
+  console.log('🚀 ~ handleSubmit ~ post.id:', post.id);
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -268,46 +265,50 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
             />
           </div>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='height'>* 키</label>
-            <input
-              name='height'
-              type='text'
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
+          {pathname.includes('market') && (
+            <>
+              <div className={`${inputWrapperClass}`}>
+                <label htmlFor='height'>* 키</label>
+                <input
+                  name='height'
+                  type='text'
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  className='outline-none pl-3'
+                  required
+                />
+              </div>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='width'>* 폭</label>
-            <input
-              name='width'
-              type='text'
-              value={width}
-              onChange={(e) => setWidth(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
+              <div className={`${inputWrapperClass}`}>
+                <label htmlFor='width'>* 폭</label>
+                <input
+                  name='width'
+                  type='text'
+                  value={width}
+                  onChange={(e) => setWidth(e.target.value)}
+                  className='outline-none pl-3'
+                  required
+                />
+              </div>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='amount'>촉수</label>
-            <input
-              name='amount'
-              type='text'
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className='outline-none pl-3'
-            />
-          </div>
+              <div className={`${inputWrapperClass}`}>
+                <label htmlFor='amount'>촉수</label>
+                <input
+                  name='amount'
+                  type='text'
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className='outline-none pl-3'
+                />
+              </div>
+            </>
+          )}
 
           <div className={`${inputWrapperClass}`}>
             <p className='w-[90px] border-r border-neutral-300 cursor-default'>
               파일 첨부
             </p>
-            <div className='flex flex-wrap pl-3'>
+            <div className='flex flex-col pl-3'>
               <label
                 htmlFor='addFile'
                 className='py-1 w-[100px_!important] text-center cursor-pointer
@@ -326,7 +327,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
                 />
               </label>
               {(images || imageArr) && (
-                <ul className='w-full py-4 flex gap-2'>
+                <ul className='w-full py-4 flex flex-wrap gap-2'>
                   {images &&
                     images.map((item) => (
                       <li key={item}>
@@ -389,7 +390,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
               type='submit'
               size='large'
               variant='contained'
-              onClick={handleSubmit}
+              onClick={(e) => handleSubmit(e)}
             >
               등록하기
             </Button>

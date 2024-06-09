@@ -1,9 +1,8 @@
 import { dbService } from '@/firebase';
-import { DocumentData, doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 
-export const updatedViews = async (post: DocumentData, pathname: string) => {
-  const newPostObj = { ...post, views: post.views + 1 };
-  const docRef = doc(dbService, `${pathname}/${post.id}`);
+export const updatedViews = async (views: number, pathname: string) => {
+  const docRef = doc(dbService, `${pathname}`);
 
-  await updateDoc(docRef, newPostObj);
+  await updateDoc(docRef, { views: views + 1 });
 };

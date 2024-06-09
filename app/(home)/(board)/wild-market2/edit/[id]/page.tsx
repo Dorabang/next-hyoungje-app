@@ -1,26 +1,15 @@
 'use client';
 import Edit from '@/components/Edit';
-import { getPosts } from '@/apis/posts';
-import { DocumentData } from 'firebase/firestore';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useGetPost } from '@/hooks/queries/usePosts';
 
 const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
-  const pathname = usePathname().trim().split('/');
+  const pathname = usePathname().trim().split('/')[1];
+  const { data } = useGetPost(pathname, id);
 
-  const [posts, setPosts] = useState<DocumentData[]>([]);
+  if (!data) return;
 
-  const post = posts.find((item) => item.id === id);
-
-  useEffect(() => {
-    if (posts.length === 0) {
-      getPosts(pathname[1]).then((response) => response && setPosts(response));
-    }
-  }, [posts.length, pathname]);
-
-  if (!post) return;
-
-  return <Edit post={post} pathname={pathname[1]} />;
+  return <Edit post={data} pathname={pathname} />;
 };
 
 export default DetailEditPage;

@@ -85,7 +85,6 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       amount: amount,
       image: imageIdArr,
       like: [],
-      comment: [],
       views: 0,
       num: postAmount?.amount + 1,
       creatorName: user?.displayName,

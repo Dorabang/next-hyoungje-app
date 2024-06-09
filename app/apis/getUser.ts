@@ -9,7 +9,8 @@ import {
   getDocs,
 } from 'firebase/firestore';
 
-const getUser = async (uid: string) => {
+const getUser = async (uid?: string) => {
+  if (!uid) return;
   let post: DocumentData;
   const docRef = doc(dbService, 'users', uid);
   const docSnapshot = await getDoc(docRef);

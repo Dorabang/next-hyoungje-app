@@ -4,49 +4,61 @@ import ReactQuill from 'react-quill';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
-import { DocumentData } from 'firebase/firestore';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { updatedLike } from '@/apis/like';
-import GetImageURL from '@/apis/getImageURL';
-import getPost from '@/apis/getPost';
 import { deletePost } from '@/apis/posts';
 import { updatedViews } from '@/apis/updatedViews';
 import getAdmin from '@/apis/getAdmin';
+import { getImageURL } from '@/apis/images';
+import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';
 import statusOptions from '@/components/StatusOptions';
-import HasLikes from '@/components/HasLikes';
 import PrevNextPost from '@/components/Posts/PrevNextPost';
 import Comments from '../Comment/Comments';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import Loading from '../Loading';
+import HasLikes from '../HasLikes';
 
 interface DetailPageProps {
-  id: string;
+  postId: string;
 }
 
-const PostDetail = ({ id }: DetailPageProps) => {
+const PostDetail = ({ postId }: DetailPageProps) => {
   const router = useRouter();
   const user = useRecoilValue(authState);
 
-  const [post, setPost] = useState<DocumentData | null>(null);
   const [admin, setAdmin] = useState<boolean>(false);
 
   const path = usePathname().split('/');
   const pathname = path[3] ? path[2] : path[1];
+  const { data, isLoading } = useGetPost(pathname, postId);
+  const [image, setImage] = useState<string[] | null>(null);
 
   useEffect(() => {
-    if (post === null) {
-      getPost(pathname, id).then((response) => {
-        updatedViews({ ...response[0], id: id }, pathname);
-        setPost({ ...response[0], views: response[0].views + 1 });
+    const updatePostView = async () => {
+      if (data) {
+        await updatedViews(data.views, `${pathname}/${postId}`);
+      }
+    };
+    updatePostView();
+  }, [data, pathname, postId]);
+
+  useEffect(() => {
+    if (image === null && data) {
+      const imgId = data.image;
+      imgId?.forEach(async (img: string) => {
+        const url = await getImageURL(pathname, data.creatorId, img);
+        setImage((prev) =>
+          prev !== null
+            ? prev.includes(url)
+              ? [...prev]
+              : [...prev, url]
+            : [url],
+        );
       });
     }
-  }, [id, post, pathname]);
-
-  const [image, setImage] = useState<string[]>();
-
-  const postImages = post && post?.image;
+  }, [image, data, pathname]);
 
   const modules = {
     toolbar: { container: [] },
@@ -55,35 +67,11 @@ const PostDetail = ({ id }: DetailPageProps) => {
   const handleDeletePost = (id: string) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
-    if (!post) return;
+    if (!data) return;
 
     if (ok) {
-      deletePost(post, user, pathname, id);
+      deletePost(data, user, pathname, id);
       router.push(`/${pathname}`);
-    }
-  };
-
-  const handleUpdatedLikes = async () => {
-    if (!user?.uid || !post) return;
-
-    const hasLike =
-      post?.like.filter((id: string) => id === user.uid).length > 0;
-
-    const updatedLikeList: DocumentData = hasLike
-      ? [...post.like.filter((id: string) => id !== user.uid)]
-      : post?.like.length !== 0
-        ? [...post.like, user?.uid]
-        : [user?.uid];
-
-    const likeData = {
-      updateData: updatedLikeList,
-      postId: post.id,
-      pathname: pathname,
-    };
-
-    const result = await updatedLike(likeData);
-    if (result) {
-      setPost((prev) => ({ ...prev, like: updatedLikeList }));
     }
   };
 
@@ -99,21 +87,19 @@ const PostDetail = ({ id }: DetailPageProps) => {
     }
   }, [admin, user]);
 
-  useEffect(() => {
-    const getImage = (value: string) => {
-      return setImage((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
-      );
-    };
+  if (isLoading)
+    return (
+      <ContainerBox className='py-20'>
+        <Loading />
+      </ContainerBox>
+    );
 
-    if (postImages && post.creatorId) {
-      postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
-      );
-    }
-  }, [postImages, pathname, post?.creatorId]);
-
-  if (!post) return;
+  if (!data)
+    return (
+      <ContainerBox className='py-20'>
+        삭제된 게시물이거나 찾을 수 없는 게시물입니다.
+      </ContainerBox>
+    );
 
   return (
     <ContainerBox>
@@ -133,18 +119,18 @@ const PostDetail = ({ id }: DetailPageProps) => {
         </div>
 
         <h2 className='text-lg font-bold flex-grow'>
-          <span className='px-2'>{statusOptions(post.status)}</span>
-          {post?.title}
+          <span className='px-2'>{statusOptions(data.status)}</span>
+          {data?.title}
         </h2>
 
-        {(user?.uid === post.creatorId || admin) && (
+        {(user?.uid === data.creatorId || admin) && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
             <li
               onClick={() =>
                 router.push(
-                  path[2]
-                    ? `/${path[1]}/${path[2]}/edit/${post.id}`
-                    : `/${pathname}/edit/${post.id}`,
+                  path[3]
+                    ? `/community/${path[2]}/edit/${data.id}`
+                    : `/${pathname}/edit/${data.id}`,
                 )
               }
               className='hover:text-gray-900'
@@ -152,7 +138,7 @@ const PostDetail = ({ id }: DetailPageProps) => {
               편집
             </li>
             <li
-              onClick={() => handleDeletePost(id)}
+              onClick={() => handleDeletePost(postId)}
               className='hover:text-gray-900'
             >
               삭제
@@ -165,24 +151,18 @@ const PostDetail = ({ id }: DetailPageProps) => {
       <ul className='flex gap-4 pt-2 pb-6 justify-end items-center text-sm text-gray-500'>
         <li>
           <span className='pr-2 font-semibold'>작성자</span>
-          {post.creatorName}
+          {data.creatorName}
         </li>
         <li>
           <span className='pr-2 font-semibold'>등록일자</span>
-          {DateFormat(post.createdAt)}
+          {DateFormat(data.createdAt)}
         </li>
         <li>
           <span className='pr-2 font-semibold'>조회수</span>
-          {post.views.toLocaleString()}
+          {data.views + 1}
         </li>
         <li>
-          <button
-            onClick={() => handleUpdatedLikes()}
-            className='flex gap-2 items-center'
-          >
-            <HasLikes pathname={pathname} userId={user?.uid} postId={post.id} />
-            {Number(post.like.length ?? 0).toLocaleString()}
-          </button>
+          <HasLikes postId={postId} userId={user?.uid} pathname={pathname} />
         </li>
       </ul>
 
@@ -200,19 +180,19 @@ const PostDetail = ({ id }: DetailPageProps) => {
             <tbody>
               <tr>
                 <th>종류</th>
-                <td>{post.variant}</td>
+                <td>{data.variant}</td>
               </tr>
               <tr>
                 <th>연락처</th>
-                <td>{post.phone}</td>
+                <td>{data.phone}</td>
               </tr>
               <tr>
                 <th>산지</th>
-                <td>{post.place}</td>
+                <td>{data.place}</td>
               </tr>
               <tr>
                 <th>산채일</th>
-                <td>{DateFormat(post.date)}</td>
+                <td>{DateFormat(data.date)}</td>
               </tr>
             </tbody>
           </table>
@@ -229,19 +209,19 @@ const PostDetail = ({ id }: DetailPageProps) => {
             <tbody>
               <tr>
                 <th>가격</th>
-                <td>{post.price}</td>
+                <td>{data.price}</td>
               </tr>
               <tr>
                 <th>키</th>
-                <td>{post.height}</td>
+                <td>{data.height}</td>
               </tr>
               <tr>
                 <th>폭</th>
-                <td>{post.width}</td>
+                <td>{data.width}</td>
               </tr>
               <tr>
                 <th>촉수</th>
-                <td>{post.amount}</td>
+                <td>{data.amount}</td>
               </tr>
             </tbody>
           </table>
@@ -249,20 +229,24 @@ const PostDetail = ({ id }: DetailPageProps) => {
 
         {/* image */}
         <div className='pt-8 w-full'>
-          {postImages &&
-            image &&
-            image.map((imageURL) => (
-              <div
-                key={imageURL}
-                className='relative w-full md:max-w-[700px] mx-auto'
-              >
-                <AutoHeightImageWrapper
-                  src={imageURL}
-                  alt={`${post.creatorName} 업로드 이미지`}
-                  priority
-                />
-              </div>
-            ))}
+          {data.image ? (
+            image !== null ? (
+              image.map((imageURL: string) => (
+                <div
+                  key={imageURL}
+                  className='relative w-full md:max-w-[700px] mx-auto'
+                >
+                  <AutoHeightImageWrapper
+                    src={imageURL}
+                    alt={`${data.creatorName} 업로드 이미지`}
+                    priority
+                  />
+                </div>
+              ))
+            ) : (
+              <div className='w-full h-[400px] bg-grayColor-100 animate-pulse' />
+            )
+          ) : null}
         </div>
 
         {/* contents */}
@@ -274,23 +258,22 @@ const PostDetail = ({ id }: DetailPageProps) => {
           [&_.ql-container.ql-snow]:border-none
           [&_.ql-container]:text-base
           [&_.ql-editor]:p-0
-          [&_.ql-video]:relative
-          [&_.ql-video]:pb-[56.25%]
-          [&_.ql-video]:h-0
-          [&_.ql-video]:overflow-hidden
-          [&_#player]:absolute
-          [&_#player]:top-0
-          [&_#player]:left-0
+          [&_.ql-video-wrapper]:aspect-video
+          [&_.ql-video]:block
+          [&_.ql-video]:w-full
+          [&_.ql-video]:h-full
+          md:[&_.ql-video]:min-h-[500px]
+          [&_.ql-video]:min-h-[300px]
           pt-8
         '
         >
-          <ReactQuill defaultValue={post.contents} modules={modules} readOnly />
+          <ReactQuill defaultValue={data.contents} modules={modules} readOnly />
         </div>
       </div>
 
-      <Comments pathname={`${pathname}/${id}`} user={user} />
+      <Comments pathname={`${pathname}/${postId}`} user={user} />
 
-      <PrevNextPost pathname={pathname} post={post} />
+      <PrevNextPost pathname={pathname} post={data} />
     </ContainerBox>
   );
 };

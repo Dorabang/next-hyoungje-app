@@ -5,7 +5,7 @@ interface NoticeDetailPageProps {
 }
 
 const NoticeDetailPage = ({ params: { id } }: NoticeDetailPageProps) => {
-  return <CommDetailPage id={id} />;
+  return <CommDetailPage postId={id} />;
 };
 
 export default NoticeDetailPage;
