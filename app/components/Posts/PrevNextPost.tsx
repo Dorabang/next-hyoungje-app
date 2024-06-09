@@ -1,4 +1,4 @@
-import { getNextPost, getPosts, getPrevPost } from '@/apis/posts';
+import { getNextPost, getPrevPost } from '@/apis/posts';
 import { DocumentData } from 'firebase/firestore';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
