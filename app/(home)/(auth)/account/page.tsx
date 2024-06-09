@@ -41,8 +41,13 @@ const AccountPage = () => {
     const { email, password2, nickName, phoneNumber } = data;
 
     try {
-      await createUserWithEmailAndPassword(authService, email, password2);
+      await createUserWithEmailAndPassword(
+        authService,
+        `${email}@hyoungje.kr`,
+        password2,
+      );
       const user = authService.currentUser;
+
       const photo =
         user && (await uploadImage(`/profile/${user.uid}/photo`, image));
 
@@ -56,6 +61,7 @@ const AccountPage = () => {
         id: user.uid,
         displayName: nickName,
         phoneNumber: phoneNumber,
+        like: [],
       };
 
       userObj && (await addDoc(collection(dbService, 'users'), userObj));
@@ -150,12 +156,12 @@ const AccountPage = () => {
           name='email'
           rules={{
             required: {
-              message: '이메일을 입력해주세요. ex) example@email.com',
+              message: '아이디를 입력해주세요. ex) example',
               value: true,
             },
             pattern: {
-              message: '잘못된 이메일 주소입니다.',
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: '잘못된 아이디 형식입니다.',
+              value: /^[A-Z0-9._%+-]/i,
             },
           }}
           control={control}
@@ -163,7 +169,7 @@ const AccountPage = () => {
             <CssTextField
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
-              label='* 이메일'
+              label='* 아이디'
               {...field}
             />
           )}

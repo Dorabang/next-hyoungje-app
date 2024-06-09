@@ -29,13 +29,12 @@ const LoginPage = () => {
 
   const onSubmit = async (data: Inputs) => {
     const { email, password } = data;
-    // console.log(data);
     setPersistence(authService, browserSessionPersistence)
       .then(async () => {
         return await signInWithEmailAndPassword(
           authService,
-          email,
-          password
+          `${email}@hyoungje.kr`,
+          password,
         ).then(() => {
           alert('로그인에 성공했습니다.');
 
@@ -81,18 +80,14 @@ const LoginPage = () => {
         <Controller
           name='email'
           rules={{
-            required: { message: '이메일을 입력해주세요', value: true },
-            pattern: {
-              message: '잘못된 이메일 주소입니다.',
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            },
+            required: { message: '아이디를 입력해주세요', value: true },
           }}
           control={control}
           render={({ field }) => (
             <CssTextField
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
-              label='* 이메일'
+              label='* 아이디'
               {...field}
             />
           )}
