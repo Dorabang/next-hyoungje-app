@@ -4,11 +4,12 @@ export const livingVegetable = [
 ];
 
 export const community = [
-  { link: '/커뮤니티/난원소개', name: '난원소개' },
-  { link: '/커뮤니티/공지사항', name: '공지사항' },
-  { link: '/커뮤니티/문의사항', name: '문의사항' },
-  { link: '/커뮤니티/산채기', name: '산채기' },
-  { link: '/커뮤니티/난자랑', name: '난자랑' },
+  { link: '/community/hyoungje', name: '난원소개' },
+  { link: '/community/notice', name: '공지사항' },
+  { link: '/community/qna', name: '문의사항' },
+  { link: '/community/wild-catch', name: '산채기' },
+  { link: '/community/boast', name: '난자랑' },
+  { link: '/community/board', name: '자유게시판' },
 ];
 
 export const routes = {
@@ -45,3 +46,17 @@ export const routes = {
   myPage: { path: '/mypage', name: '마이페이지', members: true },
   writePage: { path: '/edit', name: '글쓰기', members: true },
 };
+
+export const allRoutes = [
+  { link: '/wild-market1', name: '산채품장터1' },
+  { link: '/wild-market2', name: '산채품장터2' },
+  { link: '/general-market', name: '일반장터' },
+  { link: '/natural-herb', name: '자연산약초' },
+  { link: '/single-leaf', name: '단엽산채기' },
+  { link: '/community/hyoungje', name: '난원소개' },
+  { link: '/community/notice', name: '공지사항' },
+  { link: '/community/qna', name: '문의사항' },
+  { link: '/community/wild-catch', name: '산채기' },
+  { link: '/community/boast', name: '난자랑' },
+  { link: '/community/board', name: '자유게시판' },
+];

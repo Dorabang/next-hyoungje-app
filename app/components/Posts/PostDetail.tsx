@@ -32,7 +32,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
 
   const path = usePathname().split('/');
   const pathname = path[3] ? path[2] : path[1];
-  const { data, refetch, isLoading } = useGetPost(pathname, postId);
+  const { data, isLoading } = useGetPost(pathname, postId);
   const [image, setImage] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -87,10 +87,17 @@ const PostDetail = ({ postId }: DetailPageProps) => {
     }
   }, [admin, user]);
 
-  if (!data)
+  if (isLoading)
     return (
       <ContainerBox className='py-20'>
         <Loading />
+      </ContainerBox>
+    );
+
+  if (!data)
+    return (
+      <ContainerBox className='py-20'>
+        삭제된 게시물이거나 찾을 수 없는 게시물입니다.
       </ContainerBox>
     );
 
@@ -121,8 +128,8 @@ const PostDetail = ({ postId }: DetailPageProps) => {
             <li
               onClick={() =>
                 router.push(
-                  path[2]
-                    ? `/${path[1]}/${path[2]}/edit/${data.id}`
+                  path[3]
+                    ? `/community/${path[2]}/edit/${data.id}`
                     : `/${pathname}/edit/${data.id}`,
                 )
               }
@@ -237,7 +244,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
                 </div>
               ))
             ) : (
-              <div className='w-full h-[400px] bg-grayColor-100 animate-pulse'></div>
+              <div className='w-full h-[400px] bg-grayColor-100 animate-pulse' />
             )
           ) : null}
         </div>
