@@ -22,7 +22,7 @@ const BookmarkPage = () => {
 
   return (
     <ContainerBox className='flex flex-wrap gap-5'>
-      {data?.like.length !== 0 ? (
+      {data?.like ? (
         data?.like.map((path: string) => {
           const pathname = path.split('/')[0];
           const postId = path.split('/')[1];
