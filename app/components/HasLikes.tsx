@@ -21,12 +21,11 @@ const HasLikes = ({ userId, postId, pathname }: HasLikesProps) => {
 
     const bookmark = (await getUser(userId))?.like;
 
-    const updatedBookmarkList =
-      bookmark.filter((post: string) => post.includes(postId)).length > 0
+    const updatedBookmarkList = bookmark
+      ? bookmark.filter((post: string) => post.includes(postId)).length > 0
         ? [...bookmark.filter((item: string) => !item.includes(postId))]
-        : bookmark.length !== 0
-          ? [...bookmark, `${pathname}/${postId}`]
-          : [`${pathname}/${postId}`];
+        : [...bookmark, `${pathname}/${postId}`]
+      : [`${pathname}/${postId}`];
 
     const updatedLikeList: DocumentData = hasLike
       ? [...data.filter((id: string) => id !== userId)]

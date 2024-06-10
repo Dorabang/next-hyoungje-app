@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useRecoilValue } from 'recoil';
 import { LiaHeart } from 'react-icons/lia';
 
@@ -21,26 +21,34 @@ const BookmarkPage = () => {
     );
 
   return (
-    <ContainerBox className='flex flex-wrap gap-5'>
-      {data?.like.length !== 0 ? (
-        data?.like.map((path: string) => {
-          const pathname = path.split('/')[0];
-          const postId = path.split('/')[1];
-          return (
-            <div key={path} className='w-full md:w-[calc((100%-60px)/3)]'>
-              <Bookmark pathname={pathname} postId={postId} />
-            </div>
-          );
-        })
-      ) : (
-        <div className='text-center w-full py-[100px]'>
-          <span className='flex flex-col gap-4 items-center justify-center text-grayColor-300'>
-            <LiaHeart size={36} />
-            즐겨찾기 되어 있는 게시물이 없습니다.
-          </span>
-        </div>
-      )}
-    </ContainerBox>
+    <Suspense
+      fallback={
+        <ContainerBox>
+          <Loading />
+        </ContainerBox>
+      }
+    >
+      <ContainerBox className='flex flex-wrap gap-5'>
+        {data?.like ? (
+          data?.like.map((path: string) => {
+            const pathname = path.split('/')[0];
+            const postId = path.split('/')[1];
+            return (
+              <div key={path} className='w-full md:w-[calc((100%-60px)/3)]'>
+                <Bookmark pathname={pathname} postId={postId} />
+              </div>
+            );
+          })
+        ) : (
+          <div className='text-center w-full py-[100px]'>
+            <span className='flex flex-col gap-4 items-center justify-center text-grayColor-300'>
+              <LiaHeart size={36} />
+              즐겨찾기 되어 있는 게시물이 없습니다.
+            </span>
+          </div>
+        )}
+      </ContainerBox>
+    </Suspense>
   );
 };
 
