@@ -12,20 +12,10 @@ const MyPage = () => {
   if (!user) return;
 
   return (
-    <ContainerBox>
-      <Stack
-        marginX={'auto'}
-        width={'100%'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        paddingY={4}
-      >
-        <Stack spacing={4}>
-          <ChangeProfile user={user} />
+    <ContainerBox className='flex flex-col justify-center gap-5'>
+      <ChangeProfile user={user} />
 
-          <ChangeUserInfo user={user} />
-        </Stack>
-      </Stack>
+      <ChangeUserInfo user={user} />
     </ContainerBox>
   );
 };
