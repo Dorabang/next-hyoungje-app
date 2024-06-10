@@ -12,7 +12,7 @@ import { useState } from 'react';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import imageCompression from 'browser-image-compression';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 interface Inputs {
@@ -41,27 +41,34 @@ const AccountPage = () => {
     const { email, password2, nickName, phoneNumber } = data;
 
     try {
-      await createUserWithEmailAndPassword(authService, email, password2);
+      await createUserWithEmailAndPassword(
+        authService,
+        `${email}@hyoungje.kr`,
+        password2,
+      );
       const user = authService.currentUser;
-      const photo =
-        user && (await uploadImage(`/profile/${user.uid}/photo`, image));
 
-      user &&
-        (await updateProfile(user, {
+      if (user) {
+        const photo = await uploadImage(`/profile/${user.uid}/photo`, image);
+
+        await updateProfile(user, {
           displayName: nickName,
           photoURL: photo,
-        }));
+        });
 
-      const userObj = user && {
-        id: user.uid,
-        displayName: nickName,
-        phoneNumber: phoneNumber,
-      };
+        const userObj = {
+          id: user.uid,
+          displayName: nickName,
+          phoneNumber: phoneNumber,
+          like: [],
+        };
 
-      userObj && (await addDoc(collection(dbService, 'users'), userObj));
+        await setDoc(doc(dbService, 'users', user.uid), userObj);
+        alert('회원가입에 성공 했습니다.');
+        router.push('/');
+      }
 
-      alert('회원가입에 성공 했습니다.');
-      router.push('/');
+      // userObj && (await addDoc(collection(dbService, 'users'), userObj));
     } catch (error) {
       if (error) {
         const { code } = error as { code: string };
@@ -150,12 +157,12 @@ const AccountPage = () => {
           name='email'
           rules={{
             required: {
-              message: '이메일을 입력해주세요. ex) example@email.com',
+              message: '아이디를 입력해주세요. ex) example',
               value: true,
             },
             pattern: {
-              message: '잘못된 이메일 주소입니다.',
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: '잘못된 아아디 형식입니다.',
+              value: /^[A-Z0-9._%+-]/i,
             },
           }}
           control={control}
@@ -163,7 +170,7 @@ const AccountPage = () => {
             <CssTextField
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
-              label='* 이메일'
+              label='* 아이디'
               {...field}
             />
           )}
