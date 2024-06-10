@@ -299,6 +299,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                   accept='image/*'
                   onChange={onFileChange}
                   className='outline-none w-full hidden'
+                  multiple
                 />
               </label>
               {selectedImage && (
