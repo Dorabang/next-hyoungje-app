@@ -11,7 +11,7 @@ import { routes } from '../../../constant/Routes';
 
 import defaultProfile from '@/assets/defaultProfile.jpg';
 
-const UtilBtn = () => {
+const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
   const [user, setUser] = useRecoilState(authState);
   const router = useRouter();
 
@@ -19,6 +19,7 @@ const UtilBtn = () => {
     const onLogOutClick = () => {
       signOut(authService);
       setUser(null);
+      onClick && onClick();
       router.push('/');
     };
 
@@ -27,13 +28,19 @@ const UtilBtn = () => {
         {user ? (
           <>
             <Button
-              onClick={() => router.push(routes.bookmark.path)}
+              onClick={() => {
+                onClick && onClick();
+                router.push(routes.bookmark.path);
+              }}
               sx={authBtnStyle}
             >
               {routes.bookmark.name}
             </Button>
             <Button
-              onClick={() => router.push(routes.myPage.path)}
+              onClick={() => {
+                onClick && onClick();
+                router.push(routes.myPage.path);
+              }}
               sx={authBtnStyle}
             >
               <div className='flex gap-[6px] items-center'>
@@ -55,13 +62,19 @@ const UtilBtn = () => {
         ) : (
           <>
             <Button
-              onClick={() => router.push(routes.login.path)}
+              onClick={() => {
+                onClick && onClick();
+                router.push(routes.login.path);
+              }}
               sx={authBtnStyle}
             >
               {routes.login.name}
             </Button>
             <Button
-              onClick={() => router.push(routes.join.path)}
+              onClick={() => {
+                onClick && onClick();
+                router.push(routes.join.path);
+              }}
               sx={authBtnStyle}
             >
               {routes.join.name}
@@ -70,7 +83,7 @@ const UtilBtn = () => {
         )}
       </Box>
     );
-  }, [user, setUser, router]);
+  }, [user, setUser, router, onClick]);
 };
 
 export default UtilBtn;

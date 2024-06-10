@@ -128,7 +128,7 @@ const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
           })}
         </div>
         <div className='w-full flex justify-end'>
-          <UtilBtn />
+          <UtilBtn onClick={() => setIsOpen(false)} />
         </div>
       </div>
     </div>

@@ -97,6 +97,7 @@ const Nav = () => {
 
   return (
     <Fragment>
+      <div className={`h-[80px] ${isScrolled ? 'block' : 'hidden'}`} />
       <AppBar
         position={isScrolled ? 'fixed' : 'static'}
         sx={{
