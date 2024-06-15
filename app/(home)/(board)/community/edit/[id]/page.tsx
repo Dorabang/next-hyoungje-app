@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -43,7 +43,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     null,
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!user) return;
 
     /* 이미지 업로드 */
@@ -85,7 +87,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     router.back();
   };
 
-  const inputWrapClass = 'flex w-full border-b border-[#ddd] p-2';
+  const inputWrapClass = 'flex items-start w-full border-b border-[#ddd] p-2';
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -93,7 +95,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     } = e;
 
     if (files) {
-      const theFile = files[0];
+      const fileList = Object.values(files).slice(0, 8);
 
       const options = {
         maxSizeMB: 0.2, // 이미지 최대 용량
@@ -101,22 +103,23 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
         useWebWorker: true,
       };
 
-      imageCompression(theFile, options)
-        .then((response) => {
-          imageCompression.getDataUrlFromFile(response).then((result) => {
-            const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
+      fileList.map((file) => {
+        imageCompression(file, options)
+          .then((response) => {
+            imageCompression.getDataUrlFromFile(response).then((result) => {
+              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
 
-            setSelectedImage((prev) =>
-              prev !== null ? [...prev, imageObj] : [imageObj],
-            );
+              setSelectedImage((prev) =>
+                prev !== null ? [...prev, imageObj] : [imageObj],
+              );
+            });
+          })
+          .catch((error) => {
+            // console.log('🚀 ~ onFileChange ~ error:', error);
           });
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+      });
     }
   };
-
   const handleDeleteImage = (id: string) => {
     if (selectedImage?.length === 0 || selectedImage === null) {
       return setSelectedImage(null);
@@ -132,7 +135,10 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   return (
     <ContainerBox>
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
-        <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'
+        >
           <div className={`${inputWrapClass}`}>
             <label htmlFor='phone'>제목 *</label>
             <input
@@ -146,27 +152,45 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
           </div>
 
           <div className={`${inputWrapClass}`}>
-            <p className='w-[90px] border-r border-neutral-300 cursor-default'>
+            <p className='w-[90px] border-r border-neutral-300 cursor-default flex flex-col gap-2'>
               파일 첨부
+              <span className='text-grayColor-300 text-sm'>
+                {'('}
+                {selectedImage ? selectedImage.length : '0'}/8{')'}
+              </span>
             </p>
-            <div className='flex flex-wrap pl-3'>
-              <label
-                htmlFor='addFile'
-                className='py-1 w-[100px_!important] text-center cursor-pointer
+            <div className='flex flex-grow flex-wrap pl-3'>
+              <div className='flex gap-2 items-center'>
+                <label
+                  htmlFor='addFile'
+                  className={`py-1 w-[100px_!important] text-center
                 border border-[#ddd] transition-colors
-                hover:border-[#333]
-                '
-              >
-                파일 선택
-                <input
-                  id='addFile'
-                  name='addFile'
-                  type='file'
-                  accept='image/*'
-                  onChange={onFileChange}
-                  className='outline-none w-full hidden'
-                />
-              </label>
+                ${selectedImage && selectedImage.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
+                `}
+                >
+                  파일 선택
+                  <input
+                    id='addFile'
+                    name='addFile'
+                    type='file'
+                    multiple
+                    disabled={
+                      selectedImage && selectedImage.length >= 8 ? true : false
+                    }
+                    accept='image/*'
+                    onChange={onFileChange}
+                    className='outline-none w-full hidden group'
+                  />
+                </label>
+                {selectedImage && (
+                  <span
+                    className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
+                    onClick={() => setSelectedImage(null)}
+                  >
+                    파일 전체 삭제
+                  </span>
+                )}
+              </div>
               {selectedImage && (
                 <ul className='w-full py-4 flex gap-2'>
                   {selectedImage.map((item) => (
@@ -193,20 +217,15 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
               )}
             </div>
           </div>
+
+          <Editor />
+
+          <div className='flex justify-center pt-[80px]'>
+            <Button type='submit' size='large' variant='contained'>
+              등록하기
+            </Button>
+          </div>
         </form>
-
-        <Editor />
-
-        <div className='flex justify-center pt-[80px]'>
-          <Button
-            type='submit'
-            size='large'
-            variant='contained'
-            onClick={handleSubmit}
-          >
-            등록하기
-          </Button>
-        </div>
       </div>
     </ContainerBox>
   );

@@ -29,7 +29,7 @@ export const getSlidePosts = async (pathname: string) => {
       return post.push({ id: doc.id, ...doc.data() });
     });
   } catch (err) {
-    console.log('🚀 ~ getSlidePosts ~ err1:', err);
+    // console.log('🚀 ~ getSlidePosts ~ err1:', err);
   }
 
   const imgArr = await getImages(pathname, post);
@@ -45,7 +45,7 @@ const getSlideURL = (url: string) => {
     const photoUrl = getUrl();
     return photoUrl;
   } catch (err) {
-    console.log('🚀 ~ GetSlideURL err:', err);
+    // console.log('🚀 ~ GetSlideURL err:', err);
     return;
   }
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -15,7 +15,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import uuid from 'react-uuid';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import uploadImage from '@/apis/uploadImage';
 import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -35,6 +35,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const user = useRecoilValue(authState);
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const [title, setTitle] = useState('');
   const [variant, setVariant] = useState('');
@@ -42,7 +43,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const [status, setStatus] = useState('sale');
   const [price, setPrice] = useState('');
   const [place, setPlace] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
   const [height, setHeight] = useState(' cm');
   const [width, setWidth] = useState(' cm');
   const [amount, setAmount] = useState('');
@@ -53,7 +54,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     null,
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!user) return;
 
     /* 이미지 업로드 */
@@ -80,9 +83,11 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       contents: value,
       date: date,
       price: price,
-      height: height,
-      width: width,
-      amount: amount,
+      ...(pathname.includes('market') && {
+        height: height,
+        width: width,
+        amount: amount,
+      }),
       image: imageIdArr,
       like: [],
       views: 0,
@@ -101,7 +106,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     setTitle('');
     setValue('');
-    setDate('');
+    setDate(new Date().toISOString().substring(0, 10));
     setWidth(' cm');
     setHeight(' cm');
     setPlace('');
@@ -111,7 +116,8 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     router.back();
   };
 
-  const inputWrapperClass = 'flex w-full border-b border-[#ddd] p-2';
+  const inputWrapperClass =
+    'flex items-start w-full border-b border-[#ddd] p-2';
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -119,7 +125,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     } = e;
 
     if (files) {
-      const theFile = files[0];
+      const fileList = Object.values(files).slice(0, 8);
 
       const options = {
         maxSizeMB: 0.2, // 이미지 최대 용량
@@ -127,19 +133,21 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
         useWebWorker: true,
       };
 
-      imageCompression(theFile, options)
-        .then((response) => {
-          imageCompression.getDataUrlFromFile(response).then((result) => {
-            const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
+      fileList.map((file) => {
+        imageCompression(file, options)
+          .then((response) => {
+            imageCompression.getDataUrlFromFile(response).then((result) => {
+              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
 
-            setSelectedImage((prev) =>
-              prev !== null ? [...prev, imageObj] : [imageObj],
-            );
+              setSelectedImage((prev) =>
+                prev !== null ? [...prev, imageObj] : [imageObj],
+              );
+            });
+          })
+          .catch((error) => {
+            // console.log('🚀 ~ onFileChange ~ error:', error);
           });
-        })
-        .catch((error) => {
-          console.log('🚀 ~ onFileChange ~ error:', error);
-        });
+      });
     }
   };
 
@@ -157,8 +165,11 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <ContainerBox>
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
-        <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
+      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'
+        >
           <div className={`${inputWrapperClass}`}>
             <div className='pr-4'>
               <select
@@ -243,64 +254,86 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
               required
             />
           </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='height'>* 키</label>
-            <input
-              name='height'
-              type='text'
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='width'>* 폭</label>
-            <input
-              name='width'
-              type='text'
-              value={width}
-              onChange={(e) => setWidth(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='amount'>촉수</label>
-            <input
-              name='amount'
-              type='text'
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className='outline-none pl-3'
-            />
-          </div>
-
-          <div className={`${inputWrapperClass}`}>
-            <p className='w-[90px] border-r border-neutral-300 cursor-default'>
-              파일 첨부
-            </p>
-            <div className='flex flex-wrap pl-3'>
-              <label
-                htmlFor='addFile'
-                className='py-1 w-[100px_!important] text-center cursor-pointer
-                border border-[#ddd] transition-colors
-                hover:border-[#333]
-                '
-              >
-                파일 선택
+          {pathname.includes('market') && (
+            <>
+              <div className={`${inputWrapperClass}`}>
+                <label htmlFor='height'>* 키</label>
                 <input
-                  id='addFile'
-                  name='addFile'
-                  type='file'
-                  accept='image/*'
-                  onChange={onFileChange}
-                  className='outline-none w-full hidden'
+                  name='height'
+                  type='text'
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  className='outline-none pl-3'
+                  required
                 />
-              </label>
+              </div>
+
+              <div className={`${inputWrapperClass}`}>
+                <label htmlFor='width'>* 폭</label>
+                <input
+                  name='width'
+                  type='text'
+                  value={width}
+                  onChange={(e) => setWidth(e.target.value)}
+                  className='outline-none pl-3'
+                  required
+                />
+              </div>
+
+              <div className={`${inputWrapperClass}`}>
+                <label htmlFor='amount'>촉수</label>
+                <input
+                  name='amount'
+                  type='text'
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className='outline-none pl-3'
+                />
+              </div>
+            </>
+          )}
+
+          <div className={`${inputWrapperClass}`}>
+            <p className='w-[90px] border-r border-neutral-300 cursor-default flex flex-col gap-2'>
+              파일 첨부
+              <span className='text-grayColor-300 text-sm'>
+                {'('}
+                {selectedImage ? selectedImage.length : '0'}
+                /8{')'}
+              </span>
+            </p>
+            <div className='flex flex-grow flex-wrap pl-3'>
+              <div className='flex gap-2 items-center'>
+                <label
+                  htmlFor='addFile'
+                  className={`py-1 w-[100px_!important] text-center
+                border border-[#ddd] transition-colors
+                ${selectedImage && selectedImage.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
+                `}
+                >
+                  파일 선택
+                  <input
+                    id='addFile'
+                    name='addFile'
+                    type='file'
+                    disabled={
+                      selectedImage && selectedImage.length >= 8 ? true : false
+                    }
+                    accept='image/*'
+                    onChange={onFileChange}
+                    className='outline-none w-full hidden group'
+                    multiple
+                  />
+                </label>
+                {selectedImage && (
+                  <span
+                    className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
+                    onClick={() => setSelectedImage(null)}
+                  >
+                    파일 전체 삭제
+                  </span>
+                )}
+              </div>
               {selectedImage && (
                 <ul className='w-full py-4 flex gap-2'>
                   {selectedImage.map((item) => (
@@ -327,20 +360,15 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
               )}
             </div>
           </div>
+
+          <Editor />
+
+          <div className='flex justify-center pt-[80px]'>
+            <Button type='submit' size='large' variant='contained'>
+              등록하기
+            </Button>
+          </div>
         </form>
-
-        <Editor />
-
-        <div className='flex justify-center pt-[80px]'>
-          <Button
-            type='submit'
-            size='large'
-            variant='contained'
-            onClick={handleSubmit}
-          >
-            등록하기
-          </Button>
-        </div>
       </div>
     </ContainerBox>
   );

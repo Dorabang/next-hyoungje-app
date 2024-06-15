@@ -27,7 +27,7 @@ export const updatedLike = async (data: LikeProps) => {
     await updateDoc(userRef, { like: updateBookmark });
     return true;
   } catch (e) {
-    console.log('🚀 ~ disabledLike ~ e:', e);
+    // console.log('🚀 ~ disabledLike ~ e:', e);
     return false;
   }
 };
