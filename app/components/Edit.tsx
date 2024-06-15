@@ -1,5 +1,5 @@
 'use client';
-import { MouseEvent, useEffect, useState } from 'react';
+import { FormEvent, MouseEvent, useEffect, useState } from 'react';
 import ContainerBox from './ContainerBox';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
@@ -59,8 +59,9 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   const inputWrapperClass =
     'flex items-start w-full border-b border-grayColor-200 p-2';
 
-  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!user) return;
 
     imageArr?.map(async (value) => {
@@ -104,15 +105,15 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     const docRef = doc(dbService, `${pathname}/${post.id}`);
 
     await updateDoc(docRef, newPostObj);
-    setTitle('');
-    setValue('');
-    setDate('');
-    setWidth(' cm');
-    setHeight(' cm');
-    setPlace('');
-    setPrice('');
-    setAmount('');
-    setStatus('');
+    setTitle(post.title);
+    setValue(contents);
+    setDate(post.date);
+    setWidth(post.width);
+    setHeight(post.height);
+    setPlace(post.place);
+    setPrice(post.price);
+    setAmount(post.amount);
+    setStatus(post.status);
     router.back();
   };
 
@@ -199,7 +200,10 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   return (
     <ContainerBox>
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
-        <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'
+        >
           <div className={`${inputWrapperClass}`}>
             <div className='pr-4'>
               <select
@@ -426,12 +430,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
             >
               취소
             </Button>
-            <Button
-              type='submit'
-              size='large'
-              variant='contained'
-              onClick={(e) => handleSubmit(e)}
-            >
+            <Button type='submit' size='large' variant='contained'>
               등록하기
             </Button>
           </div>

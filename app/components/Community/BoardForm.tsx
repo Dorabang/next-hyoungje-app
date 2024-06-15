@@ -52,10 +52,12 @@ const BoardForm = ({
                   <div className='flex-grow text-left'>
                     <Link
                       href={`${path}/${id}`}
-                      className='flex gap-2 items-center'
+                      className='flex w-full h-full items-center whitespace-nowrap hover:underline active:underline'
                     >
                       {image && image?.length !== 0 && <AiOutlineFileImage />}
-                      {title}
+                      <div className='flex-grow block h-full text-left min-h-[16px]'>
+                        {title}
+                      </div>
                     </Link>
                   </div>
                   <div className='w-[20%] md:w-[10%]'>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import ContainerBox from '@/components/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -43,7 +43,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const [status, setStatus] = useState('sale');
   const [price, setPrice] = useState('');
   const [place, setPlace] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
   const [height, setHeight] = useState(' cm');
   const [width, setWidth] = useState(' cm');
   const [amount, setAmount] = useState('');
@@ -54,7 +54,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     null,
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!user) return;
 
     /* 이미지 업로드 */
@@ -104,7 +106,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     setTitle('');
     setValue('');
-    setDate('');
+    setDate(new Date().toISOString().substring(0, 10));
     setWidth(' cm');
     setHeight(' cm');
     setPlace('');
@@ -164,7 +166,10 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   return (
     <ContainerBox>
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
-        <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'
+        >
           <div className={`${inputWrapperClass}`}>
             <div className='pr-4'>
               <select
@@ -355,20 +360,15 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
               )}
             </div>
           </div>
+
+          <Editor />
+
+          <div className='flex justify-center pt-[80px]'>
+            <Button type='submit' size='large' variant='contained'>
+              등록하기
+            </Button>
+          </div>
         </form>
-
-        <Editor />
-
-        <div className='flex justify-center pt-[80px]'>
-          <Button
-            type='submit'
-            size='large'
-            variant='contained'
-            onClick={handleSubmit}
-          >
-            등록하기
-          </Button>
-        </div>
       </div>
     </ContainerBox>
   );

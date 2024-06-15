@@ -77,15 +77,17 @@ const PostList = ({
       ) : null}
 
       {/* 제목 */}
-      <div className='flex-grow flex justify-between items-center'>
+      <div className='flex-grow h-full flex justify-between items-center'>
         <Link
           href={`${pathname}/${id}`}
-          className='flex items-center whitespace-nowrap'
+          className='flex w-full h-full items-center whitespace-nowrap hover:underline active:underline'
         >
           {image && image?.length !== 0 && (
             <AiOutlineFileImage className='mr-2' />
           )}
-          {title}
+          <div className='flex-grow block h-full text-left min-h-[16px]'>
+            {title}
+          </div>
         </Link>
         {(user?.uid === creatorId || admin) && (
           <div className='text-gray-400 text-xs flex [&_span]:px-1 ml-4'>

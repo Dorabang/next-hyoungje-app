@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import ContainerBox from '../ContainerBox';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
@@ -58,7 +58,9 @@ const CommEdit = ({
   const inputWrapperClass =
     'flex items-start w-full border-b border-grayColor-200 p-2';
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!user) return;
 
     imageArr?.map(async (value) => {
@@ -164,7 +166,10 @@ const CommEdit = ({
   return (
     <ContainerBox>
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
-        <form className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'>
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'
+        >
           <div className={`${inputWrapperClass}`}>
             <label htmlFor='title'>* 제목</label>
             <input
@@ -277,12 +282,7 @@ const CommEdit = ({
             >
               취소
             </Button>
-            <Button
-              type='submit'
-              size='large'
-              variant='contained'
-              onClick={handleSubmit}
-            >
+            <Button type='submit' size='large' variant='contained'>
               등록하기
             </Button>
           </div>
