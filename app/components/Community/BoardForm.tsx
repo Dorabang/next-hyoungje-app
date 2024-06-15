@@ -49,7 +49,7 @@ const BoardForm = ({
                 >
                   <div className='w-[6%]'>{num}</div>
                   <div className='w-[15%] md:w-[10%]'>{creatorName}</div>
-                  <div className='flex-grow text-left'>
+                  <div className='flex-grow h-full flex justify-between items-center'>
                     <Link
                       href={`${path}/${id}`}
                       className='flex w-full h-full items-center whitespace-nowrap hover:underline active:underline'
