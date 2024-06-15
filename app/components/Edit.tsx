@@ -90,11 +90,11 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       contents: value,
       status: status,
       variant: variant,
-      phone: phone,
       place: place,
       date: date,
       price: price,
       ...(pathname.includes('market') && {
+        phone: phone,
         height: height,
         width: width,
       }),
@@ -241,17 +241,19 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
             />
           </div>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='phone'>* 연락처</label>
-            <input
-              name='phone'
-              type='text'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className='outline-none pl-3'
-              required
-            />
-          </div>
+          {pathname.includes('market') && (
+            <div className={`${inputWrapperClass}`}>
+              <label htmlFor='phone'>* 연락처</label>
+              <input
+                name='phone'
+                type='text'
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className='outline-none pl-3'
+                required
+              />
+            </div>
+          )}
 
           <div className={`${inputWrapperClass}`}>
             <label htmlFor='place'>* 산지</label>
