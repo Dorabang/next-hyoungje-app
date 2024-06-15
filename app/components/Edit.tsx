@@ -1,5 +1,5 @@
 'use client';
-import { MouseEvent, use, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import ContainerBox from './ContainerBox';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
@@ -19,7 +19,6 @@ import { deleteObject, ref } from 'firebase/storage';
 import { getImageURL } from '@/apis/images';
 
 const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
-  console.log('🚀 ~ Edit ~ post:', post);
   const router = useRouter();
 
   const user = useRecoilValue(authState);
@@ -57,7 +56,8 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     setValue(contents);
   }, [setValue, contents]);
 
-  const inputWrapperClass = 'flex w-full border-b border-grayColor-200 p-2';
+  const inputWrapperClass =
+    'flex items-start w-full border-b border-grayColor-200 p-2';
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -72,10 +72,14 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
     const newImageArr = imageArr && imageArr.map((item) => item.id);
 
-    const imageIdArr = postImages
+    const prevImage = postImages.filter((item: string) =>
+      images?.filter((items) => items.includes(item)),
+    );
+
+    const imageIdArr = images
       ? newImageArr
-        ? [...newImageArr, ...postImages]
-        : [...postImages]
+        ? [...newImageArr, ...prevImage]
+        : [...prevImage]
       : newImageArr
         ? [...newImageArr]
         : null;
@@ -111,8 +115,6 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     setStatus('');
     router.back();
   };
-  console.log('🚀 ~ handleSubmit ~ post.id:', post.id);
-  console.log('🚀 ~ handleSubmit ~ post.id:', post.id);
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -120,7 +122,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     } = e;
 
     if (files) {
-      const theFile = files[0];
+      const fileList = Object.values(files).slice(0, 8);
 
       const options = {
         maxSizeMB: 0.2, // 이미지 최대 용량
@@ -128,19 +130,21 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
         useWebWorker: true,
       };
 
-      imageCompression(theFile, options)
-        .then((response) => {
-          imageCompression.getDataUrlFromFile(response).then((result) => {
-            const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
+      fileList.map((file) => {
+        imageCompression(file, options)
+          .then((response) => {
+            imageCompression.getDataUrlFromFile(response).then((result) => {
+              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
 
-            setImageArr((prev) =>
-              prev !== null ? [...prev, imageObj] : [imageObj],
-            );
+              setImageArr((prev) =>
+                prev !== null ? [...prev, imageObj] : [imageObj],
+              );
+            });
+          })
+          .catch((error) => {
+            // console.log('🚀 ~ onFileChange ~ error:', error);
           });
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+      });
     }
   };
 
@@ -155,6 +159,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   };
 
   const handleDBDeleteImage = async (id: string) => {
+    const imageId = postImages.filter((item: string) => id.includes(item))[0];
     if (postImages.filter((item: string) => id.includes(item))) {
       if (images?.length === 0 || images === null) {
         return setImages(null);
@@ -163,15 +168,30 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
         const deleteImageRef = ref(
           storageService,
-          `${pathname}/${user.uid}/post/${id}/image`,
+          `${pathname}/${user.uid}/post/${imageId}/image.jpg`,
         );
 
         await deleteObject(deleteImageRef);
+
+        const docRef = doc(dbService, `${pathname}/${post.id}`);
+        const updateImage = postImages.filter(
+          (item: string) => !id.includes(item),
+        );
+        await updateDoc(docRef, { image: updateImage });
 
         const deleteImages = images.filter((image) => image !== id);
         return setImages(deleteImages);
       }
     }
+  };
+
+  const handleDeleteImageAll = () => {
+    setImageArr(null);
+
+    images?.forEach(async (image) => {
+      await handleDBDeleteImage(image);
+      setImages(null);
+    });
   };
 
   if (!post || !user) return;
@@ -305,27 +325,47 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
           )}
 
           <div className={`${inputWrapperClass}`}>
-            <p className='w-[90px] border-r border-neutral-300 cursor-default'>
+            <p className='w-[90px] border-r border-neutral-300 cursor-default flex flex-col gap-2'>
               파일 첨부
+              <span className='text-grayColor-300 text-sm'>
+                {'('}
+                {imageArr?.length || images?.length
+                  ? imageArr?.length ?? 0 + (images ? images.length : 0)
+                  : 0}
+                /8
+                {')'}
+              </span>
             </p>
             <div className='flex flex-col pl-3'>
-              <label
-                htmlFor='addFile'
-                className='py-1 w-[100px_!important] text-center cursor-pointer
-                border border-grayColor-200 transition-colors
-                hover:border-grayColor-500
-                '
-              >
-                파일 선택
-                <input
-                  id='addFile'
-                  name='addFile'
-                  type='file'
-                  accept='image/*'
-                  onChange={onFileChange}
-                  className='outline-none w-full hidden'
-                />
-              </label>
+              <div className='flex gap-2 items-center'>
+                <label
+                  htmlFor='addFile'
+                  className={`py-1 w-[100px_!important] text-center
+                border border-[#ddd] transition-colors
+                ${imageArr && imageArr.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
+                `}
+                >
+                  파일 선택
+                  <input
+                    id='addFile'
+                    name='addFile'
+                    type='file'
+                    accept='image/*'
+                    disabled={imageArr && imageArr.length >= 8 ? true : false}
+                    onChange={onFileChange}
+                    multiple
+                    className='outline-none w-full hidden group'
+                  />
+                </label>
+                {(imageArr || images) && (
+                  <span
+                    className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
+                    onClick={() => handleDeleteImageAll()}
+                  >
+                    파일 전체 삭제
+                  </span>
+                )}
+              </div>
               {(images || imageArr) && (
                 <ul className='w-full py-4 flex flex-wrap gap-2'>
                   {images &&
