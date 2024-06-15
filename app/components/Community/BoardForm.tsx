@@ -21,7 +21,9 @@ const BoardForm = ({
     <>
       <div className='flex justify-between'>
         <h3 className={`font-bold ${noto_serif_kr.className} text-2xl pb-6`}>
-          {title}
+          <Link href={path} className='hover:underline active:underline'>
+            {title}
+          </Link>
         </h3>
         <Link href={path}>
           <AiOutlinePlus

@@ -27,11 +27,14 @@ const MainSlide = ({
         }`}
       >
         <p className='text-grayColor-400 text-lg'>{subTitle}</p>
-        <h2
-          className={`${noto_serif_kr.className} text-3xl font-semibold md:text-4xl md:tracking-tight pt-1 pb-5`}
-        >
-          {title}
-        </h2>
+        <h3>
+          <Link
+            href={`/${path}`}
+            className={`${noto_serif_kr.className} inline-block text-3xl font-semibold md:text-4xl md:tracking-tight mt-2 mb-5 hover:underline active:underline`}
+          >
+            {title}
+          </Link>
+        </h3>
       </div>
 
       <div
