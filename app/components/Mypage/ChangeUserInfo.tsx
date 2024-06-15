@@ -73,7 +73,6 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
 
     if (getValues('password') !== '' && isEdit) {
       await updatePassword(user, getValues('password')).then((response) => {
-        console.log('response', response);
         alert('성공적으로 비밀번호가 변경되었습니다. 로그인 후, 이용해주세요.');
         signOut(authService);
         router.push('/login');

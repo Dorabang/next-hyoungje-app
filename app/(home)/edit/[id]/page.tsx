@@ -143,7 +143,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             });
           })
           .catch((error) => {
-            console.log('🚀 ~ onFileChange ~ error:', error);
+            // console.log('🚀 ~ onFileChange ~ error:', error);
           });
       });
     }
