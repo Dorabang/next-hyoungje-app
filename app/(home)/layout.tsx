@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '옥동',
     description: '한국춘란 산채품 전문 직거래장터',
-    images: '../assets/common/open_graph.jpg',
+    images: '/open_graph.jpg',
   },
   robots: {
     index: false,
