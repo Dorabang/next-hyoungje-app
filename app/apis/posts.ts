@@ -41,7 +41,7 @@ export const getPosts = async (pathname: string) => {
   let post: DocumentData[] = [];
   const postRef = collection(dbService, `${pathname}`);
 
-  const q = query(postRef, orderBy('createdAt', 'desc'));
+  const q = query(postRef, orderBy('num', 'desc'));
 
   const querySnapshot = await getDocs(q);
 
@@ -56,7 +56,7 @@ export const getCommunityPosts = async (pathname: string) => {
   let post: DocumentData[] = [];
   const postRef = collection(dbService, `${pathname}`);
 
-  const q = query(postRef, orderBy('createdAt', 'desc'), limit(10));
+  const q = query(postRef, orderBy('num', 'desc'), limit(10));
 
   const querySnapshot = await getDocs(q);
 

@@ -183,14 +183,17 @@ const PostDetail = ({ postId }: DetailPageProps) => {
                 <th>종류</th>
                 <td>{data.variant}</td>
               </tr>
-              <tr>
-                <th>연락처</th>
-                <td>{data.phone}</td>
-              </tr>
+              {pathname.includes('market') && (
+                <tr>
+                  <th>연락처</th>
+                  <td>{data.phone}</td>
+                </tr>
+              )}
               <tr>
                 <th>산지</th>
                 <td>{data.place}</td>
               </tr>
+
               <tr>
                 <th>산채일</th>
                 <td>{DateFormat(data.date)}</td>
@@ -212,14 +215,18 @@ const PostDetail = ({ postId }: DetailPageProps) => {
                 <th>가격</th>
                 <td>{data.price}</td>
               </tr>
-              <tr>
-                <th>키</th>
-                <td>{data.height}</td>
-              </tr>
-              <tr>
-                <th>폭</th>
-                <td>{data.width}</td>
-              </tr>
+              {pathname.includes('market') && (
+                <>
+                  <tr>
+                    <th>키</th>
+                    <td>{data.height}</td>
+                  </tr>
+                  <tr>
+                    <th>폭</th>
+                    <td>{data.width}</td>
+                  </tr>
+                </>
+              )}
               <tr>
                 <th>촉수</th>
                 <td>{data.amount}</td>

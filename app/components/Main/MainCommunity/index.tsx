@@ -1,6 +1,6 @@
 'use client';
 
-import { getPosts } from '@/apis/posts';
+import { getCommunityPosts, getPosts } from '@/apis/posts';
 import BoardForm from '@/components/Community/BoardForm';
 import { DocumentData } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
@@ -29,7 +29,7 @@ const MainCommunity = () => {
     const communityList = ['boast', 'wild-catch'];
 
     communityList.forEach(async (category) => {
-      const response = await getPosts(category);
+      const response = await getCommunityPosts(category);
       setCommunity((prev) => ({ ...prev, [category]: [...response] }));
       setIsLoading((prev) => ({ ...prev, [category]: false }));
     });
