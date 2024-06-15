@@ -11,7 +11,7 @@ interface HasLikesProps {
   postId: string;
 }
 
-const HasLikes = ({ userId, postId, pathname }: HasLikesProps) => {
+const HasLikes = ({ userId = undefined, postId, pathname }: HasLikesProps) => {
   const { data, refetch } = useHasLikes({ pathname, postId });
 
   const handleUpdatedLikes = async () => {
@@ -48,7 +48,7 @@ const HasLikes = ({ userId, postId, pathname }: HasLikesProps) => {
   return (
     <button
       onClick={() => handleUpdatedLikes()}
-      className={`flex gap-2 items-center ${userId ? 'cursor-pointer' : ''}`}
+      className={`flex gap-2 items-center ${userId ? 'cursor-pointer' : 'cursor-default'}`}
     >
       {data?.filter((item: string) => item === userId).length > 0 ? (
         <LiaHeartSolid size={20} className='text-[#BF1E2E]' />
