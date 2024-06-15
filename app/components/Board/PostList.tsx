@@ -80,7 +80,7 @@ const PostList = ({
       <div className='flex-grow flex justify-between items-center'>
         <Link
           href={`${pathname}/${id}`}
-          className='flex items-center whitespace-nowrap'
+          className='flex w-full items-center whitespace-nowrap hover:underline active:underline'
         >
           {image && image?.length !== 0 && (
             <AiOutlineFileImage className='mr-2' />
