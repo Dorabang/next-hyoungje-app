@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     title: '옥동',
     description: '한국춘란 산채품 전문 직거래장터',
     images: '/open_graph.jpg',
+    siteName: '옥동',
   },
   robots: {
     index: false,
