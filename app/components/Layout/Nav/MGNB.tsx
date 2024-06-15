@@ -21,7 +21,7 @@ const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
 
   return (
     <div
-      className={`${isOpen ? 'fixed top-0 left-0 lg:hidden w-screen h-screen bg-black/30 z-50' : ''}`}
+      className={`${isOpen ? 'fixed top-0 left-0 lg:hidden w-screen h-[100dvh] bg-black/30 z-50' : ''}`}
     >
       <div
         className={`absolute h-full transition-all delay-100 ease-in-out bg-white flex flex-col items-start justify-between p-4 ${isOpen ? 'left-0 w-4/5' : '-left-full w-0'}`}

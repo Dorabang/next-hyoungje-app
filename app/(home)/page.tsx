@@ -1,5 +1,6 @@
 import Community from '@/components/Community';
 import ContainerBox from '@/components/ContainerBox';
+import MainCommunity from '@/components/Main/MainCommunity';
 import MainSlide from '@/components/Main/MainSlide';
 import MainVisual from '@/components/Main/MainVisual';
 
@@ -22,8 +23,8 @@ export default function Home() {
           variant='left'
         />
 
-        <div className='border-t border-grayColor-200 mt-20 lg:mt-36'>
-          <Community />
+        <div className='border-t border-grayColor-200 mt-20 lg:mt-36 pt-10'>
+          <MainCommunity />
         </div>
       </ContainerBox>
     </main>
