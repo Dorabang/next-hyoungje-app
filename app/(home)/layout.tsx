@@ -22,6 +22,16 @@ export const metadata: Metadata = {
     description: '한국춘란 산채품 전문 직거래장터',
     images: '../assets/common/open_graph.jpg',
   },
+  robots: {
+    index: false,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: false,
+      noimageindex: true,
+    },
+  },
   keywords: [
     '형제난원',
     '옥동',
