@@ -6,6 +6,7 @@ import './globals.css';
 import RecoilRootWrapper from '@/components/RecoilRootWrapper';
 import Script from 'next/script';
 import QueryClientWrapper from '@/components/QueryClientWrapper';
+import { URL } from 'url';
 
 const noto_sans_kr = Noto_Sans_KR({
   weight: ['400', '500', '700'],
@@ -13,8 +14,24 @@ const noto_sans_kr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: '형/제/난/원 || 한국춘란 산채품 직거래장터',
+  title: '옥동 || 한국춘란 산채품 직거래장터',
   description: '한국춘란 산채품 전문 직거래장터',
+  metadataBase: new URL('https://www.hyoungje.kr'),
+  openGraph: {
+    title: '옥동',
+    description: '한국춘란 산채품 전문 직거래장터',
+    images: '../assets/common/open_graph.jpg',
+  },
+  keywords: [
+    '형제난원',
+    '옥동',
+    '산채품',
+    '한국춘란',
+    '난',
+    '난초',
+    '산채품 직거래',
+    '난초 직거래',
+  ],
 };
 
 export default function RootLayout({
