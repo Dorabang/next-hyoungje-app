@@ -195,7 +195,6 @@ const CommEdit = ({
                   accept='image/*'
                   onChange={onFileChange}
                   className='outline-none w-full hidden'
-                  multiple
                 />
               </label>
               {(images || imageArr) && (

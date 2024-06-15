@@ -324,7 +324,6 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
                   accept='image/*'
                   onChange={onFileChange}
                   className='outline-none w-full hidden'
-                  multiple
                 />
               </label>
               {(images || imageArr) && (
