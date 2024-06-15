@@ -13,6 +13,8 @@ const ContainerBox = ({
       maxWidth='xl'
       sx={{
         padding: '24px 20px',
+        width: '100%',
+        height: '100%',
       }}
     >
       <div className={`${className}`}>{children}</div>
