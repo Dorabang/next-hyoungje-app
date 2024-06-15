@@ -55,7 +55,8 @@ const CommEdit = ({
     setValue(contents);
   }, [setValue, contents]);
 
-  const inputWrapperClass = 'flex w-full border-b border-grayColor-200 p-2';
+  const inputWrapperClass =
+    'flex items-start w-full border-b border-grayColor-200 p-2';
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -102,7 +103,7 @@ const CommEdit = ({
     } = e;
 
     if (files) {
-      const theFile = files[0];
+      const fileList = Object.values(files).slice(0, 8);
 
       const options = {
         maxSizeMB: 0.2, // 이미지 최대 용량
@@ -110,19 +111,21 @@ const CommEdit = ({
         useWebWorker: true,
       };
 
-      imageCompression(theFile, options)
-        .then((response) => {
-          imageCompression.getDataUrlFromFile(response).then((result) => {
-            const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
+      fileList.map((file) => {
+        imageCompression(file, options)
+          .then((response) => {
+            imageCompression.getDataUrlFromFile(response).then((result) => {
+              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
 
-            setImageArr((prev) =>
-              prev !== null ? [...prev, imageObj] : [imageObj],
-            );
+              setImageArr((prev) =>
+                prev !== null ? [...prev, imageObj] : [imageObj],
+              );
+            });
+          })
+          .catch((error) => {
+            // console.log('🚀 ~ onFileChange ~ error:', error);
           });
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+      });
     }
   };
 
@@ -176,27 +179,44 @@ const CommEdit = ({
           </div>
 
           <div className={`${inputWrapperClass}`}>
-            <p className='w-[90px] border-r border-neutral-300 cursor-default'>
+            <p className='w-[90px] border-r border-neutral-300 cursor-default flex flex-col gap-2'>
               파일 첨부
+              <span className='text-grayColor-300 text-sm'>
+                {'('}
+                {imageArr ? imageArr.length : '0'}
+                /8{')'}
+              </span>
             </p>
             <div className='flex flex-col pl-3'>
-              <label
-                htmlFor='addFile'
-                className='py-1 w-[100px_!important] text-center cursor-pointer
-                border border-grayColor-200 transition-colors
-                hover:border-grayColor-500
-                '
-              >
-                파일 선택
-                <input
-                  id='addFile'
-                  name='addFile'
-                  type='file'
-                  accept='image/*'
-                  onChange={onFileChange}
-                  className='outline-none w-full hidden'
-                />
-              </label>
+              <div className='flex gap-2 items-center'>
+                <label
+                  htmlFor='addFile'
+                  className={`py-1 w-[100px_!important] text-center
+                border border-[#ddd] transition-colors
+                ${imageArr && imageArr.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
+                `}
+                >
+                  파일 선택
+                  <input
+                    id='addFile'
+                    name='addFile'
+                    type='file'
+                    accept='image/*'
+                    multiple
+                    disabled={imageArr && imageArr.length >= 8 ? true : false}
+                    onChange={onFileChange}
+                    className='outline-none w-full hidden group'
+                  />
+                </label>
+                {imageArr && (
+                  <span
+                    className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
+                    onClick={() => setImageArr(null)}
+                  >
+                    파일 전체 삭제
+                  </span>
+                )}
+              </div>
               {(images || imageArr) && (
                 <ul className='w-full py-4 flex flex-wrap gap-2'>
                   {images &&

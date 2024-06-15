@@ -7,12 +7,14 @@ interface FilterOptionProps {
   selectedCategory: string;
   handleUpdateFilter: (status: string) => void;
   pathname: string;
+  type: 'community' | 'etc';
 }
 
 const FilterOption = ({
   selectedCategory,
   handleUpdateFilter,
   pathname,
+  type,
 }: FilterOptionProps) => {
   const user = useRecoilValue(authState);
 
@@ -46,7 +48,7 @@ const FilterOption = ({
           <li className='cursor-default'>|</li>
           <li>
             <Link
-              href={`/edit/${pathname}`}
+              href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
               className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
             >
               <HiOutlinePencilSquare size={18} className='mr-1' />

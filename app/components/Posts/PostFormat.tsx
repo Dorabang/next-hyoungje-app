@@ -71,6 +71,7 @@ const PostFormat = () => {
         selectedCategory={selectedCategory}
         handleUpdateFilter={handleUpdateFilter}
         pathname={pathname}
+        type={path.includes('community') ? 'community' : 'etc'}
       />
 
       <Board isLoading={isLoading}>

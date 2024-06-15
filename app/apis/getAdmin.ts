@@ -23,7 +23,7 @@ const getAdmin = async (userId: string) => {
     if (admin.length !== 0) return true;
     return false;
   } catch (err) {
-    console.log('🚀 ~ getAdmin ~ err:', err);
+    // console.log('🚀 ~ getAdmin ~ err:', err);
   }
 };
 

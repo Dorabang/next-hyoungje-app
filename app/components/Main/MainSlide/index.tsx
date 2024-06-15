@@ -20,7 +20,7 @@ const MainSlide = ({
   speed = 1200,
 }: MainSlideProps) => {
   return (
-    <div className='relative w-full flex justify-between flex-wrap pt-20 xl:pt-[150px]'>
+    <div className='relative w-full flex justify-between flex-wrap'>
       <div
         className={`w-full text-center ${
           variant === 'left' ? 'xl:w-[25%] mx-3 xl:mx-0 xl:text-left' : 'pb-5'
@@ -52,7 +52,7 @@ const MainSlide = ({
           transition-colors
           ${
             variant === 'left'
-              ? 'static xl:absolute xl:left-0 xl:top-[400px] mx-auto xl:m-0'
+              ? 'static xl:absolute xl:left-0 xl:top-[200px] mx-auto xl:m-0'
               : ''
           }
           `}

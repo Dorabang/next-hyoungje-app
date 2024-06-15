@@ -153,9 +153,8 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
       <div className='w-full px-5 md:px-0 md:w-[1016px] mx-auto pb-[100px]'>
         {/* image */}
         <div className='pt-4 w-full'>
-          {data.image ? (
-            image !== null ? (
-              image.map((imageURL) => (
+          {data.image
+            ? image?.map((imageURL) => (
                 <div
                   key={imageURL}
                   className='relative w-full md:max-w-[800px] mx-auto'
@@ -166,10 +165,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
                   />
                 </div>
               ))
-            ) : (
-              <div className='w-full h-[400px] bg-grayColor-100 animate-pulse' />
-            )
-          ) : null}
+            : null}
         </div>
 
         {/* contents */}

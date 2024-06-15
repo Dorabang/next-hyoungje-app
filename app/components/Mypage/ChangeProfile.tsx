@@ -92,7 +92,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
 
       await updateProfile(user, { displayName: displayName }).then(
         async (err) => {
-          console.log(err);
+          // console.log(err);
           await setDoc(
             displayNameRef,
             { displayName: displayName },

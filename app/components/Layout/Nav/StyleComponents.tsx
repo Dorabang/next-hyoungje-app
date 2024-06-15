@@ -2,7 +2,7 @@ import { Tooltip, TooltipProps, styled, tooltipClasses } from '@mui/material';
 
 export const btnStyle = {
   color: '#444 !important',
-  fontSize: '18px',
+  fontSize: 18,
   padding: '10px 20px',
   fontWeight: '500',
   backgroundColor: 'transparent !important',
@@ -20,7 +20,7 @@ export const mgnbBtnStyle = {
 
 export const authBtnStyle = {
   color: '#666 !important',
-  fontSize: 15,
+  fontSize: 16,
   padding: '10px',
   fontWeight: '400',
   backgroundColor: 'transparent !important',

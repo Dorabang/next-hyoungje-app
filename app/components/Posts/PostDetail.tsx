@@ -230,9 +230,8 @@ const PostDetail = ({ postId }: DetailPageProps) => {
 
         {/* image */}
         <div className='pt-8 w-full'>
-          {data.image ? (
-            image !== null ? (
-              image.map((imageURL: string) => (
+          {data.image
+            ? image?.map((imageURL: string) => (
                 <div
                   key={imageURL}
                   className='relative w-full md:max-w-[700px] mx-auto'
@@ -244,10 +243,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
                   />
                 </div>
               ))
-            ) : (
-              <div className='w-full h-[400px] bg-grayColor-100 animate-pulse' />
-            )
-          ) : null}
+            : null}
         </div>
 
         {/* contents */}
