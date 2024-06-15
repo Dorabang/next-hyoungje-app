@@ -41,7 +41,7 @@ export const getPosts = async (pathname: string) => {
   let post: DocumentData[] = [];
   const postRef = collection(dbService, `${pathname}`);
 
-  const q = query(postRef, orderBy('createdAt', 'desc'));
+  const q = query(postRef, orderBy('num', 'desc'));
 
   const querySnapshot = await getDocs(q);
 

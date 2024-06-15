@@ -32,7 +32,6 @@ const PostDetail = ({ postId }: DetailPageProps) => {
 
   const path = usePathname().split('/');
   const pathname = path[3] ? path[2] : path[1];
-  console.log('🚀 ~ PostDetail ~ pathname:', pathname.includes('single-leaf'));
   const { data, isLoading } = useGetPost(pathname, postId);
   const [image, setImage] = useState<string[] | null>(null);
 
