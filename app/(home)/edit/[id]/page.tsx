@@ -86,8 +86,8 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       ...(pathname.includes('market') && {
         height: height,
         width: width,
-        amount: amount,
       }),
+      amount: amount,
       image: imageIdArr,
       like: [],
       views: 0,
@@ -279,19 +279,18 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                   required
                 />
               </div>
-
-              <div className={`${inputWrapperClass}`}>
-                <label htmlFor='amount'>촉수</label>
-                <input
-                  name='amount'
-                  type='text'
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className='outline-none pl-3'
-                />
-              </div>
             </>
           )}
+          <div className={`${inputWrapperClass}`}>
+            <label htmlFor='amount'>촉수</label>
+            <input
+              name='amount'
+              type='text'
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className='outline-none pl-3'
+            />
+          </div>
 
           <div className={`${inputWrapperClass}`}>
             <p className='w-[90px] border-r border-neutral-300 cursor-default flex flex-col gap-2'>

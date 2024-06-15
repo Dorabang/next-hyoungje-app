@@ -97,8 +97,8 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       ...(pathname.includes('market') && {
         height: height,
         width: width,
-        amount: amount,
       }),
+      amount: amount,
       image: imageIdArr,
       updatedAt: Date.now(),
     };
@@ -314,19 +314,19 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
                   required
                 />
               </div>
-
-              <div className={`${inputWrapperClass}`}>
-                <label htmlFor='amount'>촉수</label>
-                <input
-                  name='amount'
-                  type='text'
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className='outline-none pl-3'
-                />
-              </div>
             </>
           )}
+
+          <div className={`${inputWrapperClass}`}>
+            <label htmlFor='amount'>촉수</label>
+            <input
+              name='amount'
+              type='text'
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className='outline-none pl-3'
+            />
+          </div>
 
           <div className={`${inputWrapperClass}`}>
             <p className='w-[90px] border-r border-neutral-300 cursor-default flex flex-col gap-2'>

@@ -32,6 +32,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
 
   const path = usePathname().split('/');
   const pathname = path[3] ? path[2] : path[1];
+  console.log('🚀 ~ PostDetail ~ pathname:', pathname.includes('single-leaf'));
   const { data, isLoading } = useGetPost(pathname, postId);
   const [image, setImage] = useState<string[] | null>(null);
 
@@ -191,10 +192,12 @@ const PostDetail = ({ postId }: DetailPageProps) => {
                 <th>산지</th>
                 <td>{data.place}</td>
               </tr>
-              <tr>
-                <th>산채일</th>
-                <td>{DateFormat(data.date)}</td>
-              </tr>
+              {!pathname.includes('market') ? null : (
+                <tr>
+                  <th>산채일</th>
+                  <td>{DateFormat(data.date)}</td>
+                </tr>
+              )}
             </tbody>
           </table>
 
@@ -212,14 +215,24 @@ const PostDetail = ({ postId }: DetailPageProps) => {
                 <th>가격</th>
                 <td>{data.price}</td>
               </tr>
-              <tr>
-                <th>키</th>
-                <td>{data.height}</td>
-              </tr>
-              <tr>
-                <th>폭</th>
-                <td>{data.width}</td>
-              </tr>
+              {!pathname.includes('market') && (
+                <tr>
+                  <th>산채일</th>
+                  <td>{DateFormat(data.date)}</td>
+                </tr>
+              )}
+              {pathname.includes('market') && (
+                <>
+                  <tr>
+                    <th>키</th>
+                    <td>{data.height}</td>
+                  </tr>
+                  <tr>
+                    <th>폭</th>
+                    <td>{data.width}</td>
+                  </tr>
+                </>
+              )}
               <tr>
                 <th>촉수</th>
                 <td>{data.amount}</td>
