@@ -110,7 +110,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
       >
         <div
           className='p-2 cursor-pointer'
-          onClick={() => router.push(`/community}/${pathname}`)}
+          onClick={() => router.push(`/community/${pathname}`)}
         >
           <IoArrowBack size={18} />
         </div>
