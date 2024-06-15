@@ -4,6 +4,7 @@ import MainCommunity from '@/components/Main/MainCommunity';
 import MainSlide from '@/components/Main/MainSlide';
 import MainVisual from '@/components/Main/MainVisual';
 import { noto_serif_kr } from '@/components/NotoSerif';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -30,11 +31,14 @@ export default function Home() {
             className={`w-full text-center xl:w-[25%] mx-3 xl:mx-0 xl:text-left pb-5`}
           >
             <p className='text-grayColor-400 text-lg'>산채품 정보 공유</p>
-            <h2
-              className={`${noto_serif_kr.className} text-3xl font-semibold md:text-4xl md:tracking-tight pt-1 pb-5`}
-            >
-              커뮤니티
-            </h2>
+            <h3>
+              <Link
+                href='/community'
+                className={`${noto_serif_kr.className} inline-block text-3xl font-semibold md:text-4xl md:tracking-tight mt-2 mb-5 hover:underline active:underline`}
+              >
+                커뮤니티
+              </Link>
+            </h3>
           </div>
           <MainCommunity />
         </ContainerBox>
