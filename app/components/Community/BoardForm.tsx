@@ -32,32 +32,37 @@ const BoardForm = ({
       </div>
 
       <ul className='w-full border-b border-neutral-500 mb-16 text-sm'>
-        <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400'>
-          <div className='w-[10%]'>작성자</div>
+        <li className='border-b border-t border-neutral-500 flex gap-2 text-center font-bold [&_>_div]:py-2 text-grayColor-400'>
+          <div className='w-[6%]'>번호</div>
+          <div className='w-[15%]'>작성자</div>
           <div className='flex-grow text-left'>제목</div>
-          <div className='w-[10%]'>등록일</div>
-          <div className='w-[10%]'>조회수</div>
+          <div className='w-[20%] md:w-[10%]'>등록일</div>
+          <div className='w-[15%] md:w-[10%]'>조회수</div>
         </li>
         {!isLoading ? (
           data.length !== 0 ? (
-            data.map(({ id, creatorName, title, createdAt, views, image }) => (
-              <li
-                key={id}
-                className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_>_div]:py-3'
-              >
-                <div className='w-[10%]'>{creatorName}</div>
-                <div className='flex-grow text-left'>
-                  <Link href={`${path}/${id}`}>
-                    {image && image?.length !== 0 && (
-                      <AiOutlineFileImage className='mr-2' />
-                    )}
-                    {title}
-                  </Link>
-                </div>
-                <div className='w-[10%]'>{DateFormat(createdAt)}</div>
-                <div className='w-[10%]'>{views}</div>
-              </li>
-            ))
+            data.map(
+              ({ id, num, creatorName, title, createdAt, views, image }) => (
+                <li
+                  key={id}
+                  className='flex gap-2 items-center border-b border-neutral-300 text-center text-gray-700 [&_>_div]:py-3 [&_>_div]:truncate'
+                >
+                  <div className='w-[6%]'>{num}</div>
+                  <div className='w-[15%]'>{creatorName}</div>
+                  <div className='flex-grow text-left'>
+                    <Link
+                      href={`${path}/${id}`}
+                      className='flex gap-2 items-center'
+                    >
+                      {image && image?.length !== 0 && <AiOutlineFileImage />}
+                      {title}
+                    </Link>
+                  </div>
+                  <div className='w-[20%]'>{DateFormat(createdAt)}</div>
+                  <div className='w-[15%]'>{views}</div>
+                </li>
+              ),
+            )
           ) : (
             <PostsNotFound />
           )
