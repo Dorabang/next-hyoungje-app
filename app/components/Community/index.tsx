@@ -5,14 +5,14 @@ import { DocumentData } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import BoardForm from './BoardForm';
 
-interface communityState {
+export interface communityState {
   board: DocumentData[];
   notice: DocumentData[];
   boast: DocumentData[];
   qna: DocumentData[];
 }
 
-interface communityLoadingState {
+export interface communityLoadingState {
   board: boolean;
   notice: boolean;
   boast: boolean;

@@ -175,6 +175,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
         sm:[&_th]:w-[15%] [&_th]:p-2
         [&_td]:w-[80%]
         sm:[&_td]:w-[85%] [&_td]:p-2
+        [&_tr]:truncate
         '
           >
             <tbody>

@@ -32,7 +32,7 @@ const Board = ({ children }: BoardProps) => {
 
 const Headers = ({ type = 'etc' }: { type?: 'community' | 'etc' }) => {
   return (
-    <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400'>
+    <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400 [&_div]:truncate'>
       <div className='w-[4%] hidden lg:block'>번호</div>
       {type === 'etc' ? (
         <>
