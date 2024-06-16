@@ -72,7 +72,7 @@ const CommEdit = ({
 
     const newImageArr = imageArr && imageArr.map((item) => item.id);
 
-    const prevImage = postImages.filter((item: string) =>
+    const prevImage = postImages?.filter((item: string) =>
       images?.filter((items) => items.includes(item)),
     );
 
