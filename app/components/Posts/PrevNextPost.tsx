@@ -1,4 +1,5 @@
 import { getNextPost, getPrevPost } from '@/apis/posts';
+import { allRoutes } from '@/constant/Routes';
 import { DocumentData } from 'firebase/firestore';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -17,6 +18,10 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
     null,
   );
 
+  const includesCommunity = allRoutes
+    .filter((r) => r.link.includes('community'))
+    .filter((r) => r.link.includes(pathname));
+
   useEffect(() => {
     const getPrevNext = async () => {
       const prev = await getPrevPost(pathname, post.num);
@@ -34,7 +39,11 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
           <div>
             {prevPost && (
               <Link
-                href={`/${pathname}/${prevPost.id}`}
+                href={
+                  includesCommunity.length > 0
+                    ? `/community/${pathname}/${prevPost.id}`
+                    : `/${pathname}/${prevPost.id}`
+                }
                 className='text-left flex gap-1 justify-start items-center text-sm transition-colors text-grayColor-300 hover:text-grayColor-400 active:text-grayColor-400'
               >
                 <AiOutlineLeft size={20} />
@@ -50,7 +59,11 @@ const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
           <div>
             {nextPost && (
               <Link
-                href={`/${pathname}/${nextPost.id}`}
+                href={
+                  includesCommunity.length > 0
+                    ? `/community/${pathname}/${nextPost.id}`
+                    : `/${pathname}/${nextPost.id}`
+                }
                 className='text-right flex gap-1 justify-end items-center text-sm transition-colors text-grayColor-300 hover:text-grayColor-400 active:text-grayColor-400'
               >
                 <p>
