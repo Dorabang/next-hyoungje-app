@@ -49,7 +49,7 @@ const FilterOption = ({
           <li>
             <Link
               href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
-              className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
+              className='text-grayColor-500 hover:text-grayColor-800 flex items-center transition-colors'
             >
               <HiOutlinePencilSquare size={18} className='mr-1' />
               글쓰기

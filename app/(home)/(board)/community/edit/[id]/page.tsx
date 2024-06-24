@@ -137,7 +137,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form
           onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-neutral-300'
+          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-grayColor-300'
         >
           <div className={`${inputWrapClass}`}>
             <label htmlFor='phone'>제목 *</label>
@@ -152,7 +152,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
           </div>
 
           <div className={`${inputWrapClass}`}>
-            <p className='w-[90px] border-r border-neutral-300 cursor-default flex flex-col gap-2'>
+            <p className='w-[90px] border-r border-grayColor-300 cursor-default flex flex-col gap-2'>
               파일 첨부
               <span className='text-grayColor-300 text-sm'>
                 {'('}

@@ -170,7 +170,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
         <div className='w-full flex flex-wrap md:gap-4 justify-center'>
           <table
             className='w-full md:w-[500px]
-        [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-neutral-300
+        [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-grayColor-300
         [&_th]:w-[20%]
         sm:[&_th]:w-[15%] [&_th]:p-2
         [&_td]:w-[80%]
@@ -203,7 +203,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
 
           <table
             className='w-full md:w-[500px]
-              [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-neutral-300
+              [&_tr]:flex [&_tr]:gap-2 [&_tr]:border-b [&_tr]:border-grayColor-300
               [&_th]:w-[20%]
               sm:[&_th]:w-[15%] [&_th]:p-2
               [&_td]:w-[80%]

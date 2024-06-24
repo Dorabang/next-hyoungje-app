@@ -9,6 +9,7 @@ interface MainSlideProps {
   variant?: 'left' | 'center';
   slidesPerView?: number;
   speed?: number;
+  community?: boolean;
 }
 
 const MainSlide = ({
@@ -18,18 +19,21 @@ const MainSlide = ({
   variant = 'left',
   slidesPerView = 2,
   speed = 1200,
+  community = false,
 }: MainSlideProps) => {
   return (
     <div className='relative w-full flex justify-between flex-wrap'>
       <div
         className={`w-full text-center ${
-          variant === 'left' ? 'xl:w-[25%] mx-3 xl:mx-0 xl:text-left' : 'pb-5'
-        }`}
+          variant === 'left' ? 'xl:w-[25%] mx-3 xl:mx-0 xl:text-left' : ''
+        }
+        ${variant === 'center' ? 'pb-5' : ''}
+        `}
       >
         <p className='text-grayColor-400 text-lg'>{subTitle}</p>
         <h3>
           <Link
-            href={`/${path}`}
+            href={community ? `/community/${path}` : `/${path}`}
             className={`${noto_serif_kr.className} inline-block text-3xl font-semibold md:text-4xl md:tracking-tight mt-2 mb-5 hover:underline active:underline`}
           >
             {title}
@@ -38,15 +42,16 @@ const MainSlide = ({
       </div>
 
       <div
-        className={`w-full mx-3 xl:mx-0 overflow-hidden ${
-          variant === 'left' ? 'xl:w-[75%]' : 'text-center'
-        }`}
+        className={`w-full mx-3 xl:mx-0 overflow-hidden
+          ${variant === 'left' ? 'xl:w-[75%]' : ''}
+          ${variant === 'center' ? 'text-center' : ''}
+        `}
       >
         <Slide pathname={path} slidesPerView={slidesPerView} speed={speed} />
       </div>
 
       <Link
-        href={`/${path}`}
+        href={community ? `/community/${path}` : `/${path}`}
         className={`inline-block px-10 py-[10px] mx-auto mt-10
           border border-grayColor-500
           hover:text-white

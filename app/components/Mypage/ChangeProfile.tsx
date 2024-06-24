@@ -135,7 +135,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
         autoComplete='off'
       >
         <div className='flex flex-col gap-4 items-center pb-10'>
-          <p className='text-neutral-700'>프로필 이미지</p>
+          <p className='text-grayColor-700'>프로필 이미지</p>
           <label className='cursor-pointer'>
             <div
               className='h-32 w-32 flex justify-center items-center border border-grayColor-100

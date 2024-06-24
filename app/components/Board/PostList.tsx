@@ -58,7 +58,7 @@ const PostList = ({
   return (
     <li
       key={id}
-      className='flex items-center border-b border-neutral-300 text-center text-gray-700 [&_>_div]:py-3 [&_>_div]:truncate'
+      className='flex items-center border-b border-grayColor-300 text-center text-gray-700 [&_>_div]:py-3 [&_>_div]:truncate'
     >
       {/* 문서 번호 */}
       <div className='w-[4%] hidden lg:block'>{num ? num : null}</div>
