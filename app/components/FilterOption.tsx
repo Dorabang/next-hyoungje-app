@@ -51,18 +51,20 @@ const FilterOption = ({
             {filter.value}
           </li>
         ))}
-      {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
-        user && <li className='cursor-default'>|</li>}
       {user && (
-        <li>
-          <Link
-            href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
-            className='text-grayColor-500 hover:text-grayColor-800 flex items-center transition-colors'
-          >
-            <HiOutlinePencilSquare size={18} className='mr-1' />
-            글쓰기
-          </Link>
-        </li>
+        <>
+          {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
+            user && <li className='cursor-default'>|</li>}
+          <li>
+            <Link
+              href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
+              className='text-grayColor-500 hover:text-grayColor-800 flex items-center transition-colors'
+            >
+              <HiOutlinePencilSquare size={18} className='mr-1' />
+              글쓰기
+            </Link>
+          </li>
+        </>
       )}
     </ul>
   );
