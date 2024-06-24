@@ -26,7 +26,7 @@ const PaginationComponets = ({
     <Stack
       direction={'row'}
       justifyContent={'center'}
-      sx={{ padding: '80px 0 90px' }}
+      sx={{ padding: '40px 0' }}
     >
       <Pagination page={page} count={numPages} onChange={handlePageUpDown} />
     </Stack>
