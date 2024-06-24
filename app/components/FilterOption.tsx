@@ -53,7 +53,8 @@ const FilterOption = ({
         ))}
       {user && (
         <>
-          <li className='cursor-default'>|</li>
+          {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
+            user && <li className='cursor-default'>|</li>}
           <li>
             <Link
               href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
