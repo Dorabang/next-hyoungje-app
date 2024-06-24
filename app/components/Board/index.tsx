@@ -25,14 +25,14 @@ const Board = ({ children }: BoardProps) => {
 
   return (
     <PostContext.Provider value={{ user, pathname }}>
-      <ul className='w-full border-b border-neutral-500'>{children}</ul>
+      <ul className='w-full border-b border-grayColor-500'>{children}</ul>
     </PostContext.Provider>
   );
 };
 
 const Headers = ({ type = 'etc' }: { type?: 'community' | 'etc' }) => {
   return (
-    <li className='border-b border-t border-neutral-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400 [&_div]:truncate'>
+    <li className='border-b border-t border-grayColor-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400 [&_div]:truncate'>
       <div className='w-[4%] hidden lg:block'>번호</div>
       {type === 'etc' ? (
         <>
