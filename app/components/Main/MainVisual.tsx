@@ -1,7 +1,7 @@
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
-import mvDesktop from '@/assets/main_visual_pc.jpg';
-import mvTablet from '@/assets/main_visual_tablet.jpg';
-import mvMobile from '@/assets/main_visual_mobile.jpg';
+import mvDesktop from '@/assets/banner/mainVisual/main_visual_pc.jpg';
+import mvTablet from '@/assets/banner/mainVisual/main_visual_tablet.jpg';
+import mvMobile from '@/assets/banner/mainVisual/main_visual_mobile.jpg';
 
 const MainVisual = () => {
   return (
