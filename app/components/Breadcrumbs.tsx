@@ -72,19 +72,15 @@ const pages: pagesTypes = [
  */
 const Breadcrumbs = () => {
   const pathname = usePathname().trim().split('/');
-  const [currentPage, setCurrentPage] = useState<pagesType>();
 
-  useEffect(() => {
+  const memoizedCurrentPage = useMemo(() => {
     const findPage = pages.filter((page) =>
       pathname[2]
         ? page.path.includes(pathname[2])
         : page.path.includes(pathname[1]),
-    );
-
-    findPage && setCurrentPage(findPage[0]);
+    )[0];
+    return findPage;
   }, [pathname]);
-
-  const memoizedCurrentPage = useMemo(() => currentPage, [currentPage]);
 
   return (
     <ul className='flex gap-2 py-2 text-gray-500 text-sm'>
@@ -92,6 +88,14 @@ const Breadcrumbs = () => {
         <Link href='/'>Home</Link>
       </li>
       <li className='cursor-default'>{'>'}</li>
+      {pathname[2] && (
+        <>
+          <li className='hover:underline'>
+            <Link href='/community'>커뮤니티</Link>
+          </li>
+          <li className='cursor-default'>{'>'}</li>
+        </>
+      )}
       <li className='hover:underline'>
         <Link href={memoizedCurrentPage?.path || '/'}>
           {memoizedCurrentPage?.name}

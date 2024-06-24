@@ -11,7 +11,7 @@ import statusOptions from '../StatusOptions';
 import HasLikes from '../HasLikes';
 import { authState } from '@/recoil/atoms';
 import { useRecoilValue } from 'recoil';
-import { allRoutes, routes } from '@/constant/Routes';
+import { allRoutes } from '@/constant/Routes';
 
 const Bookmark = ({
   pathname,
@@ -53,11 +53,15 @@ const Bookmark = ({
         : `/community/${path}`;
     return router.push(route);
   };
+
   if (!data) return <div>게시물을 찾을 수 없습니다.</div>;
 
   return (
-    <div className='w-full relative flex flex-col border border-grayColor-100 rounded-md overflow-hidden'>
-      <div className='w-full h-[300px] bg-grayColor-500 flex items-center justify-center'>
+    <div className='w-full relative flex flex-col border border-grayColor-100 overflow-hidden hover:-translate-y-2 transition-transform'>
+      <div
+        className='w-full h-[350px] bg-grayColor-500 flex items-center justify-center cursor-pointer'
+        onClick={() => handleClickBookmark()}
+      >
         {image ? (
           <Image
             fill
@@ -89,7 +93,7 @@ const Bookmark = ({
             </h3>
             <HasLikes pathname={pathname} postId={postId} userId={user?.uid} />
           </div>
-          <p>{path[0].name}</p>
+          <p className='text-grayColor-500 text-sm'>{path[0].name}</p>
           <div className='flex justify-between text-grayColor-500 text-sm'>
             <p>
               {data.creatorName}
