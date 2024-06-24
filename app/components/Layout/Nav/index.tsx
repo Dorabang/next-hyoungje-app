@@ -38,9 +38,9 @@ import { PagesRoutes } from '@/constant/PagesRoutes';
 /* image */
 import logoImg from '@/assets/common/logo.png';
 
-const LogoButton = (props: MUIStyledCommonProps) => {
+const LogoButton = ({ className = '' }: { className?: string }) => {
   return (
-    <Box {...props}>
+    <div className={`${className}`}>
       <Stack
         sx={{
           width: 100,
@@ -59,7 +59,7 @@ const LogoButton = (props: MUIStyledCommonProps) => {
           />
         </Link>
       </Stack>
-    </Box>
+    </div>
   );
 };
 
@@ -119,21 +119,10 @@ const Nav = () => {
               padding: { xs: '0', md: '0 16px' },
             }}
           >
-            <LogoButton
-              sx={{
-                display: { xs: 'none', lg: 'flex' },
-              }}
-            />
+            <LogoButton className='hidden xl:flex' />
 
             {/* 네이게이션 */}
-            <Box
-              component={'nav'}
-              sx={{
-                flexGrow: 1,
-                display: { xs: 'none', lg: 'flex' },
-                justifyContent: 'space-between',
-              }}
-            >
+            <nav className='flex-grow hidden xl:flex justify-between items-center'>
               <Box
                 sx={{
                   flexGrow: 1,
@@ -207,25 +196,11 @@ const Nav = () => {
               </Box>
               {/* utilBtn */}
               <UtilBtn />
-            </Box>
+            </nav>
 
             {/* mgnb */}
-            <Box
-              sx={{
-                width: '100%',
-                display: { xs: 'flex', lg: 'none' },
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                position: 'relative',
-              }}
-            >
-              <LogoButton
-                sx={{
-                  position: 'absolute',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                }}
-              />
+            <div className='w-full flex xl:hidden justify-between items-center relative'>
+              <LogoButton className='absolute left-1/2 -translate-x-1/2' />
 
               <Box
                 onClick={() => setIsOpen(true)}
@@ -233,7 +208,7 @@ const Nav = () => {
               >
                 <AiOutlineMenu size={24} />
               </Box>
-            </Box>
+            </div>
           </Toolbar>
         </Container>
       </AppBar>
