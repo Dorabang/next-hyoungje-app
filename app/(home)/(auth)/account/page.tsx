@@ -135,14 +135,14 @@ const AccountPage = () => {
         autoComplete='off'
       >
         <div className='flex flex-col gap-4 items-center'>
-          <p className='text-neutral-700'>프로필 이미지</p>
+          <p className='text-grayColor-700'>프로필 이미지</p>
           <div className='h-40 w-40 rounded-full overflow-hidden relative'>
             <AutoHeightImageWrapper
               src={image !== '' ? image : defaultProfile}
               alt='프로필 이미지 미리보기'
             />
           </div>
-          <label className='p-2 border border-neutral-400 transition-colors hover:bg-neutral-400 rounded hover:text-white cursor-pointer'>
+          <label className='p-2 border border-grayColor-400 transition-colors hover:bg-grayColor-400 rounded hover:text-white cursor-pointer'>
             파일 업로드하기
             <input
               type='file'

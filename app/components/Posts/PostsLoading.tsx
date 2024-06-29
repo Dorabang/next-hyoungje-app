@@ -1,7 +1,7 @@
 const PostsLoading = () => {
   return (
     <li className='py-3 h-52 flex justify-center items-center'>
-      <p className='text-neutral-500 flex gap-2 items-center'>
+      <p className='text-grayColor-500 flex gap-2 items-center'>
         <span
           className='inline-block
             border-[3px] border-[#ddd] border-l-[#333]

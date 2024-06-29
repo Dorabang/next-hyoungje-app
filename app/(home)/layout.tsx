@@ -57,9 +57,11 @@ export default function RootLayout({
       >
         <QueryClientWrapper>
           <RecoilRootWrapper>
-            <Nav />
-            {children}
-            <Footer />
+            <div className='flex flex-col w-full h-[100dvh]'>
+              <Nav />
+              <div className='flex-grow'>{children}</div>
+              <Footer />
+            </div>
           </RecoilRootWrapper>
         </QueryClientWrapper>
         <Script

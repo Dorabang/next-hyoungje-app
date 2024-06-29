@@ -4,7 +4,7 @@ import React from 'react';
 
 const LoadingPage = () => {
   return (
-    <ContainerBox className='w-full h-full'>
+    <ContainerBox className='w-full h-full flex justify-center items-center'>
       <Loading />
     </ContainerBox>
   );

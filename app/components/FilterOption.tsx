@@ -1,3 +1,4 @@
+import { allRoutes } from '@/constant/Routes';
 import { authState } from '@/recoil/atoms';
 import Link from 'next/link';
 import { HiOutlinePencilSquare } from 'react-icons/hi2';
@@ -24,32 +25,40 @@ const FilterOption = ({
     { key: 'sold-out', value: '판매 완료' },
     { key: 'reservation', value: '예약 중' },
   ];
+  const applyFilterRoutes = [
+    'wild-market1',
+    'wild-market2',
+    'general-market',
+    'natural-herb',
+  ];
 
   return (
     <ul
       className='flex justify-end items-center gap-4 pt-10 pb-5
       text-gray-500 text-sm'
     >
-      {filters.map((filter) => (
-        <li
-          key={filter.key}
-          className={`cursor-pointer hover:text-gray-700 hover:font-medium hover:underline
+      {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
+        filters.map((filter) => (
+          <li
+            key={filter.key}
+            className={`cursor-pointer hover:text-gray-700 hover:font-medium hover:underline
           ${selectedCategory === filter.key ? 'text-gray-700' : ''}
           ${selectedCategory === filter.key ? 'font-medium' : ''}
           ${selectedCategory === filter.key ? 'underline' : ''}
           `}
-          onClick={() => handleUpdateFilter(filter.key)}
-        >
-          {filter.value}
-        </li>
-      ))}
+            onClick={() => handleUpdateFilter(filter.key)}
+          >
+            {filter.value}
+          </li>
+        ))}
       {user && (
         <>
-          <li className='cursor-default'>|</li>
+          {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
+            user && <li className='cursor-default'>|</li>}
           <li>
             <Link
               href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
-              className='text-neutral-500 hover:text-neutral-800 flex items-center transition-colors'
+              className='text-grayColor-500 hover:text-grayColor-800 flex items-center transition-colors'
             >
               <HiOutlinePencilSquare size={18} className='mr-1' />
               글쓰기
