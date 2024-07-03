@@ -86,12 +86,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
     }
   }, [admin, user]);
 
-  if (isLoading)
-    return (
-      <ContainerBox className='py-20'>
-        <Loading />
-      </ContainerBox>
-    );
+  if (isLoading) return <Loading />;
 
   if (!data)
     return (
