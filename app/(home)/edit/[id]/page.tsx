@@ -129,7 +129,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
       const options = {
         maxSizeMB: 0.2, // 이미지 최대 용량
-        maxWidthOrHeight: 1920, // 최대 넓이(혹은 높이)
+        maxWidthOrHeight: 840, // 최대 넓이(혹은 높이)
         useWebWorker: true,
       };
 
