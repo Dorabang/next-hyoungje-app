@@ -241,7 +241,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
             ? image?.map((imageURL: string) => (
                 <div
                   key={imageURL}
-                  className='relative w-full md:max-w-[700px] mx-auto'
+                  className='relative w-full md:max-w-[700px] min-h-[350px] mx-auto'
                 >
                   <AutoHeightImageWrapper
                     src={imageURL}
