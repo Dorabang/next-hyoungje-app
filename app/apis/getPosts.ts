@@ -27,9 +27,7 @@ const getPosts = async (pathname: string) => {
     return post.push({ id: doc.id, ...doc.data() });
   });
 
-  if (post.length > 0) return post;
-
-  return;
+  return post;
 };
 
 export default getPosts;

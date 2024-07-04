@@ -1,6 +1,7 @@
-import { addComments, deleteComments, updateComments } from '@/apis/comments';
-import { User } from 'firebase/auth';
 import { useState, Fragment } from 'react';
+import { User } from 'firebase/auth';
+
+import { addComments, deleteComments, updateComments } from '@/apis/comments';
 import InputComment from './InputComment';
 import { useGetComments } from '@/hooks/queries/useComments';
 import Loading from '../Loading';

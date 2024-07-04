@@ -1,9 +1,9 @@
 'use client';
-import Edit from '@/components/Edit';
-import { usePathname } from 'next/navigation';
-import { useGetPost } from '@/hooks/queries/usePosts';
-import ContainerBox from '@/components/ContainerBox';
 import { Suspense } from 'react';
+import { usePathname } from 'next/navigation';
+
+import Edit from '@/components/Edit';
+import { useGetPost } from '@/hooks/queries/usePosts';
 import Loading from '@/components/Loading';
 
 const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
@@ -13,13 +13,7 @@ const DetailEditPage = ({ params: { id } }: { params: { id: string } }) => {
   if (!data) return;
 
   return (
-    <Suspense
-      fallback={
-        <ContainerBox>
-          <Loading />
-        </ContainerBox>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <Edit post={data} pathname={pathname} />
     </Suspense>
   );
