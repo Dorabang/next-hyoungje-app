@@ -3,19 +3,21 @@ import {
   addDoc,
   collection,
   getDocs,
-  onSnapshot,
+  orderBy,
   query,
   where,
 } from 'firebase/firestore';
 import { dbService, storageService } from '@/firebase';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 import { fetchAPI } from '../fetchAPI';
 import {
+  VideoData,
   YoutubeChannelData,
   YoutubeChannelType,
   YoutubeType,
 } from '@/components/Youtube/type';
-import { getDownloadURL, ref } from 'firebase/storage';
+import { OrderType } from '@/components/Youtube/GeneralChannelWrapper';
 
 export const fetchYoutube = async <T>(
   url: string,
@@ -40,50 +42,70 @@ export const postYoutubeChannel = async (data: YoutubeChannelType) => {
   });
 };
 
-export const getGeneralChannel = async () => {
+export const getGeneralChannel = async (order: OrderType) => {
   const generalChannel: YoutubeChannelData[] = [];
-  const q = query(
-    collection(dbService, 'youtube'),
-    where('channelId', '==', null),
-  );
+  const fieldPath = order === 'latest' ? 'createdAt' : 'name';
 
-  const generalChannelSnap = await getDocs(q);
-  generalChannelSnap.forEach((doc) => {
-    generalChannel.push({
-      id: doc.id,
-      ...doc.data(),
-    } as YoutubeChannelData);
-  });
+  try {
+    const q = query(
+      collection(dbService, 'youtube'),
+      where('channelId', '==', null),
+      orderBy('channelId'),
+      orderBy(fieldPath),
+    );
 
+    const generalChannelSnap = await getDocs(q);
+    generalChannelSnap.forEach((doc) => {
+      generalChannel.push({
+        id: doc.id,
+        ...doc.data(),
+      } as YoutubeChannelData);
+    });
+  } catch (err) {
+    // console.log('🚀 ~ getGeneralChannel ~ err:', err);
+  }
   return generalChannel;
 };
 
 export const getSpecialChannel = async () => {
   const specialChannel: DocumentData[] = [];
 
-  const q = query(
-    collection(dbService, 'youtube'),
-    where('channelId', '!=', null),
-  );
+  try {
+    const q = query(
+      collection(dbService, 'youtube'),
+      where('channelId', '!=', null),
+    );
 
-  const specialChannelSnap = await getDocs(q);
-  specialChannelSnap.forEach((doc) => {
-    specialChannel.push({
-      id: doc.id,
-      ...doc.data(),
-    } as YoutubeChannelData);
-  });
-
+    const specialChannelSnap = await getDocs(q);
+    specialChannelSnap.forEach((doc) => {
+      specialChannel.push({
+        id: doc.id,
+        ...doc.data(),
+      } as YoutubeChannelData);
+    });
+  } catch (err) {
+    // console.log('🚀 ~ getGeneralChannel ~ err:', err);
+  }
   return specialChannel;
 };
 
-export const postPlaylist = async (id: string, channelId: string) => {
-  const youtubeChannelRef = collection(dbService, 'youtube', id);
+export const postVideos = async (id: string, channelId: string) => {
+  const youtubeChannelRef = collection(dbService, `youtube/${id}`, 'playlist');
   const playlist: YoutubeType = await getPlaylist(channelId);
 
   playlist.items.forEach(async (playlistItem) => {
     await addDoc(youtubeChannelRef, playlistItem);
   });
+};
+
+export const getVideos = async (id: string, channelId: string) => {
+  const videos = [];
+  const videosRef = collection(dbService, `youtube/${id}`, 'playlist');
+  const videosSnapshot = await getDocs(videosRef);
+
+  videosSnapshot.docs.forEach((doc) =>
+    videos.push({ id: doc.id, ...doc.data() } as VideoData),
+  );
 };
 
 export const getPlaylist = async (channelId: string) => {
@@ -92,7 +114,7 @@ export const getPlaylist = async (channelId: string) => {
   return await fetchYoutube(url);
 };
 
-export const putPlaylist = async (id: string) => {};
+export const putVideos = async (id: string) => {};
 
 export const getChannelProfile = async (url: string) => {
   const profileRef = ref(storageService, url);

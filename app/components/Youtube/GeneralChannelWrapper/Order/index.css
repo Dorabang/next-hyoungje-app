@@ -1,0 +1,16 @@
+@tailwind components;
+@tailwind utilities;
+
+.order {
+  @apply flex justify-end items-center gap-3
+  pb-5 w-full
+  text-grayColor-300
+  [&_li]:relative
+  [&_li:not(:last-of-type)]:pr-3
+  [&_li:not(:last-of-type)]:before:absolute
+  [&_li]:before:right-0
+  [&_li]:before:top-1/2
+  [&_li]:before:-translate-y-1/2
+  [&_li]:before:w-[1px] [&_li]:before:block [&_li]:before:h-3/5
+  [&_li]:before:bg-grayColor-300 [&_li]:last:before:content-none;
+}

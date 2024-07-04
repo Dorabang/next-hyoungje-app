@@ -4,9 +4,14 @@ import { MdDoNotDisturbAlt } from 'react-icons/md';
 import { useGeneralChannel } from '@/hooks/queries/useYoutube';
 import GeneralChannel from './GeneralChannel';
 import Skeleton from './Skeleton';
+import { Fragment, useState } from 'react';
+import Order from './Order';
+
+export type OrderType = 'latest' | 'text';
 
 const GeneralChannelWrapper = () => {
-  const { data, isLoading } = useGeneralChannel();
+  const [order, setOrder] = useState<OrderType>('text');
+  const { data, isLoading } = useGeneralChannel(order);
 
   if (isLoading)
     return (
@@ -18,22 +23,25 @@ const GeneralChannelWrapper = () => {
     );
 
   return (
-    <div className='flex flex-wrap gap-5'>
-      {data && data.length > 0 ? (
-        data.map((channel) => (
-          <GeneralChannel data={channel} key={channel.id} />
-        ))
-      ) : (
-        <div className='text-grayColor-200 flex justify-center gap-4 flex-col items-center w-full font-medium text-xl py-10'>
-          <MdDoNotDisturbAlt size={48} className='text-primary' />
-          <p className='text-center'>
-            유튜브 채널을 찾을 수 없습니다.
-            <br />
-            다시 시도해주세요.
-          </p>
-        </div>
-      )}
-    </div>
+    <Fragment>
+      <Order order={order} setOrder={(value) => setOrder(value)} />
+      <div className='flex flex-wrap gap-5'>
+        {data && data.length > 0 ? (
+          data.map((channel) => (
+            <GeneralChannel data={channel} key={channel.id} />
+          ))
+        ) : (
+          <div className='text-grayColor-200 flex justify-center gap-4 flex-col items-center w-full font-medium text-xl py-10'>
+            <MdDoNotDisturbAlt size={48} className='text-primary' />
+            <p className='text-center'>
+              유튜브 채널을 찾을 수 없습니다.
+              <br />
+              다시 시도해주세요.
+            </p>
+          </div>
+        )}
+      </div>
+    </Fragment>
   );
 };
 
