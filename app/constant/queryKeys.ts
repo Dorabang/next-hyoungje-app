@@ -10,3 +10,6 @@ export const useGetPostQueryKey = 'useGetPostQueryKey';
 
 // user
 export const useUserInfoQueryKey = 'useUserInfoQueryKey';
+
+// youtube
+export const useGeneralChannelQueryKey = 'useGeneralChannelQueryKey';

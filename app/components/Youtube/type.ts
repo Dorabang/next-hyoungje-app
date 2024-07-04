@@ -1,6 +1,6 @@
 type ThumbnailsType = { url: string; width: number; height: number };
 
-export interface youtubeType {
+export interface YoutubeType {
   kind: string;
   etag: string;
   nextPageToken: string;
@@ -28,4 +28,18 @@ export interface youtubeType {
       videoOwnerChannelId: string;
     };
   }[];
+}
+
+export interface YoutubeChannelType {
+  name: string;
+  summary: string;
+  url: string;
+  channelId: string | null;
+}
+
+export interface YoutubeChannelData extends YoutubeChannelType {
+  profile: string;
+  id: string;
+  createdAt: number;
+  updatedAt: number;
 }
