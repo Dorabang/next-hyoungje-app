@@ -12,7 +12,7 @@ const Badge = ({ children, variant, className = '' }: BadgeProps) => {
       className={`rounded-full inline-block px-2 py-1 text-white text-sm
         ${variant === 'primary' ? 'bg-primary' : ''}
         ${variant === 'lime' ? 'bg-limeColor' : ''}
-        ${variant === 'skeleton' ? 'bg-grayColor-200 animate-pulse' : ''}
+        ${variant === 'skeleton' ? 'w-20 h-6 bg-grayColor-200 animate-pulse' : ''}
       ${className}`}
     >
       {children}

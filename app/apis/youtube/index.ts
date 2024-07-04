@@ -1,5 +1,4 @@
 import {
-  DocumentData,
   addDoc,
   collection,
   getDocs,
@@ -10,25 +9,15 @@ import {
 import { dbService, storageService } from '@/firebase';
 import { getDownloadURL, ref } from 'firebase/storage';
 
-import { fetchAPI } from '../fetchAPI';
 import {
+  SpecialChannelData,
   VideoData,
   YoutubeChannelData,
   YoutubeChannelType,
   YoutubeType,
 } from '@/components/Youtube/type';
 import { OrderType } from '@/components/Youtube/GeneralChannelWrapper';
-
-export const fetchYoutube = async <T>(
-  url: string,
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-  data?: T,
-  headers?: T,
-) => {
-  const base = `${process.env.NEXT_PUBLIC_YOUTUBE_API_URL}${url}`;
-
-  return await fetchAPI(base, method, data, headers);
-};
+import { getPlaylist } from './playlistItems';
 
 export const postYoutubeChannel = async (data: YoutubeChannelType) => {
   const youtubeChannelRef = collection(dbService, 'youtube');
@@ -68,7 +57,7 @@ export const getGeneralChannel = async (order: OrderType) => {
 };
 
 export const getSpecialChannel = async () => {
-  const specialChannel: DocumentData[] = [];
+  const specialChannel: SpecialChannelData[] = [];
 
   try {
     const q = query(
@@ -81,7 +70,7 @@ export const getSpecialChannel = async () => {
       specialChannel.push({
         id: doc.id,
         ...doc.data(),
-      } as YoutubeChannelData);
+      } as SpecialChannelData);
     });
   } catch (err) {
     // console.log('🚀 ~ getGeneralChannel ~ err:', err);
@@ -98,20 +87,16 @@ export const postVideos = async (id: string, channelId: string) => {
   });
 };
 
-export const getVideos = async (id: string, channelId: string) => {
-  const videos = [];
+export const getVideos = async (id: string) => {
+  const videos: VideoData[] = [];
   const videosRef = collection(dbService, `youtube/${id}`, 'playlist');
   const videosSnapshot = await getDocs(videosRef);
 
   videosSnapshot.docs.forEach((doc) =>
     videos.push({ id: doc.id, ...doc.data() } as VideoData),
   );
-};
 
-export const getPlaylist = async (channelId: string) => {
-  const url = `/part=snippet,contentDetails&playlistId=${channelId}&maxResults=10&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`;
-
-  return await fetchYoutube(url);
+  return videos;
 };
 
 export const putVideos = async (id: string) => {};

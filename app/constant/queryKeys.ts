@@ -13,3 +13,4 @@ export const useUserInfoQueryKey = 'useUserInfoQueryKey';
 
 // youtube
 export const useGeneralChannelQueryKey = 'useGeneralChannelQueryKey';
+export const useSpecialChannelQueryKey = 'useSpecialChannelQueryKey';

@@ -9,10 +9,11 @@ import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
 import { useEffect, useState } from 'react';
-import { getSlidePosts } from '@/apis/slides';
-import { DocumentData } from 'firebase/firestore';
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
+import { DocumentData } from 'firebase/firestore';
+
+import { getSlidePosts } from '@/apis/slides';
 
 const Slide = ({
   pathname,
