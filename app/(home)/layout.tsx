@@ -7,6 +7,7 @@ import RecoilRootWrapper from '@/components/RecoilRootWrapper';
 import Script from 'next/script';
 import QueryClientWrapper from '@/components/QueryClientWrapper';
 import { URL } from 'url';
+import YoutubeFloatBtn from '@/components/Youtube/YoutubeFloatBtn';
 
 const noto_sans_kr = Noto_Sans_KR({
   weight: ['400', '500', '700'],
@@ -69,6 +70,7 @@ export default function RootLayout({
               <div className='flex-grow'>{children}</div>
               <Footer />
             </div>
+            <YoutubeFloatBtn />
           </RecoilRootWrapper>
         </QueryClientWrapper>
         <Script

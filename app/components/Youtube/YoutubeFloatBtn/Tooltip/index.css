@@ -1,0 +1,26 @@
+@tailwind components;
+@tailwind utilities;
+
+.tooltipWrapper {
+  @apply relative z-20;
+}
+
+.tooltip {
+  @apply px-[14px] animate-bounce
+  whitespace-pre-line py-[10px] w-max h-auto text-xs
+  bg-grayColor-500 border border-white text-white rounded-[6px] z-20;
+}
+
+.tooltip::before,
+.tooltip::after {
+  @apply border-x-transparent right-10 absolute w-0 z-10
+  border-l-[6px] border-r-[6px];
+}
+
+.tooltip::before {
+  @apply -bottom-[8px] border-t-8 border-b-0 border-y-white;
+}
+
+.tooltip::after {
+  @apply -bottom-[7px] border-t-8 border-b-0 border-y-grayColor-500;
+}
