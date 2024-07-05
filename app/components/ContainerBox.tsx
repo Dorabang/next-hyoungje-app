@@ -17,7 +17,7 @@ const ContainerBox = ({
         height: '100%',
       }}
     >
-      <div className={`${className}`}>{children}</div>
+      <div className={`pb-[80px] ${className}`}>{children}</div>
     </Container>
   );
 };

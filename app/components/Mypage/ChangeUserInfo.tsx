@@ -167,8 +167,8 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
               name='email'
               rules={{
                 pattern: {
-                  message: '잘못된 이메일 주소입니다.',
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: '잘못된 아이디입니다.',
+                  value: /^[A-Z0-9._%+-]/i,
                 },
               }}
               control={control}
@@ -177,8 +177,10 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
                   error={Boolean(errors.email)}
                   helperText={errors.email?.message}
                   disabled
-                  label='이메일'
-                  defaultValue={user && user.email ? user.email : ''}
+                  label='아이디'
+                  defaultValue={
+                    user && user.email ? user.email.split('@')[0] : ''
+                  }
                   {...field}
                   sx={{ flexGrow: 1 }}
                 />

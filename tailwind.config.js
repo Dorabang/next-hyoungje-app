@@ -18,6 +18,8 @@ module.exports = {
           400: '#666',
           500: '#333',
         },
+        primary: '#BF1E2E',
+        limeColor: '#8EC000',
       },
     },
   },

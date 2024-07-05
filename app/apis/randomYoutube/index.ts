@@ -1,7 +1,6 @@
 import { dbService } from '@/firebase';
 import {
   DocumentData,
-  DocumentReference,
   OrderByDirection,
   addDoc,
   collection,
@@ -9,7 +8,6 @@ import {
   limit,
   orderBy,
   query,
-  startAfter,
   startAt,
 } from 'firebase/firestore';
 

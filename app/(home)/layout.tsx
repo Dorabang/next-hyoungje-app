@@ -7,6 +7,7 @@ import RecoilRootWrapper from '@/components/RecoilRootWrapper';
 import Script from 'next/script';
 import QueryClientWrapper from '@/components/QueryClientWrapper';
 import { URL } from 'url';
+import YoutubeFloatBtn from '@/components/Youtube/YoutubeFloatBtn';
 
 const noto_sans_kr = Noto_Sans_KR({
   weight: ['400', '500', '700'],
@@ -34,14 +35,21 @@ export const metadata: Metadata = {
     },
   },
   keywords: [
-    '형제난원',
     '옥동',
+    '형제난원',
     '산채품',
     '한국춘란',
     '난',
     '난초',
     '산채품 직거래',
     '난초 직거래',
+    '산채',
+    '집채',
+    '춘란',
+    '약초',
+    '단엽',
+    '산반',
+    '자생지',
   ],
 };
 
@@ -62,6 +70,7 @@ export default function RootLayout({
               <div className='flex-grow'>{children}</div>
               <Footer />
             </div>
+            <YoutubeFloatBtn />
           </RecoilRootWrapper>
         </QueryClientWrapper>
         <Script

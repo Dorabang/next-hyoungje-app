@@ -1,0 +1,12 @@
+@tailwind components;
+@tailwind utilities;
+
+.youtubeFloatBtn {
+  @apply fixed z-30 right-10 bottom-10 lg:right-16 lg:bottom-20
+  w-14 h-14 flex justify-center items-center
+  rounded-full border border-transparent bg-primary
+  hover:bg-white hover:border-primary hover:text-primary
+  active:bg-white active:border-primary active:text-primary
+  shadow-lg
+  transition-colors;
+}
