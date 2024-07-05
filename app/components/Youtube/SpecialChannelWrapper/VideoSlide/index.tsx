@@ -9,27 +9,26 @@ import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { VideoData } from '../../type';
-import { getVideos } from '@/apis/youtube';
+
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import { useVideos } from '@/hooks/queries/useYoutube';
 
 const VideoSlide = ({ id }: { id: string }) => {
-  const [videos, setVideos] = useState<VideoData[] | null>(null);
+  const { data: videos, isLoading } = useVideos(id);
 
-  useEffect(() => {
-    if (videos === null) {
-      (async () => {
-        const response = await getVideos(id);
-        setVideos(response);
-      })();
-    }
-  }, [videos, id]);
+  if (isLoading)
+    return (
+      <>
+        {Array.from(Array(4)).map((_, idx) => (
+          <VideoSkeleton key={idx} />
+        ))}
+      </>
+    );
 
   return (
     <Swiper
       loop={true}
-      // autoplay={{ delay: 3000, disableOnInteraction: false }}
+      autoplay={{ delay: 3000, disableOnInteraction: false }}
       slidesPerView={1}
       spaceBetween={20}
       speed={1500}
@@ -52,7 +51,7 @@ const VideoSlide = ({ id }: { id: string }) => {
       modules={[Autoplay]}
       className='w-full'
     >
-      {videos !== null &&
+      {videos &&
         videos.map(({ id, snippet, contentDetails }) => {
           return (
             <SwiperSlide key={id}>
@@ -78,3 +77,12 @@ const VideoSlide = ({ id }: { id: string }) => {
 };
 
 export default VideoSlide;
+
+export const VideoSkeleton = () => {
+  return (
+    <div className='w-full h-[300px] bg-grayColor-200 animate-pulse flex flex-col gap-3'>
+      <div className='w-full min-h-[300px]' />
+      <div className='bg-grayColor-200 animate-pulse w-full h-4' />
+    </div>
+  );
+};

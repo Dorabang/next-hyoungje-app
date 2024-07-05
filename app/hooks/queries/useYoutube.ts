@@ -1,5 +1,9 @@
 'use client';
-import { getGeneralChannel, getSpecialChannel } from '@/apis/youtube';
+import {
+  getGeneralChannel,
+  getSpecialChannel,
+  getVideos,
+} from '@/apis/youtube';
 import { OrderType } from '@/components/Youtube/GeneralChannelWrapper';
 import {
   useGeneralChannelQueryKey,
@@ -11,7 +15,7 @@ export const useGeneralChannel = (order: OrderType) => {
   return useQuery({
     queryKey: [useGeneralChannelQueryKey, order],
     queryFn: () => getGeneralChannel(order),
-    refetchInterval: 1 * 60 * 1000, // 1분
+    refetchInterval: 10 * 60 * 1000, // 10분
   });
 };
 
@@ -19,6 +23,14 @@ export const useSpecialChannel = () => {
   return useQuery({
     queryKey: [useSpecialChannelQueryKey],
     queryFn: () => getSpecialChannel(),
-    refetchInterval: 1 * 60 * 1000, // 1분
+    refetchInterval: 10 * 60 * 1000, // 10분
+  });
+};
+
+export const useVideos = (id: string) => {
+  return useQuery({
+    queryKey: [useSpecialChannelQueryKey, id],
+    queryFn: () => getVideos(id),
+    refetchInterval: 10 * 60 * 1000, // 10분
   });
 };
