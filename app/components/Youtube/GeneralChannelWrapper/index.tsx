@@ -1,10 +1,10 @@
 'use client';
 import { MdDoNotDisturbAlt } from 'react-icons/md';
+import { Fragment, useState } from 'react';
 
 import { useGeneralChannel } from '@/hooks/queries/useYoutube';
 import GeneralChannel from './GeneralChannel';
 import Skeleton from './Skeleton';
-import { Fragment, useState } from 'react';
 import Order from './Order';
 
 export type OrderType = 'latest' | 'text';

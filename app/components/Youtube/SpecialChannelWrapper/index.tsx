@@ -1,12 +1,12 @@
 'use client';
-import { useSpecialChannel } from '@/hooks/queries/useYoutube';
 import React from 'react';
+
+import { useSpecialChannel } from '@/hooks/queries/useYoutube';
 import SpecialChannel from './SpecialChannel';
 import Skeleton from './Skeleton';
 
 const SpecialChannelWrapper = () => {
   const { data, isLoading } = useSpecialChannel();
-
   if (isLoading) return <Skeleton />;
 
   return (
