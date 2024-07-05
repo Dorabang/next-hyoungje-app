@@ -1,11 +1,10 @@
 'use client';
+import { Suspense } from 'react';
+import { usePathname } from 'next/navigation';
 
 import CommEdit from '@/components/Community/CommEdit';
-import ContainerBox from '@/components/ContainerBox';
 import Loading from '@/components/Loading';
 import { useGetPost } from '@/hooks/queries/usePosts';
-import { usePathname } from 'next/navigation';
-import { Suspense } from 'react';
 
 const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const pathname = usePathname().split('/')[2];
@@ -13,13 +12,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   if (!data) return;
   return (
-    <Suspense
-      fallback={
-        <ContainerBox>
-          <Loading />
-        </ContainerBox>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <CommEdit post={data} pathname={pathname} />
     </Suspense>
   );

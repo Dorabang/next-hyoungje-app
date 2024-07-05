@@ -13,23 +13,12 @@ const BookmarkPage = () => {
   const user = useRecoilValue(authState);
   const { data, isLoading } = useUserInfo(user?.uid);
 
-  if (isLoading)
-    return (
-      <ContainerBox>
-        <Loading />
-      </ContainerBox>
-    );
+  if (isLoading) return <Loading />;
 
   return (
-    <Suspense
-      fallback={
-        <ContainerBox>
-          <Loading />
-        </ContainerBox>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <ContainerBox className='flex flex-wrap gap-5'>
-        {data?.like ? (
+        {data?.like.length > 0 ? (
           data?.like.map((path: string) => {
             const pathname = path.split('/')[0];
             const postId = path.split('/')[1];
