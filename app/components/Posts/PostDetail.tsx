@@ -66,7 +66,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
     if (!data) return;
 
     if (ok) {
-      deletePost(data, user, pathname, id);
+      deletePost(data, pathname, id);
       router.push(`/${pathname}`);
     }
   };

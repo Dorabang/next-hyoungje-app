@@ -43,7 +43,7 @@ const LoginPage = () => {
         });
       })
       .catch((error) => {
-        const { code } = error as { code: string };
+        const { code } = error as { code: string | number };
 
         switch (code) {
           case 'auth/wrong-password':
@@ -54,6 +54,8 @@ const LoginPage = () => {
             break;
           case 'auth/too-many-requests':
             setError('요청이 너무 많아 잠시 후에 로그인을 시도해주세요.');
+          case 400:
+            setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
             break;
         }
       });

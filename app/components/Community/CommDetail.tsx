@@ -9,7 +9,6 @@ import { authState } from '@/recoil/atoms';
 import { deletePost } from '@/apis/posts/posts';
 import { getImageURL } from '@/apis/images/images';
 import { updatedViews } from '@/apis/posts/updatedViews';
-import getAdmin from '@/apis/user/getAdmin';
 import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';
@@ -18,6 +17,7 @@ import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 import Loading from '../Loading';
 import HasLikes from '../HasLikes';
 import Comments from '../Comment/Comments';
+import { getAdmin } from '@/apis/user';
 
 interface CommDetailPageProps {
   postId: string;
@@ -31,6 +31,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
 
   const path = usePathname().split('/');
   const pathname = path[2];
+  console.log('🚀 ~ CommDetailPage ~ pathname:', pathname);
   const { data, isLoading } = useGetPost(pathname, postId);
   const [image, setImage] = useState<string[] | null>(null);
 
@@ -69,7 +70,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
     if (!data) return;
 
     if (ok) {
-      deletePost(data, user, pathname, id);
+      deletePost(data, pathname, id);
       router.push(`/community/${pathname}`);
     }
   };
