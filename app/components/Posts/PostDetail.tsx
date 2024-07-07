@@ -1,15 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
-import ReactQuill from 'react-quill';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { deletePost } from '@/apis/posts';
-import { updatedViews } from '@/apis/updatedViews';
-import getAdmin from '@/apis/getAdmin';
-import { getImageURL } from '@/apis/images';
+import { deletePost } from '@/apis/posts/posts';
+import { getAdmin } from '@/apis/user';
+import { updatedViews } from '@/apis/posts/updatedViews';
+import { getImageURL } from '@/apis/images/images';
 import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';
@@ -19,6 +18,7 @@ import Comments from '../Comment/Comments';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import Loading from '../Loading';
 import HasLikes from '../HasLikes';
+import EditorReadOnly from '../Editor/ReadOnly';
 
 interface DetailPageProps {
   postId: string;
@@ -59,10 +59,6 @@ const PostDetail = ({ postId }: DetailPageProps) => {
       });
     }
   }, [image, data, pathname]);
-
-  const modules = {
-    toolbar: { container: [] },
-  };
 
   const handleDeletePost = (id: string) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
@@ -271,7 +267,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
           pt-8
         '
         >
-          <ReactQuill defaultValue={data.contents} modules={modules} readOnly />
+          <EditorReadOnly contents={data.contents} />
         </div>
       </div>
 

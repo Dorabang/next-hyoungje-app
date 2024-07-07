@@ -5,7 +5,7 @@ import { DocumentData } from 'firebase/firestore';
 import { usePathname } from 'next/navigation';
 import ContainerBox from '../ContainerBox';
 import FilterOption from '../FilterOption';
-import { getPosts } from '@/apis/posts';
+import { getPosts } from '@/apis/posts/posts';
 import Breadcrumbs from '../Breadcrumbs';
 import PaginationComponets from '../PaginationComponent';
 

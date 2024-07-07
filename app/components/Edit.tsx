@@ -1,22 +1,23 @@
 'use client';
-import { FormEvent, MouseEvent, useEffect, useState } from 'react';
-import ContainerBox from './ContainerBox';
+import { FormEvent, useEffect, useState } from 'react';
+import { deleteObject, ref } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { ImageObjProps } from '@/(home)/edit/[id]/page';
-import statusList from '@/constant/StatusLists';
-import { authState, editorState } from '@/recoil/atoms';
 import Image from 'next/image';
 import imageCompression from 'browser-image-compression';
 import uuid from 'react-uuid';
 import { AiOutlineClose } from 'react-icons/ai';
-import Editor from './Editor';
 import { Button } from '@mui/material';
-import uploadImage from '@/apis/uploadImage';
+
 import { dbService, storageService } from '@/firebase';
-import { deleteObject, ref } from 'firebase/storage';
-import { getImageURL } from '@/apis/images';
+import ContainerBox from './ContainerBox';
+import { ImageObjProps } from '@/(home)/edit/[id]/page';
+import statusList from '@/constant/StatusLists';
+import { authState, editorState } from '@/recoil/atoms';
+import Editor from './Editor';
+import uploadImage from '@/apis/images/uploadImage';
+import { getPostImageURL } from '@/apis/images';
 
 const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   const router = useRouter();
@@ -44,7 +45,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   useEffect(() => {
     if (postImages) {
       postImages.forEach(async (img: string) => {
-        const url = await getImageURL(pathname, post.creatorId, img);
+        const url = await getPostImageURL(pathname, post.creatorId, img);
         setImages((prev) =>
           prev ? (!prev?.includes(url) ? [...prev, url] : prev) : [url],
         );

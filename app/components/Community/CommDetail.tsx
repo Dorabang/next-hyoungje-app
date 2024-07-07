@@ -6,10 +6,10 @@ import ReactQuill from 'react-quill';
 import { IoArrowBack } from 'react-icons/io5';
 import { authState } from '@/recoil/atoms';
 
-import { deletePost } from '@/apis/posts';
-import { getImageURL } from '@/apis/images';
-import { updatedViews } from '@/apis/updatedViews';
-import getAdmin from '@/apis/getAdmin';
+import { deletePost } from '@/apis/posts/posts';
+import { getImageURL } from '@/apis/images/images';
+import { updatedViews } from '@/apis/posts/updatedViews';
+import getAdmin from '@/apis/user/getAdmin';
 import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';

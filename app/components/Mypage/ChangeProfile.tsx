@@ -9,10 +9,10 @@ import { authState } from '@/recoil/atoms';
 import { dbService } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { User, updateProfile } from 'firebase/auth';
-import uploadImage from '@/apis/uploadImage';
+import uploadImage from '@/apis/images/uploadImage';
 import imageCompression from 'browser-image-compression';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import getUser from '@/apis/getUser';
+import getUser from '@/apis/user/getUser';
 
 interface Inputs {
   displayName: string;

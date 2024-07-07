@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { useGetPost } from '@/hooks/queries/usePosts';
 import { useEffect, useState } from 'react';
-import { getImageURL } from '@/apis/images';
+import { getImageURL } from '@/apis/images/images';
 import Logo from '@/assets/common/footer_logo.png';
 import Image from 'next/image';
 import statusOptions from '../StatusOptions';

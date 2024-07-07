@@ -1,6 +1,6 @@
 'use client';
-import getUser from '@/apis/getUser';
 import { updatedLike } from '@/apis/like';
+import { getUser } from '@/apis/user';
 import useHasLikes from '@/hooks/queries/useHasLikes';
 import { DocumentData } from 'firebase/firestore';
 import { LiaHeartSolid, LiaHeart } from 'react-icons/lia';

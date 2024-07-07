@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { usePathname } from 'next/navigation';
 import PostsLoading from '../Posts/PostsLoading';
 import PostsNotFound from '../Posts/PostsNotFound';
-import { deletePost } from '@/apis/posts';
+import { deletePost } from '@/apis/posts/posts';
 import PostList from './PostList';
 
 const defaultPostContext: PostContextType = {

@@ -6,7 +6,7 @@ import { AiOutlineFileImage } from 'react-icons/ai';
 import { User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
-import getAdmin from '@/apis/getAdmin';
+import getAdmin from '@/apis/user/getAdmin';
 
 interface PostListProps {
   type?: 'etc' | 'community';

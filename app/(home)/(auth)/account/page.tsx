@@ -7,7 +7,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { useRouter } from 'next/navigation';
 import JoinTerms from '@/components/JoinTerms/JoinTerms';
 import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
-import uploadImage from '@/apis/uploadImage';
+import uploadImage from '@/apis/images/uploadImage';
 import { useState } from 'react';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';

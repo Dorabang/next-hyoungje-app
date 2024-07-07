@@ -1,6 +1,6 @@
 'use client';
 
-import { getCommunityPosts, getPosts } from '@/apis/posts';
+import { getCommunityPosts, getPosts } from '@/apis/posts/posts';
 import BoardForm from '@/components/Community/BoardForm';
 import { DocumentData } from 'firebase/firestore';
 import { useEffect, useState } from 'react';

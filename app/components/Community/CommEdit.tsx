@@ -12,9 +12,9 @@ import uuid from 'react-uuid';
 import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '../Editor';
 import { Button } from '@mui/material';
-import uploadImage from '@/apis/uploadImage';
+import uploadImage from '@/apis/images/uploadImage';
 import { dbService, storageService } from '@/firebase';
-import GetImageURL from '@/apis/getImageURL';
+import GetImageURL from '@/apis/images/getImageURL';
 import { deleteObject, ref } from 'firebase/storage';
 
 const CommEdit = ({

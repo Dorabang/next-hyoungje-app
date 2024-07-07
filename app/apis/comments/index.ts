@@ -8,7 +8,7 @@ import {
   getDocs,
   updateDoc,
 } from 'firebase/firestore';
-import { getNickname } from '../getUser';
+import { getNickname } from '../user';
 
 interface CommentsProps {
   userId: string;
