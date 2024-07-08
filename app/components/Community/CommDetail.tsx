@@ -7,7 +7,6 @@ import { IoArrowBack } from 'react-icons/io5';
 import { authState } from '@/recoil/atoms';
 
 import { deletePost } from '@/apis/posts/posts';
-import { getImageURL } from '@/apis/images/images';
 import { updatedViews } from '@/apis/posts/updatedViews';
 import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
@@ -18,6 +17,7 @@ import Loading from '../Loading';
 import HasLikes from '../HasLikes';
 import Comments from '../Comment/Comments';
 import { useAdmin } from '@/hooks/queries/useUserInfo';
+import { getPostImageURL } from '@/apis/images';
 
 interface CommDetailPageProps {
   postId: string;
@@ -46,7 +46,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
     if (image === null && data) {
       const imgId = data.image;
       imgId?.forEach(async (img: string) => {
-        const url = await getImageURL(pathname, data.creatorId, img);
+        const url = await getPostImageURL(pathname, data.creatorId, img);
         setImage((prev) =>
           prev !== null
             ? prev.includes(url)

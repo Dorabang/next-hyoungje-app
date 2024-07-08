@@ -10,11 +10,11 @@ import { Stack } from '@mui/system';
 import { ErrorMessage } from '@hookform/error-message';
 
 import JoinTerms from '@/components/JoinTerms/JoinTerms';
-import uploadImage from '@/apis/images/uploadImage';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import { imageResize } from '@/utils/imageResize';
+import { uploadImage } from '@/apis/images';
 
 interface Inputs {
   email: string;

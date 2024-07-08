@@ -7,7 +7,6 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { deletePost } from '@/apis/posts/posts';
 import { updatedViews } from '@/apis/posts/updatedViews';
-import { getImageURL } from '@/apis/images/images';
 import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';
@@ -19,6 +18,7 @@ import Loading from '../Loading';
 import HasLikes from '../HasLikes';
 import EditorReadOnly from '../Editor/ReadOnly';
 import { useAdmin } from '@/hooks/queries/useUserInfo';
+import { getPostImageURL } from '@/apis/images';
 
 interface DetailPageProps {
   postId: string;
@@ -48,7 +48,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
     if (image === null && data) {
       const imgId = data.image;
       imgId?.forEach(async (img: string) => {
-        const url = await getImageURL(pathname, data.creatorId, img);
+        const url = await getPostImageURL(pathname, data.creatorId, img);
         setImage((prev) =>
           prev !== null
             ? prev.includes(url)

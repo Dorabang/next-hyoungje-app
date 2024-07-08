@@ -1,17 +1,17 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useRecoilValue } from 'recoil';
 
 import { useGetPost } from '@/hooks/queries/usePosts';
-import { useEffect, useState } from 'react';
-import { getImageURL } from '@/apis/images/images';
 import Logo from '@/assets/common/footer_logo.png';
-import Image from 'next/image';
 import statusOptions from '../StatusOptions';
 import HasLikes from '../HasLikes';
 import { authState } from '@/recoil/atoms';
-import { useRecoilValue } from 'recoil';
 import { allRoutes } from '@/constant/Routes';
+import { getPostImageURL } from '@/apis/images';
 
 const Bookmark = ({
   pathname,
@@ -22,7 +22,7 @@ const Bookmark = ({
 }) => {
   const router = useRouter();
   const user = useRecoilValue(authState);
-  const { data, refetch } = useGetPost(pathname, postId);
+  const { data } = useGetPost(pathname, postId);
   const [image, setImage] = useState<string | null>(null);
 
   const path = allRoutes.filter((route) => route.link.includes(pathname));
@@ -31,7 +31,7 @@ const Bookmark = ({
     if (image === null && data?.image) {
       const img = data.image[0];
       const getPreviewImage = async () => {
-        const url = await getImageURL(pathname, data.creatorId, img);
+        const url = await getPostImageURL(pathname, data.creatorId, img);
         setImage(url);
       };
       getPreviewImage();

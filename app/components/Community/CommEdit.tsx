@@ -14,9 +14,8 @@ import ContainerBox from '../ContainerBox';
 import { ImageObjProps } from '@/(home)/edit/[id]/page';
 import { authState, editorState } from '@/recoil/atoms';
 import Editor from '../Editor';
-import uploadImage from '@/apis/images/uploadImage';
-import GetImageURL from '@/apis/images/getImageURL';
 import { imageResize } from '@/utils/imageResize';
+import { getPostImageURL, uploadImage } from '@/apis/images';
 
 const CommEdit = ({
   post,
@@ -39,18 +38,15 @@ const CommEdit = ({
   const postImages = post && post?.image;
 
   useEffect(() => {
-    const getImage = (value: string) => {
-      return setImages((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
-      );
-    };
-
-    if (postImages && post.creatorId) {
-      postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
-      );
+    if (postImages) {
+      postImages.forEach(async (img: string) => {
+        const url = await getPostImageURL(pathname, post.creatorId, img);
+        setImages((prev) =>
+          prev ? (!prev?.includes(url) ? [...prev, url] : prev) : [url],
+        );
+      });
     }
-  }, [postImages, post.creatorId, pathname]);
+  }, [postImages, pathname, post.creatorId]);
 
   useEffect(() => {
     setValue(contents);

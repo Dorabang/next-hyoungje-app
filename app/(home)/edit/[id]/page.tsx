@@ -19,11 +19,11 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 
-import uploadImage from '@/apis/images/uploadImage';
 import Editor from '@/components/Editor';
 import getPostsAmount from '@/apis/posts/getPostsAmount';
 import statusList from '@/constant/StatusLists';
 import { imageResize } from '@/utils/imageResize';
+import { uploadImage } from '@/apis/images';
 
 export interface ImageObjProps {
   id: string;

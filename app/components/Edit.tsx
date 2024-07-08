@@ -15,8 +15,7 @@ import { ImageObjProps } from '@/(home)/edit/[id]/page';
 import statusList from '@/constant/StatusLists';
 import { authState, editorState } from '@/recoil/atoms';
 import Editor from './Editor';
-import uploadImage from '@/apis/images/uploadImage';
-import { getPostImageURL } from '@/apis/images';
+import { getPostImageURL, uploadImage } from '@/apis/images';
 import { imageResize } from '@/utils/imageResize';
 
 const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {

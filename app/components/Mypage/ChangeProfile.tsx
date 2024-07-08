@@ -8,10 +8,10 @@ import { User, updateProfile } from 'firebase/auth';
 
 import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
-import uploadImage from '@/apis/images/uploadImage';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { getUser } from '@/apis/user';
 import { imageResize } from '@/utils/imageResize';
+import { uploadImage } from '@/apis/images';
 
 interface Inputs {
   displayName: string;
