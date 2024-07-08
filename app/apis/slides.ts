@@ -6,7 +6,6 @@ import {
   limit,
   orderBy,
   query,
-  where,
 } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
 
@@ -16,7 +15,7 @@ export const getSlidePosts = async (pathname: string) => {
 
   const q = query(
     postRef,
-    where('image', '!=', null).orderBy('num', 'desc'),
+    orderBy('num', 'desc'),
     orderBy('image', 'desc'),
     limit(5),
   );
