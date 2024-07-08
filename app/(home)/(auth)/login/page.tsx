@@ -43,19 +43,23 @@ const LoginPage = () => {
         });
       })
       .catch((error) => {
-        const { code } = error as { code: string | number };
+        // console.log('🚀 ~ onSubmit ~ error:', error);
+        const { code } = error as { code: string };
 
         switch (code) {
           case 'auth/wrong-password':
-            setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
+            setError('아이디 또는 비밀번호를 잘못 입력하였습니다.');
+            break;
+          case 'auth/invalid-login-credentials':
+            setError('아이디 또는 비밀번호를 잘못 입력하였습니다.');
             break;
           case 'auth/user-not-found':
-            setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
+            setError('아이디 또는 비밀번호를 잘못 입력하였습니다.');
             break;
           case 'auth/too-many-requests':
-            setError('요청이 너무 많아 잠시 후에 로그인을 시도해주세요.');
-          case 400:
-            setError('이메일 또는 비밀번호를 잘못 입력하였습니다.');
+            setError(
+              '여러 번의 로그인 시도 실패로 비활성화되었습니다. 잠시 후에 다시 시도해주세요.',
+            );
             break;
         }
       });
