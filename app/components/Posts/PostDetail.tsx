@@ -1,15 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import ReactQuill from 'react-quill';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { deletePost } from '@/apis/posts';
-import { updatedViews } from '@/apis/updatedViews';
-import getAdmin from '@/apis/getAdmin';
-import { getImageURL } from '@/apis/images';
+import { deletePost } from '@/apis/posts/posts';
+import { updatedViews } from '@/apis/posts/updatedViews';
 import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';
@@ -19,6 +16,9 @@ import Comments from '../Comment/Comments';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import Loading from '../Loading';
 import HasLikes from '../HasLikes';
+import EditorReadOnly from '../Editor/ReadOnly';
+import { useAdmin } from '@/hooks/queries/useUserInfo';
+import { getPostImageURL } from '@/apis/images';
 
 interface DetailPageProps {
   postId: string;
@@ -28,7 +28,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
   const router = useRouter();
   const user = useRecoilValue(authState);
 
-  const [admin, setAdmin] = useState<boolean>(false);
+  const { data: admin } = useAdmin(user?.uid);
 
   const path = usePathname().split('/');
   const pathname = path[3] ? path[2] : path[1];
@@ -48,7 +48,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
     if (image === null && data) {
       const imgId = data.image;
       imgId?.forEach(async (img: string) => {
-        const url = await getImageURL(pathname, data.creatorId, img);
+        const url = await getPostImageURL(pathname, data.creatorId, img);
         setImage((prev) =>
           prev !== null
             ? prev.includes(url)
@@ -60,32 +60,16 @@ const PostDetail = ({ postId }: DetailPageProps) => {
     }
   }, [image, data, pathname]);
 
-  const modules = {
-    toolbar: { container: [] },
-  };
-
   const handleDeletePost = (id: string) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
     if (!data) return;
 
     if (ok) {
-      deletePost(data, user, pathname, id);
+      deletePost(data, pathname, id);
       router.push(`/${pathname}`);
     }
   };
-
-  useEffect(() => {
-    if (!admin) {
-      const getAdminData = async () => {
-        if (user) {
-          const response = await getAdmin(user.uid);
-          response && setAdmin(response);
-        }
-      };
-      getAdminData();
-    }
-  }, [admin, user]);
 
   if (isLoading)
     return (
@@ -271,7 +255,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
           pt-8
         '
         >
-          <ReactQuill defaultValue={data.contents} modules={modules} readOnly />
+          <EditorReadOnly contents={data.contents} />
         </div>
       </div>
 

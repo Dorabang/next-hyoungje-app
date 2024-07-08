@@ -1,3 +1,4 @@
+'use server';
 import { dbService } from '@/firebase';
 import {
   DocumentData,
@@ -7,9 +8,10 @@ import {
   collection,
   where,
   getDocs,
+  limit,
 } from 'firebase/firestore';
 
-const getUser = async (uid?: string) => {
+export const getUser = async (uid?: string) => {
   if (!uid) return;
   let post: DocumentData;
   const docRef = doc(dbService, 'users', uid);
@@ -33,4 +35,19 @@ export const getNickname = async (uid: string) => {
   return nickname;
 };
 
-export default getUser;
+export const getAdmin = async (userId?: string) => {
+  if (!userId) return;
+
+  let admin: DocumentData[] = [];
+  const adminRef = collection(dbService, 'admin');
+
+  const q = query(adminRef, where('user', '==', userId), limit(1));
+
+  const adminSnap = await getDocs(q);
+  adminSnap.forEach((doc) => {
+    admin.push({ ...doc.data() });
+  });
+
+  if (admin.length !== 0) return true;
+  return false;
+};

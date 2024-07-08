@@ -11,6 +11,7 @@ import {
   deleteDoc,
   limit,
   where,
+  startAt,
 } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 
@@ -79,25 +80,27 @@ export const getPost = async (pathname: string, postId: string) => {
 
 export const deletePost = async (
   post: DocumentData,
-  user: User | null,
   pathname: string,
   id: string,
 ) => {
   const imageArr = post.image;
 
-  if (!user) return;
-  if (imageArr && imageArr.length > 0) {
-    imageArr.map(async (item: string) => {
-      const imgRef = ref(
-        storageService,
-        `${pathname}/${user.uid}/post/${item}/image.jpg`,
-      );
-      await deleteObject(imgRef);
-    });
-  }
+  try {
+    if (imageArr && imageArr.length > 0) {
+      imageArr.map(async (item: string) => {
+        const imgRef = ref(
+          storageService,
+          `${pathname}/${post.creatorId}/post/${item}/image.jpg`,
+        );
+        await deleteObject(imgRef);
+      });
+    }
 
-  const postRef = doc(dbService, pathname, id);
-  await deleteDoc(postRef);
+    const postRef = doc(dbService, pathname, id);
+    await deleteDoc(postRef);
+  } catch (err) {
+    console.log('🚀 ~ err:', err);
+  }
 };
 
 export const getPrevPost = async (pathname: string, postNum: number) => {
@@ -120,6 +123,7 @@ export const getPrevPost = async (pathname: string, postNum: number) => {
 
   return prevPost;
 };
+
 export const getNextPost = async (pathname: string, postNum: number) => {
   let nextPost: DocumentData | null = null;
   const collectionRef = collection(dbService, pathname);

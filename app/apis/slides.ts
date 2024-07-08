@@ -6,7 +6,6 @@ import {
   limit,
   orderBy,
   query,
-  where,
 } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
 
@@ -16,9 +15,8 @@ export const getSlidePosts = async (pathname: string) => {
 
   const q = query(
     postRef,
-    where('image', '!=', false),
-    orderBy('image', 'asc'),
-    orderBy('createdAt', 'desc'),
+    orderBy('num', 'desc'),
+    orderBy('image', 'desc'),
     limit(5),
   );
 
@@ -29,7 +27,7 @@ export const getSlidePosts = async (pathname: string) => {
       return post.push({ id: doc.id, ...doc.data() });
     });
   } catch (err) {
-    // console.log('🚀 ~ getSlidePosts ~ err1:', err);
+    console.log('🚀 ~ getSlidePosts ~ err1:', err);
   }
 
   const imgArr = await getImages(pathname, post);

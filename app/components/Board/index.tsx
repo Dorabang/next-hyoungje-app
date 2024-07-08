@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { usePathname } from 'next/navigation';
 import PostsLoading from '../Posts/PostsLoading';
 import PostsNotFound from '../Posts/PostsNotFound';
-import { deletePost } from '@/apis/posts';
+import { deletePost } from '@/apis/posts/posts';
 import PostList from './PostList';
 
 const defaultPostContext: PostContextType = {
@@ -20,7 +20,8 @@ export const PostContext = createContext(defaultPostContext);
 export const usePostContext = () => useContext(PostContext);
 
 const Board = ({ children }: BoardProps) => {
-  const pathname = usePathname();
+  const path = usePathname().split('/');
+  const pathname = path[2] ? path[2] : path[1];
   const user = useRecoilValue(authState);
 
   return (
@@ -75,34 +76,32 @@ export const Bodys = ({
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
     if (ok) {
-      deletePost(post, user, pathname, id);
+      deletePost(post, pathname, id);
       const deletePosts = posts.filter((item) => item.id !== id);
       editPosts(deletePosts);
     }
   };
+
+  if (isLoading) return <PostsLoading />;
+
   return (
     <>
-      {!isLoading ? (
-        posts && posts?.length !== 0 ? (
-          posts.map((post) => {
-            return (
-              <PostList
-                key={post.id}
-                type={type}
-                pathname={pathname}
-                post={post}
-                user={user}
-                handleDeletePost={handleDeletePost}
-              />
-            );
-          })
-        ) : (
-          /* 게시물 데이터가 없을 때 */
-          <PostsNotFound />
-        )
+      {posts && posts?.length !== 0 ? (
+        posts.map((post) => {
+          return (
+            <PostList
+              key={post.id}
+              type={type}
+              pathname={pathname}
+              post={post}
+              user={user}
+              handleDeletePost={handleDeletePost}
+            />
+          );
+        })
       ) : (
-        /* 게시물 데이터 로딩 중 */
-        <PostsLoading />
+        /* 게시물 데이터가 없을 때 */
+        <PostsNotFound />
       )}
     </>
   );
