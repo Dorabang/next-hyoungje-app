@@ -5,6 +5,7 @@ import { addComments, deleteComments, updateComments } from '@/apis/comments';
 import InputComment from './InputComment';
 import { useGetComments } from '@/hooks/queries/useComments';
 import Loading from '../Loading';
+import { useAdmin } from '@/hooks/queries/useUserInfo';
 
 export interface CommentsType {
   id: string;
@@ -27,6 +28,8 @@ const Comments = ({
   const [editValue, setEditValue] = useState('');
 
   const { data, isLoading, refetch } = useGetComments(pathname);
+
+  const { data: admin } = useAdmin(user?.uid);
 
   const handleAddComment = async () => {
     if (!user) return window.alert('로그인 후 사용 가능한 기능입니다.');
@@ -82,7 +85,7 @@ const Comments = ({
                         - {new Date(createdAt).toLocaleDateString()}
                       </span>
                     </p>
-                    {userId === user?.uid && (
+                    {(userId === user?.uid || admin) && (
                       <div className='flex gap-1 text-sm'>
                         {isModify === id ? (
                           <span

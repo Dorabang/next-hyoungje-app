@@ -35,7 +35,9 @@ export const getNickname = async (uid: string) => {
   return nickname;
 };
 
-export const getAdmin = async (userId: string) => {
+export const getAdmin = async (userId?: string) => {
+  if (!userId) return;
+
   let admin: DocumentData[] = [];
   const adminRef = collection(dbService, 'admin');
 

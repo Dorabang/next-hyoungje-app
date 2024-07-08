@@ -17,7 +17,7 @@ import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 import Loading from '../Loading';
 import HasLikes from '../HasLikes';
 import Comments from '../Comment/Comments';
-import { getAdmin } from '@/apis/user';
+import { useAdmin } from '@/hooks/queries/useUserInfo';
 
 interface CommDetailPageProps {
   postId: string;
@@ -27,12 +27,10 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
   const router = useRouter();
   const user = useRecoilValue(authState);
 
-  const [admin, setAdmin] = useState<boolean>(false);
-
   const path = usePathname().split('/');
   const pathname = path[2];
-  console.log('🚀 ~ CommDetailPage ~ pathname:', pathname);
   const { data, isLoading } = useGetPost(pathname, postId);
+  const { data: admin } = useAdmin(user?.uid);
   const [image, setImage] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -74,18 +72,6 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
       router.push(`/community/${pathname}`);
     }
   };
-
-  useEffect(() => {
-    if (!admin) {
-      const getAdminData = async () => {
-        if (user) {
-          const response = await getAdmin(user.uid);
-          response && setAdmin(response);
-        }
-      };
-      getAdminData();
-    }
-  }, [admin, user]);
 
   if (isLoading) return <Loading />;
 

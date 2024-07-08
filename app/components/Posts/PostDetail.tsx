@@ -6,7 +6,6 @@ import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { deletePost } from '@/apis/posts/posts';
-import { getAdmin } from '@/apis/user';
 import { updatedViews } from '@/apis/posts/updatedViews';
 import { getImageURL } from '@/apis/images/images';
 import { useGetPost } from '@/hooks/queries/usePosts';
@@ -19,6 +18,7 @@ import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 import Loading from '../Loading';
 import HasLikes from '../HasLikes';
 import EditorReadOnly from '../Editor/ReadOnly';
+import { useAdmin } from '@/hooks/queries/useUserInfo';
 
 interface DetailPageProps {
   postId: string;
@@ -28,7 +28,7 @@ const PostDetail = ({ postId }: DetailPageProps) => {
   const router = useRouter();
   const user = useRecoilValue(authState);
 
-  const [admin, setAdmin] = useState<boolean>(false);
+  const { data: admin } = useAdmin(user?.uid);
 
   const path = usePathname().split('/');
   const pathname = path[3] ? path[2] : path[1];
@@ -70,18 +70,6 @@ const PostDetail = ({ postId }: DetailPageProps) => {
       router.push(`/${pathname}`);
     }
   };
-
-  useEffect(() => {
-    if (!admin) {
-      const getAdminData = async () => {
-        if (user) {
-          const response = await getAdmin(user.uid);
-          response && setAdmin(response);
-        }
-      };
-      getAdminData();
-    }
-  }, [admin, user]);
 
   if (isLoading)
     return (
