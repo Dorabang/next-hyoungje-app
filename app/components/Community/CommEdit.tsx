@@ -66,7 +66,7 @@ const CommEdit = ({
 
     imageArr?.map(async (value) => {
       await uploadImage(
-        `${pathname}/${user.uid}/post/${value.id}/image`,
+        `${pathname}/${post.creatorId}/post/${value.id}/image`,
         value.imageUrl,
       );
     });

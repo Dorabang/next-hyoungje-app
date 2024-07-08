@@ -68,7 +68,6 @@ export const Bodys = ({
   type?: 'etc' | 'community';
 }) => {
   const { user, pathname } = useContext(PostContext);
-  console.log('🚀 ~ pathname:', pathname);
 
   const handleDeletePost = (id: string) => {
     const post = posts?.find((item) => item.id === id);
