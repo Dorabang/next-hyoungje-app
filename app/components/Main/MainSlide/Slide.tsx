@@ -19,10 +19,12 @@ const Slide = ({
   pathname,
   slidesPerView,
   speed,
+  community,
 }: {
   pathname: string;
   slidesPerView: number;
   speed: number;
+  community?: boolean;
 }) => {
   const [posts, setPosts] = useState<DocumentData[] | null>(null);
 
@@ -62,7 +64,11 @@ const Slide = ({
           return (
             <SwiperSlide key={id} className='w-[50%]'>
               <Link
-                href={`/${pathname}/${id}`}
+                href={
+                  community
+                    ? `/community/${pathname}/${id}`
+                    : `/${pathname}/${id}`
+                }
                 className={`relative block w-full ${
                   slidesPerView !== 2 ? 'h-[300px]' : 'h-[250px] xl:h-[420px] '
                 }`}

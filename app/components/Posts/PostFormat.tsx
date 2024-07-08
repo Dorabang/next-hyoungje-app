@@ -1,25 +1,27 @@
 'use client';
 import React, { useEffect, useMemo, useState } from 'react';
-import Board from '../Board';
 import { DocumentData } from 'firebase/firestore';
 import { usePathname } from 'next/navigation';
+
+import Board from '../Board';
 import ContainerBox from '../ContainerBox';
 import FilterOption from '../FilterOption';
-import { getPosts } from '@/apis/posts';
+import { getPosts } from '@/apis/posts/posts';
 import Breadcrumbs from '../Breadcrumbs';
 import PaginationComponets from '../PaginationComponent';
+import { useGetPosts } from '@/hooks/queries/usePosts';
 
 const PostFormat = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [posts, setPosts] = useState<DocumentData[] | null>(null);
+  const path = usePathname().split('/');
+  const pathname = path[2] ? path[2] : path[1];
+
+  const { data, isLoading } = useGetPosts(pathname);
+  const [posts, setPosts] = useState<DocumentData[] | undefined>(data);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const handleUpdateFilter = (status: string) => {
     setSelectedCategory(status);
   };
-
-  const path = usePathname().split('/');
-  const pathname = path[2] ? path[2] : path[1];
 
   useEffect(() => {
     /* setPosts(querySnapshot); */
@@ -27,8 +29,6 @@ const PostFormat = () => {
       if (selectedCategory === 'all') {
         const response = await getPosts(pathname);
         setPosts(response);
-
-        return setIsLoading(false);
       } else {
         const response = await getPosts(pathname);
 
@@ -36,8 +36,6 @@ const PostFormat = () => {
           (item) => item.status === selectedCategory,
         );
         setPosts(filter);
-
-        return setIsLoading(false);
       }
     };
     sortedPosts();

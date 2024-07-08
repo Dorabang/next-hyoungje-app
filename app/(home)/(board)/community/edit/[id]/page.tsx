@@ -16,12 +16,12 @@ import {
 } from 'firebase/firestore';
 import uuid from 'react-uuid';
 import { useRouter } from 'next/navigation';
-import uploadImage from '@/apis/uploadImage';
 import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '@/components/Editor';
-import imageCompression from 'browser-image-compression';
-import getPostsAmount from '@/apis/getPostsAmount';
+import getPostsAmount from '@/apis/posts/getPostsAmount';
+import { imageResize } from '@/utils/imageResize';
+import { uploadImage } from '@/apis/images';
 
 export interface ImageObjProps {
   id: string;
@@ -65,7 +65,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     const newPostObj = {
       title: title,
-      image: imageIdArr,
+      ...(imageIdArr !== null && { image: imageIdArr }),
       contents: value,
       like: [],
       views: 0,
@@ -97,26 +97,13 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
-      const options = {
-        maxSizeMB: 0.2, // 이미지 최대 용량
-        maxWidthOrHeight: 840, // 최대 넓이(혹은 높이)
-        useWebWorker: true,
-      };
+      fileList.map(async (file) => {
+        const resizingImage = await imageResize(file);
+        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
 
-      fileList.map((file) => {
-        imageCompression(file, options)
-          .then((response) => {
-            imageCompression.getDataUrlFromFile(response).then((result) => {
-              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
-
-              setSelectedImage((prev) =>
-                prev !== null ? [...prev, imageObj] : [imageObj],
-              );
-            });
-          })
-          .catch((error) => {
-            // console.log('🚀 ~ onFileChange ~ error:', error);
-          });
+        setSelectedImage((prev) =>
+          prev !== null ? [...prev, imageObj] : [imageObj],
+        );
       });
     }
   };

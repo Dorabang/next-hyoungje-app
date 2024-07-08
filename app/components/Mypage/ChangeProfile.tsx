@@ -1,18 +1,17 @@
 'use client';
-import { Button, Card, Stack, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
+import { Button, Card, Stack, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
-import { useRecoilValue } from 'recoil';
-import { authState } from '@/recoil/atoms';
 import { dbService } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { User, updateProfile } from 'firebase/auth';
-import uploadImage from '@/apis/uploadImage';
-import imageCompression from 'browser-image-compression';
+
+import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
+import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import getUser from '@/apis/getUser';
+import { getUser } from '@/apis/user';
+import { imageResize } from '@/utils/imageResize';
+import { uploadImage } from '@/apis/images';
 
 interface Inputs {
   displayName: string;
@@ -21,6 +20,7 @@ interface Inputs {
 
 const ChangeProfile = ({ user }: { user: User }) => {
   const [image, setImage] = useState<string>('');
+  console.log('🚀 ~ ChangeProfile ~ image:', image);
 
   const {
     control,
@@ -37,29 +37,16 @@ const ChangeProfile = ({ user }: { user: User }) => {
     }
   }, [user, setValue]);
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
 
     if (files) {
       const theFile = files[0];
+      const resizingImage = await imageResize(theFile);
 
-      const options = {
-        maxSizeMB: 0.2, // 이미지 최대 용량
-        maxWidthOrHeight: 840, // 최대 넓이(혹은 높이)
-        useWebWorker: true,
-      };
-
-      imageCompression(theFile, options)
-        .then((response) => {
-          imageCompression.getDataUrlFromFile(response).then((result) => {
-            setImage(result);
-          });
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+      setImage(resizingImage);
     }
   };
 

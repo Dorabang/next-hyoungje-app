@@ -47,7 +47,12 @@ const MainSlide = ({
           ${variant === 'center' ? 'text-center' : ''}
         `}
       >
-        <Slide pathname={path} slidesPerView={slidesPerView} speed={speed} />
+        <Slide
+          pathname={path}
+          slidesPerView={slidesPerView}
+          speed={speed}
+          community={community}
+        />
       </div>
 
       <Link

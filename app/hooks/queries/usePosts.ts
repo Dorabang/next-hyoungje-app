@@ -1,4 +1,4 @@
-import { getPost, getPosts } from '@/apis/posts';
+import { getPost, getPosts } from '@/apis/posts/posts';
 import { useGetPostQueryKey, useGetPostsQueryKey } from '@/constant/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 

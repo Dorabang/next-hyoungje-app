@@ -1,21 +1,21 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
-import ContainerBox from '../ContainerBox';
+import Image from 'next/image';
+import uuid from 'react-uuid';
+import { AiOutlineClose } from 'react-icons/ai';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { dbService, storageService } from '@/firebase';
+import { deleteObject, ref } from 'firebase/storage';
+import { Button } from '@mui/material';
+
+import ContainerBox from '../ContainerBox';
 import { ImageObjProps } from '@/(home)/edit/[id]/page';
 import { authState, editorState } from '@/recoil/atoms';
-import Image from 'next/image';
-import imageCompression from 'browser-image-compression';
-import uuid from 'react-uuid';
-import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '../Editor';
-import { Button } from '@mui/material';
-import uploadImage from '@/apis/uploadImage';
-import { dbService, storageService } from '@/firebase';
-import GetImageURL from '@/apis/getImageURL';
-import { deleteObject, ref } from 'firebase/storage';
+import { imageResize } from '@/utils/imageResize';
+import { getPostImageURL, uploadImage } from '@/apis/images';
 
 const CommEdit = ({
   post,
@@ -38,18 +38,15 @@ const CommEdit = ({
   const postImages = post && post?.image;
 
   useEffect(() => {
-    const getImage = (value: string) => {
-      return setImages((prev) =>
-        prev ? (!prev?.includes(value) ? [...prev, value] : prev) : [value],
-      );
-    };
-
-    if (postImages && post.creatorId) {
-      postImages.map((id: string) =>
-        GetImageURL(`${pathname}/${post.creatorId}/post/${id}/image`, getImage),
-      );
+    if (postImages) {
+      postImages.forEach(async (img: string) => {
+        const url = await getPostImageURL(pathname, post.creatorId, img);
+        setImages((prev) =>
+          prev ? (!prev?.includes(url) ? [...prev, url] : prev) : [url],
+        );
+      });
     }
-  }, [postImages, post.creatorId, pathname]);
+  }, [postImages, pathname, post.creatorId]);
 
   useEffect(() => {
     setValue(contents);
@@ -65,7 +62,7 @@ const CommEdit = ({
 
     imageArr?.map(async (value) => {
       await uploadImage(
-        `${pathname}/${user.uid}/post/${value.id}/image`,
+        `${pathname}/${post.creatorId}/post/${value.id}/image`,
         value.imageUrl,
       );
     });
@@ -111,26 +108,14 @@ const CommEdit = ({
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
-      const options = {
-        maxSizeMB: 0.2, // 이미지 최대 용량
-        maxWidthOrHeight: 840, // 최대 넓이(혹은 높이)
-        useWebWorker: true,
-      };
+      fileList.map(async (file) => {
+        const resizingImage = await imageResize(file);
 
-      fileList.map((file) => {
-        imageCompression(file, options)
-          .then((response) => {
-            imageCompression.getDataUrlFromFile(response).then((result) => {
-              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
+        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
 
-              setImageArr((prev) =>
-                prev !== null ? [...prev, imageObj] : [imageObj],
-              );
-            });
-          })
-          .catch((error) => {
-            // console.log('🚀 ~ onFileChange ~ error:', error);
-          });
+        setImageArr((prev) =>
+          prev !== null ? [...prev, imageObj] : [imageObj],
+        );
       });
     }
   };

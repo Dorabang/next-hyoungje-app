@@ -1,12 +1,13 @@
-import { DocumentData } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import statusOptions from '@/components/StatusOptions';
+import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { User } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { DocumentData } from 'firebase/firestore';
+
+import statusOptions from '@/components/StatusOptions';
 import DateFormat from '@/utils/DateFormat';
-import getAdmin from '@/apis/getAdmin';
+import { useAdmin } from '@/hooks/queries/useUserInfo';
 
 interface PostListProps {
   type?: 'etc' | 'community';
@@ -41,19 +42,7 @@ const PostList = ({
     num,
   } = post;
 
-  const [admin, setAdmin] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!admin) {
-      const getAdminData = async () => {
-        if (user) {
-          const response = await getAdmin(user.uid);
-          response && setAdmin(response);
-        }
-      };
-      getAdminData();
-    }
-  }, [admin, user]);
+  const { data: admin } = useAdmin(user?.uid);
 
   return (
     <li

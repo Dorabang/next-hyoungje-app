@@ -6,10 +6,8 @@ import ReactQuill from 'react-quill';
 import { IoArrowBack } from 'react-icons/io5';
 import { authState } from '@/recoil/atoms';
 
-import { deletePost } from '@/apis/posts';
-import { getImageURL } from '@/apis/images';
-import { updatedViews } from '@/apis/updatedViews';
-import getAdmin from '@/apis/getAdmin';
+import { deletePost } from '@/apis/posts/posts';
+import { updatedViews } from '@/apis/posts/updatedViews';
 import { useGetPost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';
@@ -18,6 +16,8 @@ import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 import Loading from '../Loading';
 import HasLikes from '../HasLikes';
 import Comments from '../Comment/Comments';
+import { useAdmin } from '@/hooks/queries/useUserInfo';
+import { getPostImageURL } from '@/apis/images';
 
 interface CommDetailPageProps {
   postId: string;
@@ -27,11 +27,10 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
   const router = useRouter();
   const user = useRecoilValue(authState);
 
-  const [admin, setAdmin] = useState<boolean>(false);
-
   const path = usePathname().split('/');
   const pathname = path[2];
   const { data, isLoading } = useGetPost(pathname, postId);
+  const { data: admin } = useAdmin(user?.uid);
   const [image, setImage] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -47,7 +46,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
     if (image === null && data) {
       const imgId = data.image;
       imgId?.forEach(async (img: string) => {
-        const url = await getImageURL(pathname, data.creatorId, img);
+        const url = await getPostImageURL(pathname, data.creatorId, img);
         setImage((prev) =>
           prev !== null
             ? prev.includes(url)
@@ -69,22 +68,10 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
     if (!data) return;
 
     if (ok) {
-      deletePost(data, user, pathname, id);
+      deletePost(data, pathname, id);
       router.push(`/community/${pathname}`);
     }
   };
-
-  useEffect(() => {
-    if (!admin) {
-      const getAdminData = async () => {
-        if (user) {
-          const response = await getAdmin(user.uid);
-          response && setAdmin(response);
-        }
-      };
-      getAdminData();
-    }
-  }, [admin, user]);
 
   if (isLoading) return <Loading />;
 

@@ -1,4 +1,4 @@
-import { getNextPost, getPrevPost } from '@/apis/posts';
+import { getNextPost, getPrevPost } from '@/apis/posts/posts';
 import { allRoutes } from '@/constant/Routes';
 import { DocumentData } from 'firebase/firestore';
 import Link from 'next/link';
