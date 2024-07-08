@@ -1,19 +1,20 @@
 'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
+import { doc, setDoc } from 'firebase/firestore';
+import { authService, dbService } from '@/firebase';
+import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
 import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { authService, dbService } from '@/firebase';
 import { ErrorMessage } from '@hookform/error-message';
-import { useRouter } from 'next/navigation';
+
 import JoinTerms from '@/components/JoinTerms/JoinTerms';
-import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
 import uploadImage from '@/apis/images/uploadImage';
-import { useState } from 'react';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
-import imageCompression from 'browser-image-compression';
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import { imageResize } from '@/utils/imageResize';
 
 interface Inputs {
   email: string;
@@ -90,7 +91,7 @@ const AccountPage = () => {
     }
   };
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
@@ -98,21 +99,8 @@ const AccountPage = () => {
     if (files) {
       const theFile = files[0];
 
-      const options = {
-        maxSizeMB: 0.2, // 이미지 최대 용량
-        maxWidthOrHeight: 840, // 최대 넓이(혹은 높이)
-        useWebWorker: true,
-      };
-
-      imageCompression(theFile, options)
-        .then((response) => {
-          imageCompression.getDataUrlFromFile(response).then((result) => {
-            setImage(result);
-          });
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+      const resizingImage = await imageResize(theFile);
+      setImage(resizingImage);
     }
   };
 
@@ -225,14 +213,6 @@ const AccountPage = () => {
           )}
         />
 
-        {/* <Controller
-          name='userName'
-          control={control}
-          render={({ field }) => (
-            <TextField autoComplete={'off'} label='이름' {...field} />
-          )}
-        /> */}
-
         <Controller
           name='nickName'
           control={control}
@@ -292,7 +272,7 @@ const AccountPage = () => {
             )}
           />
         </Stack>
-        <Stack direction={'row'} spacing={1}>
+        <Stack direction={'row'} spacing={1} paddingBottom={'100px'}>
           <Button type='submit' variant='contained' sx={{ width: '100%' }}>
             회원가입
           </Button>

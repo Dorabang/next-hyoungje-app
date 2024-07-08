@@ -1,21 +1,22 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
-import ContainerBox from '../ContainerBox';
+import Image from 'next/image';
+import uuid from 'react-uuid';
+import { AiOutlineClose } from 'react-icons/ai';
 import { useRouter } from 'next/navigation';
 import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { dbService, storageService } from '@/firebase';
+import { deleteObject, ref } from 'firebase/storage';
+import { Button } from '@mui/material';
+
+import ContainerBox from '../ContainerBox';
 import { ImageObjProps } from '@/(home)/edit/[id]/page';
 import { authState, editorState } from '@/recoil/atoms';
-import Image from 'next/image';
-import imageCompression from 'browser-image-compression';
-import uuid from 'react-uuid';
-import { AiOutlineClose } from 'react-icons/ai';
 import Editor from '../Editor';
-import { Button } from '@mui/material';
 import uploadImage from '@/apis/images/uploadImage';
-import { dbService, storageService } from '@/firebase';
 import GetImageURL from '@/apis/images/getImageURL';
-import { deleteObject, ref } from 'firebase/storage';
+import { imageResize } from '@/utils/imageResize';
 
 const CommEdit = ({
   post,
@@ -111,26 +112,14 @@ const CommEdit = ({
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
-      const options = {
-        maxSizeMB: 0.2, // 이미지 최대 용량
-        maxWidthOrHeight: 840, // 최대 넓이(혹은 높이)
-        useWebWorker: true,
-      };
+      fileList.map(async (file) => {
+        const resizingImage = await imageResize(file);
 
-      fileList.map((file) => {
-        imageCompression(file, options)
-          .then((response) => {
-            imageCompression.getDataUrlFromFile(response).then((result) => {
-              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
+        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
 
-              setImageArr((prev) =>
-                prev !== null ? [...prev, imageObj] : [imageObj],
-              );
-            });
-          })
-          .catch((error) => {
-            // console.log('🚀 ~ onFileChange ~ error:', error);
-          });
+        setImageArr((prev) =>
+          prev !== null ? [...prev, imageObj] : [imageObj],
+        );
       });
     }
   };

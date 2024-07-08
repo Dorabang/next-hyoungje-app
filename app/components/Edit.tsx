@@ -1,16 +1,15 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
-import { deleteObject, ref } from 'firebase/storage';
-import { useRouter } from 'next/navigation';
-import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import Image from 'next/image';
-import imageCompression from 'browser-image-compression';
 import uuid from 'react-uuid';
+import { dbService, storageService } from '@/firebase';
+import { deleteObject, ref } from 'firebase/storage';
+import { DocumentData, doc, updateDoc } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
 
-import { dbService, storageService } from '@/firebase';
 import ContainerBox from './ContainerBox';
 import { ImageObjProps } from '@/(home)/edit/[id]/page';
 import statusList from '@/constant/StatusLists';
@@ -18,6 +17,7 @@ import { authState, editorState } from '@/recoil/atoms';
 import Editor from './Editor';
 import uploadImage from '@/apis/images/uploadImage';
 import { getPostImageURL } from '@/apis/images';
+import { imageResize } from '@/utils/imageResize';
 
 const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   const router = useRouter();
@@ -67,7 +67,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
     imageArr?.map(async (value) => {
       await uploadImage(
-        `${pathname}/${user.uid}/post/${value.id}/image`,
+        `${pathname}/${post.creatorId}/post/${value.id}/image`,
         value.imageUrl,
       );
     });
@@ -94,14 +94,14 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       place: place,
       date: date,
       price: price,
+      amount: amount,
+      updatedAt: Date.now(),
       ...(pathname.includes('market') && {
         phone: phone,
         height: height,
         width: width,
       }),
-      amount: amount,
-      image: imageIdArr,
-      updatedAt: Date.now(),
+      ...(imageIdArr !== null && { image: imageIdArr }),
     };
     const docRef = doc(dbService, `${pathname}/${post.id}`);
 
@@ -126,26 +126,13 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
-      const options = {
-        maxSizeMB: 0.2, // 이미지 최대 용량
-        maxWidthOrHeight: 840, // 최대 넓이(혹은 높이)
-        useWebWorker: true,
-      };
+      fileList.map(async (file) => {
+        const resizingImage = await imageResize(file);
+        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
 
-      fileList.map((file) => {
-        imageCompression(file, options)
-          .then((response) => {
-            imageCompression.getDataUrlFromFile(response).then((result) => {
-              const imageObj: ImageObjProps = { id: uuid(), imageUrl: result };
-
-              setImageArr((prev) =>
-                prev !== null ? [...prev, imageObj] : [imageObj],
-              );
-            });
-          })
-          .catch((error) => {
-            // console.log('🚀 ~ onFileChange ~ error:', error);
-          });
+        setImageArr((prev) =>
+          prev !== null ? [...prev, imageObj] : [imageObj],
+        );
       });
     }
   };
@@ -170,7 +157,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
         const deleteImageRef = ref(
           storageService,
-          `${pathname}/${user.uid}/post/${imageId}/image.jpg`,
+          `${pathname}/${post.creatorId}/post/${imageId}/image.jpg`,
         );
 
         await deleteObject(deleteImageRef);
