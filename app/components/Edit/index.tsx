@@ -1,5 +1,5 @@
 'use client';
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import Image from 'next/image';
 import uuid from 'react-uuid';
@@ -10,31 +10,64 @@ import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
 
-import ContainerBox from './ContainerBox';
 import { ImageObjProps } from '@/(home)/edit/[id]/page';
 import statusList from '@/constant/StatusLists';
 import { authState, editorState } from '@/recoil/atoms';
-import Editor from './Editor';
 import { getPostImageURL, uploadImage } from '@/apis/images';
 import { imageResize } from '@/utils/imageResize';
+import ContainerBox from '../ContainerBox';
+import Editor from '../Editor';
+import Input from './Input';
+
+interface PostDataState {
+  title: string;
+  variant: string;
+  phone: string;
+  status: 'sale' | 'sold-out' | 'reservation';
+  price: string;
+  date: string;
+  height: string;
+  width: string;
+  amount: string;
+  place: string;
+}
+
+type PrevImages = string[] | null;
+type NewImages = ImageObjProps[] | null;
 
 const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   const router = useRouter();
 
   const user = useRecoilValue(authState);
 
-  const [title, setTitle] = useState(post.title);
-  const [variant, setVariant] = useState(post.variant);
-  const [phone, setPhone] = useState(post.phone);
-  const [status, setStatus] = useState(post.status);
-  const [price, setPrice] = useState(post.price);
-  const [place, setPlace] = useState(post.place);
-  const [date, setDate] = useState(post.date);
-  const [height, setHeight] = useState(post.height);
-  const [width, setWidth] = useState(post.width);
-  const [amount, setAmount] = useState(post.amount);
-  const [images, setImages] = useState<string[] | null>(null);
-  const [imageArr, setImageArr] = useState<ImageObjProps[] | null>(null);
+  const [postData, setPostData] = useState<PostDataState>({
+    title: post.title,
+    variant: post.variant,
+    phone: post.phone,
+    status: post.status,
+    price: post.price,
+    place: post.place,
+    date: post.date,
+    height: post.height,
+    width: post.width,
+    amount: post.width,
+  });
+
+  const [prevImages, setPrevImages] = useState<PrevImages>(null);
+  const [newImages, setNewImages] = useState<NewImages>(null);
+
+  const {
+    title,
+    amount,
+    date,
+    height,
+    phone,
+    price,
+    status,
+    variant,
+    width,
+    place,
+  } = postData;
   const [value, setValue] = useRecoilState(editorState);
 
   const contents = post.contents;
@@ -45,7 +78,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     if (postImages) {
       postImages.forEach(async (img: string) => {
         const url = await getPostImageURL(pathname, post.creatorId, img);
-        setImages((prev) =>
+        setPrevImages((prev) =>
           prev ? (!prev?.includes(url) ? [...prev, url] : prev) : [url],
         );
       });
@@ -56,33 +89,31 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     setValue(contents);
   }, [setValue, contents]);
 
-  const inputWrapperClass =
-    'flex items-start w-full border-b border-grayColor-200 p-2';
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!user) return;
 
-    imageArr?.map(async (value) => {
-      await uploadImage(
-        `${pathname}/${post.creatorId}/post/${value.id}/image`,
-        value.imageUrl,
-      );
-    });
+    newImages &&
+      newImages.map(async ({ id, imageUrl }) => {
+        await uploadImage(
+          `${pathname}/${post.creatorId}/post/${id}/image`,
+          imageUrl,
+        );
+      });
 
-    const newImageArr = imageArr && imageArr.map((item) => item.id);
+    const newImagesId = newImages && newImages.map((item) => item.id);
 
     const prevImage = postImages?.filter((item: string) =>
-      images?.filter((items) => items.includes(item)),
+      prevImages?.filter((items) => items.includes(item)),
     );
 
-    const imageIdArr = images
-      ? newImageArr
-        ? [...newImageArr, ...prevImage]
+    const imageIdArr = prevImages
+      ? newImagesId
+        ? [...newImagesId, ...prevImage]
         : [...prevImage]
-      : newImageArr
-        ? [...newImageArr]
+      : newImagesId
+        ? [...newImagesId]
         : null;
 
     const newPostObj = {
@@ -102,18 +133,23 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       }),
       ...(imageIdArr !== null && { image: imageIdArr }),
     };
+
     const docRef = doc(dbService, `${pathname}/${post.id}`);
 
     await updateDoc(docRef, newPostObj);
-    setTitle(post.title);
     setValue(contents);
-    setDate(post.date);
-    setWidth(post.width);
-    setHeight(post.height);
-    setPlace(post.place);
-    setPrice(post.price);
-    setAmount(post.amount);
-    setStatus(post.status);
+    setPostData({
+      title: post.title,
+      variant: post.variant,
+      phone: post.phone,
+      status: post.status,
+      price: post.price,
+      date: post.date,
+      height: post.height,
+      width: post.width,
+      amount: post.width,
+      place: post.place,
+    });
     router.back();
   };
 
@@ -129,7 +165,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
         const resizingImage = await imageResize(file);
         const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
 
-        setImageArr((prev) =>
+        setNewImages((prev) =>
           prev !== null ? [...prev, imageObj] : [imageObj],
         );
       });
@@ -137,20 +173,20 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   };
 
   const handleDeleteImage = (id: string) => {
-    if (imageArr?.length === 0 || imageArr === null) {
-      return setImageArr(null);
+    if (newImages?.length === 0 || newImages === null) {
+      return setNewImages(null);
     } else {
-      const modifyImageArr = imageArr.filter((imageObj) => imageObj.id !== id);
+      const modifyImageArr = newImages.filter((imageObj) => imageObj.id !== id);
 
-      return setImageArr(modifyImageArr);
+      return setNewImages(modifyImageArr);
     }
   };
 
   const handleDBDeleteImage = async (id: string) => {
     const imageId = postImages.filter((item: string) => id.includes(item))[0];
     if (postImages.filter((item: string) => id.includes(item))) {
-      if (images?.length === 0 || images === null) {
-        return setImages(null);
+      if (prevImages?.length === 0 || prevImages === null) {
+        return setPrevImages(null);
       } else {
         if (!user) return;
 
@@ -167,19 +203,28 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
         );
         await updateDoc(docRef, { image: updateImage });
 
-        const deleteImages = images.filter((image) => image !== id);
-        return setImages(deleteImages);
+        const deleteImages = prevImages.filter((image) => image !== id);
+        return setPrevImages(deleteImages);
       }
     }
   };
 
   const handleDeleteImageAll = () => {
-    setImageArr(null);
+    setNewImages(null);
 
-    images?.forEach(async (image) => {
+    prevImages?.forEach(async (image) => {
       await handleDBDeleteImage(image);
-      setImages(null);
+      setPrevImages(null);
     });
+  };
+
+  const handleChangeValue = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const {
+      target: { name, value },
+    } = e;
+    setPostData((prev) => ({ ...prev, [name]: value }));
   };
 
   if (!post || !user) return;
@@ -189,168 +234,134 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form
           onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-grayColor-300'
+          className='mb-3 flex flex-col justify-center'
         >
-          <div className={`${inputWrapperClass}`}>
-            <div className='pr-4'>
-              <select
-                id='status'
-                className='outline-none cursor-pointer'
-                onChange={(e) => setStatus(e.target.value)}
-                value={status}
-              >
-                {statusList.map((option) => (
-                  <option value={option.value} key={option.value}>
-                    {option.desc}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <input
-              type='text'
+          <Input required>
+            <Input.Label>
+              <div className='pr-4'>
+                <select
+                  id='status'
+                  name='status'
+                  className='outline-none cursor-pointer'
+                  onChange={(e) => handleChangeValue(e)}
+                  value={status}
+                >
+                  {statusList.map((option) => (
+                    <option value={option.value} key={option.value}>
+                      {option.desc}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Input.Label>
+            <Input.Text
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              name='title'
+              onChange={(e) => handleChangeValue(e)}
               placeholder='* 제목을 입력해주세요.'
-              className='outline-none'
-              required
             />
-          </div>
+          </Input>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='variant'>* 종류</label>
-            <input
+          <Input required>
+            <Input.Label>종류</Input.Label>
+            <Input.Text
               name='variant'
-              type='text'
               value={variant}
-              onChange={(e) => setVariant(e.target.value)}
-              className='outline-none pl-3'
-              required
+              onChange={(e) => handleChangeValue(e)}
             />
-          </div>
+          </Input>
 
           {pathname.includes('market') && (
-            <div className={`${inputWrapperClass}`}>
-              <label htmlFor='phone'>* 연락처</label>
-              <input
+            <Input required>
+              <Input.Label>연락처</Input.Label>
+              <Input.Text
                 name='phone'
-                type='text'
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className='outline-none pl-3'
-                required
+                onChange={(e) => handleChangeValue(e)}
               />
-            </div>
+            </Input>
           )}
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='place'>* 산지</label>
-            <input
+          <Input required>
+            <Input.Label>산지</Input.Label>
+            <Input.Text
               name='place'
-              type='text'
               value={place}
-              onChange={(e) => setPlace(e.target.value)}
-              className='outline-none pl-3'
-              required
+              onChange={(e) => handleChangeValue(e)}
             />
-          </div>
+          </Input>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='date'>* 산채일</label>
-            <input
+          <Input required>
+            <Input.Label>산채일</Input.Label>
+            <Input.Date
               name='date'
-              type='date'
               value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className='outline-none pl-3'
-              required
+              onChange={(e) => handleChangeValue(e)}
             />
-          </div>
+          </Input>
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='price'>* 가격</label>
-            <input
+          <Input required>
+            <Input.Label>가격</Input.Label>
+            <Input.Text
               name='price'
-              type='text'
               value={price.toLocaleString()}
-              onChange={(e) => setPrice(e.target.value)}
-              className='outline-none pl-3'
-              required
+              onChange={(e) => handleChangeValue(e)}
             />
-          </div>
+          </Input>
 
           {pathname.includes('market') && (
             <>
-              <div className={`${inputWrapperClass}`}>
-                <label htmlFor='height'>* 키</label>
-                <input
+              <Input required>
+                <Input.Label>키</Input.Label>
+                <Input.Text
                   name='height'
-                  type='text'
                   value={height}
-                  onChange={(e) => setHeight(e.target.value)}
-                  className='outline-none pl-3'
-                  required
+                  onChange={(e) => handleChangeValue(e)}
                 />
-              </div>
+              </Input>
 
-              <div className={`${inputWrapperClass}`}>
-                <label htmlFor='width'>* 폭</label>
-                <input
+              <Input required>
+                <Input.Label>폭</Input.Label>
+                <Input.Text
                   name='width'
-                  type='text'
                   value={width}
-                  onChange={(e) => setWidth(e.target.value)}
-                  className='outline-none pl-3'
-                  required
+                  onChange={(e) => handleChangeValue(e)}
                 />
-              </div>
+              </Input>
             </>
           )}
 
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='amount'>촉수</label>
-            <input
+          <Input required>
+            <Input.Label>촉수</Input.Label>
+            <Input.Text
               name='amount'
-              type='text'
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className='outline-none pl-3'
+              onChange={(e) => handleChangeValue(e)}
             />
-          </div>
+          </Input>
 
-          <div className={`${inputWrapperClass}`}>
-            <p className='w-[90px] border-r border-grayColor-300 cursor-default flex flex-col gap-2'>
-              파일 첨부
-              <span className='text-grayColor-300 text-sm'>
-                {'('}
-                {imageArr?.length || images?.length
-                  ? imageArr?.length ?? 0 + (images ? images.length : 0)
-                  : 0}
-                /8
-                {')'}
-              </span>
-            </p>
-            <div className='flex flex-col pl-3'>
+          <Input disabled={newImages && newImages.length >= 8 ? true : false}>
+            <Input.Label>
+              <p>
+                파일 첨부
+                <br />
+                <span className='text-grayColor-300 text-sm'>
+                  {'('}
+                  {newImages?.length || prevImages?.length
+                    ? newImages?.length ??
+                      0 + (prevImages ? prevImages.length : 0)
+                    : 0}
+                  /8
+                  {')'}
+                </span>
+              </p>
+            </Input.Label>
+            <div className='pl-2'>
               <div className='flex gap-2 items-center'>
-                <label
-                  htmlFor='addFile'
-                  className={`py-1 w-[100px_!important] text-center
-                border border-[#ddd] transition-colors
-                ${imageArr && imageArr.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
-                `}
-                >
+                <Input.File onChange={onFileChange} multiple>
                   파일 선택
-                  <input
-                    id='addFile'
-                    name='addFile'
-                    type='file'
-                    accept='image/*'
-                    disabled={imageArr && imageArr.length >= 8 ? true : false}
-                    onChange={onFileChange}
-                    multiple
-                    className='outline-none w-full hidden group'
-                  />
-                </label>
-                {(imageArr || images) && (
+                </Input.File>
+                {(newImages || prevImages) && (
                   <span
                     className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
                     onClick={() => handleDeleteImageAll()}
@@ -359,10 +370,10 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
                   </span>
                 )}
               </div>
-              {(images || imageArr) && (
+              {(prevImages || newImages) && (
                 <ul className='w-full py-4 flex flex-wrap gap-2'>
-                  {images &&
-                    images.map((item) => (
+                  {prevImages &&
+                    prevImages.map((item) => (
                       <li key={item}>
                         <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
                           <Image
@@ -382,8 +393,8 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
                         </div>
                       </li>
                     ))}
-                  {imageArr &&
-                    imageArr.map((item) => (
+                  {newImages &&
+                    newImages.map((item) => (
                       <li key={item.id}>
                         <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
                           <Image
@@ -406,7 +417,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
                 </ul>
               )}
             </div>
-          </div>
+          </Input>
 
           <Editor />
 
