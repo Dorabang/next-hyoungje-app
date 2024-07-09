@@ -1,0 +1,31 @@
+@tailwind utilities;
+@tailwind components;
+
+.inputWrapper {
+  @apply flex items-stretch w-full border-b border-grayColor-200 p-2;
+}
+
+.inputWrapper input {
+  @apply outline-none w-full pl-2;
+}
+
+.inputLabel {
+  @apply flex justify-start items-center border-r align-top border-grayColor-200;
+}
+
+.inputText {
+  @apply outline-none flex-grow;
+}
+
+.inputFile {
+  @apply py-1 w-[100px_!important] text-center
+  border border-grayColor-200 transition-colors cursor-pointer flex-grow;
+}
+
+.inputFile > input {
+  @apply w-full pl-2 hidden;
+}
+
+.inputFile > input[type='date'] {
+  @apply max-w-[300px];
+}
