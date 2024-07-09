@@ -1,13 +1,14 @@
 'use client';
-import FImg from '@/assets/common/footer_logo.png';
-import styled from 'styled-components';
-import Image from 'next/image';
 import { Container } from '@mui/material';
+import styled from 'styled-components';
+
+import FImg from '@/assets/common/footer_logo.png';
+import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 export const FooterStyle = styled.footer`
   border-top: 1px solid #ddd;
   width: 100%;
-  padding: 80px 0 50px;
+  padding: 80px 0;
   background: #333;
   text-align: center;
   font-size: 14px;
@@ -35,34 +36,20 @@ export const FooterStyle = styled.footer`
   }
 `;
 
-export const FooterLogo = styled.div`
-  width: 120px;
-  min-width: 80px;
-  margin: 0 auto;
-  padding-bottom: 30px;
-  transform: translateX(-15px);
-  position: relative;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
 const Footer = () => {
   return (
     <FooterStyle>
       <Container maxWidth='xl'>
-        <FooterLogo>
-          <Image src={FImg} alt='형제난원' priority />
-        </FooterLogo>
+        <div className='max-w-[120px] mx-auto pb-5'>
+          <AutoHeightImageWrapper src={FImg.src} alt='옥동 로고 이미지' />
+        </div>
 
         <address>
           대표 박기용 / (52842) 경상남도 진주시 금곡면 인담리 700 /
-          <br /> Tel. 010-8856-1195 / E-mail. cjs863@daum.net /
-          <br /> 사업자등록번호 605-92-39533
+          <br />
+          Tel. 010-8856-1195 / E-mail. cjs863@daum.net /
+          <br />
+          사업자등록번호 605-92-39533
         </address>
         <p>{'\u00A9'} (구)형제난원 all copyright.</p>
       </Container>
