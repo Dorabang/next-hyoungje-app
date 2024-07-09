@@ -1,4 +1,5 @@
-import { dbService, storageService } from '@/firebase';
+'use server';
+import { dbService } from '@/firebase';
 import {
   DocumentData,
   collection,
@@ -7,7 +8,7 @@ import {
   orderBy,
   query,
 } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage';
+import { getImageURL } from './images';
 
 export const getSlidePosts = async (pathname: string) => {
   let post: DocumentData[] = [];
@@ -27,31 +28,21 @@ export const getSlidePosts = async (pathname: string) => {
       return post.push({ id: doc.id, ...doc.data() });
     });
   } catch (err) {
-    console.log('🚀 ~ getSlidePosts ~ err1:', err);
+    // console.log('🚀 ~ getSlidePosts ~ err1:', err);
   }
 
-  const imgArr = await getImages(pathname, post);
-  return imgArr;
+  const transformPost = await transformPosts(pathname, post);
+
+  return transformPost;
 };
 
-const getSlideURL = (url: string) => {
-  const photoRef = ref(storageService, `${url}.jpg`);
-  try {
-    const getUrl = async () => {
-      return await getDownloadURL(photoRef);
-    };
-    const photoUrl = getUrl();
-    return photoUrl;
-  } catch (err) {
-    // console.log('🚀 ~ GetSlideURL err:', err);
-    return;
-  }
-};
-
-export const getImages = async (pathname: string, data: DocumentData[]) => {
+export const transformPosts = async (
+  pathname: string,
+  data: DocumentData[],
+) => {
   return await Promise.all(
     data.map(async (post) => {
-      const img = await getSlideURL(
+      const img = await getImageURL(
         `${pathname}/${post.creatorId}/post/${post.image[0]}/image`,
       );
       return { ...post, image: img };

@@ -1,27 +1,14 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { TfiArrowCircleRight } from 'react-icons/tfi';
 
 import { noto_serif_kr } from '@/components/NotoSerif';
-import { getChannelProfile } from '@/apis/youtube';
 import { SpecialChannelData } from '../../type';
 import VideoSlide from '../VideoSlide';
 import Badge from '../../Badge';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 const SpecialChannel = ({ data }: { data: SpecialChannelData }) => {
-  const [profile, setProfile] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (profile === null && data) {
-      (async () => {
-        const profileURL = await getChannelProfile(data.profile);
-        setProfile(profileURL);
-      })();
-    }
-  }, [profile, data]);
-
   return (
     <div className='flex flex-col gap-8 md:gap-16 min-h-[600px] bg-white rounded-xl mt-[30px] mb-[90px] md:mt-[80px] md:mb-[120px] px-5 py-4 md:px-10 md:py-8'>
       <div className='flex justify-between items-center flex-col gap-5 md:gap-0 md:flex-row'>
@@ -51,9 +38,9 @@ const SpecialChannel = ({ data }: { data: SpecialChannelData }) => {
             <TfiArrowCircleRight />
           </div>
           <div className='border border-grayColor-200 overflow-hidden rounded-full w-[72px] h-[72px] relative'>
-            {profile !== null ? (
+            {data.profile !== null ? (
               <AutoHeightImageWrapper
-                src={profile}
+                src={data.profile}
                 alt={`${data.name} 채널 프로필 이미지`}
               />
             ) : (

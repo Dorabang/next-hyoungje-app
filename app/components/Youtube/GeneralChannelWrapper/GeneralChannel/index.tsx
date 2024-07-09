@@ -1,24 +1,11 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { BsArrowUpRight } from 'react-icons/bs';
 
 import { YoutubeChannelData } from '../../type';
-import { getChannelProfile } from '@/apis/youtube';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
 
 const GeneralChannel = ({ data }: { data: YoutubeChannelData }) => {
-  const [profile, setProfile] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (profile === null) {
-      (async () => {
-        const profileURL = await getChannelProfile(data.profile);
-        setProfile(profileURL);
-      })();
-    }
-  }, [profile, data.profile]);
-
   return (
     <Link
       target='_blank'
@@ -27,10 +14,10 @@ const GeneralChannel = ({ data }: { data: YoutubeChannelData }) => {
     >
       <div className='flex justify-between'>
         <div className='w-16 h-16 rounded-full overflow-hidden relative'>
-          {profile !== null ? (
+          {data.profile ? (
             <AutoHeightImageWrapper
               alt={`${data.name} 프로필 이미지`}
-              src={profile}
+              src={data.profile}
             />
           ) : (
             <div className='w-full h-full bg-grayColor-200 animate-pulse' />

@@ -20,7 +20,6 @@ interface Inputs {
 
 const ChangeProfile = ({ user }: { user: User }) => {
   const [image, setImage] = useState<string>('');
-  console.log('🚀 ~ ChangeProfile ~ image:', image);
 
   const {
     control,
