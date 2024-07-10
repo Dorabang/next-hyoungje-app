@@ -22,6 +22,7 @@ import Editor from '@/components/Editor';
 import getPostsAmount from '@/apis/posts/getPostsAmount';
 import { imageResize } from '@/utils/imageResize';
 import { uploadImage } from '@/apis/images';
+import Input from '@/components/Edit/Input';
 
 export interface ImageObjProps {
   id: string;
@@ -36,6 +37,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const router = useRouter();
 
   const [title, setTitle] = useState('');
+  const [popup, setPopup] = useState(false);
   const [value, setValue] = useRecoilState(editorState);
 
   /* 이미지 id, url 정보를 담은 배열 */
@@ -66,6 +68,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     const newPostObj = {
       title: title,
       ...(imageIdArr !== null && { image: imageIdArr }),
+      popup: popup,
       contents: value,
       like: [],
       views: 0,
@@ -83,10 +86,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     setTitle('');
     setValue('');
+    setPopup(false);
     router.back();
   };
-
-  const inputWrapClass = 'flex items-start w-full border-b border-[#ddd] p-2';
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -120,54 +122,48 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <ContainerBox>
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
+      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
         <form
           onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-grayColor-300'
+          className='mb-3 flex flex-col justify-center'
         >
-          <div className={`${inputWrapClass}`}>
-            <label htmlFor='phone'>제목 *</label>
-            <input
-              type='text'
+          <Input required>
+            <Input.Label>제목</Input.Label>
+            <Input.Text
               value={title}
+              name='title'
               onChange={(e) => setTitle(e.target.value)}
               placeholder='제목을 입력해주세요.'
-              className='outline-none pl-3'
-              required
             />
-          </div>
+          </Input>
 
-          <div className={`${inputWrapClass}`}>
-            <p className='w-[90px] border-r border-grayColor-300 cursor-default flex flex-col gap-2'>
-              파일 첨부
-              <span className='text-grayColor-300 text-sm'>
-                {'('}
-                {selectedImage ? selectedImage.length : '0'}/8{')'}
-              </span>
-            </p>
+          {id.includes('notice') && (
+            <Input>
+              <Input.Label>공지 등록</Input.Label>
+              <Input.Radio
+                checked={popup}
+                name='popup'
+                onChange={(e) => setPopup(e.target.checked)}
+              >
+                공지 등록하기
+              </Input.Radio>
+            </Input>
+          )}
+
+          <Input>
+            <Input.Label>
+              <p>
+                파일 첨부
+                <br />
+                <span className='text-grayColor-300 text-sm'>
+                  {'('}
+                  {selectedImage ? selectedImage.length : '0'}/8{')'}
+                </span>
+              </p>
+            </Input.Label>
             <div className='flex flex-grow flex-wrap pl-3'>
               <div className='flex gap-2 items-center'>
-                <label
-                  htmlFor='addFile'
-                  className={`py-1 w-[100px_!important] text-center
-                border border-[#ddd] transition-colors
-                ${selectedImage && selectedImage.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
-                `}
-                >
-                  파일 선택
-                  <input
-                    id='addFile'
-                    name='addFile'
-                    type='file'
-                    multiple
-                    disabled={
-                      selectedImage && selectedImage.length >= 8 ? true : false
-                    }
-                    accept='image/*'
-                    onChange={onFileChange}
-                    className='outline-none w-full hidden group'
-                  />
-                </label>
+                <Input.File onChange={onFileChange}>파일 선택</Input.File>
                 {selectedImage && (
                   <span
                     className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
@@ -202,7 +198,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                 </ul>
               )}
             </div>
-          </div>
+          </Input>
 
           <Editor />
 

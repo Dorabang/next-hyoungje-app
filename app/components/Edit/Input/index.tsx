@@ -2,7 +2,13 @@
 import React, { createContext, ReactNode } from 'react';
 import './index.css';
 import useInputContext from '@/hooks/context/useInputContext';
-import { DateProps, FileProps, LabelProps, TextProps } from './type';
+import {
+  DateProps,
+  FileProps,
+  LabelProps,
+  RadioProps,
+  TextProps,
+} from './type';
 
 interface InputContextProps {
   required?: boolean;
@@ -55,6 +61,23 @@ const Text = ({ ...props }: TextProps) => {
   );
 };
 
+const Radio = ({ children, ...props }: RadioProps) => {
+  const { required, disabled } = useInputContext();
+
+  return (
+    <label className='inputRadio'>
+      <span />
+      <input
+        type='checkbox'
+        required={required}
+        disabled={disabled}
+        {...props}
+      />
+      {children}
+    </label>
+  );
+};
+
 const File = ({ children, ...props }: FileProps) => {
   const { disabled } = useInputContext();
 
@@ -81,5 +104,6 @@ Input.Label = Label;
 Input.Text = Text;
 Input.File = File;
 Input.Date = Date;
+Input.Radio = Radio;
 
 export default Input;
