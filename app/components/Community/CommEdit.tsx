@@ -17,6 +17,7 @@ import Editor from '../Editor';
 import { imageResize } from '@/utils/imageResize';
 import { getPostImageURL, uploadImage } from '@/apis/images';
 import Input from '../Edit/Input';
+import LoadingPromise from '../LoadingPromise';
 
 const CommEdit = ({
   post,
@@ -30,10 +31,11 @@ const CommEdit = ({
   const user = useRecoilValue(authState);
 
   const [title, setTitle] = useState(post.title);
+  const [popup, setPopup] = useState(post.popup);
   const [prevImages, setPrevImages] = useState<string[] | null>(null);
   const [newImages, setNewImages] = useState<ImageObjProps[] | null>(null);
   const [value, setValue] = useRecoilState(editorState);
-
+  const [isLoading, setIsLoading] = useState(false);
   const contents = post.contents;
 
   const postImages = post && post?.image;
@@ -56,14 +58,20 @@ const CommEdit = ({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading((prev) => !prev);
+
     if (!user) return;
 
-    newImages?.map(async (value) => {
-      await uploadImage(
-        `${pathname}/${post.creatorId}/post/${value.id}/image`,
-        value.imageUrl,
+    if (newImages) {
+      await Promise.all(
+        newImages?.map(async (value) => {
+          await uploadImage(
+            `${pathname}/${post.creatorId}/post/${value.id}/image`,
+            value.imageUrl,
+          );
+        }),
       );
-    });
+    }
 
     const newnewImages = newImages && newImages.map((item) => item.id);
 
@@ -82,7 +90,8 @@ const CommEdit = ({
     const newPostObj = {
       title: title,
       contents: value,
-      image: imageIdArr,
+      ...(imageIdArr !== null && { image: imageIdArr }),
+      popup: popup,
       updatedAt: Date.now(),
     };
 
@@ -91,6 +100,8 @@ const CommEdit = ({
     await updateDoc(docRef, newPostObj);
     setTitle('');
     setValue('');
+    setPopup(false);
+    setIsLoading(false);
     router.back();
   };
 
@@ -98,19 +109,25 @@ const CommEdit = ({
     const {
       target: { files },
     } = e;
+    try {
+      if (files) {
+        const fileList = Object.values(files).slice(0, 8);
 
-    if (files) {
-      const fileList = Object.values(files).slice(0, 8);
+        fileList.map(async (file) => {
+          const resizingImage = await imageResize(file);
 
-      fileList.map(async (file) => {
-        const resizingImage = await imageResize(file);
+          const imageObj: ImageObjProps = {
+            id: uuid(),
+            imageUrl: resizingImage,
+          };
 
-        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
-
-        setNewImages((prev) =>
-          prev !== null ? [...prev, imageObj] : [imageObj],
-        );
-      });
+          setNewImages((prev) =>
+            prev !== null ? [...prev, imageObj] : [imageObj],
+          );
+        });
+      }
+    } catch (err) {
+      console.log('🚀 ~ onFileChange ~ err:', err);
     }
   };
 
@@ -159,7 +176,8 @@ const CommEdit = ({
 
   return (
     <ContainerBox>
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
+      {isLoading && <LoadingPromise />}
+      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
         <form
           onSubmit={(e) => handleSubmit(e)}
           className='mb-3 flex flex-col justify-center'
@@ -174,14 +192,32 @@ const CommEdit = ({
             />
           </Input>
 
-          <Input required>
+          {pathname.includes('notice') && (
+            <Input>
+              <Input.Label>공지 등록</Input.Label>
+              <Input.Radio
+                checked={popup}
+                name='popup'
+                onChange={(e) => setPopup(e.target.checked)}
+              >
+                공지 등록하기
+              </Input.Radio>
+            </Input>
+          )}
+
+          <Input>
             <Input.Label>
-              <p className='w-[90px] border-r border-grayColor-300 cursor-default flex flex-col gap-2'>
+              <p>
                 파일 첨부
+                <br />
                 <span className='text-grayColor-300 text-sm'>
                   {'('}
-                  {newImages ? newImages.length : '0'}
-                  /8{')'}
+                  {newImages?.length || prevImages?.length
+                    ? newImages?.length ??
+                      0 + (prevImages ? prevImages.length : 0)
+                    : 0}
+                  /8
+                  {')'}
                 </span>
               </p>
             </Input.Label>

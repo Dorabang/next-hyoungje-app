@@ -77,7 +77,7 @@ const CommDetailPage = ({ postId }: CommDetailPageProps) => {
 
   if (!data)
     return (
-      <ContainerBox className='py-20'>
+      <ContainerBox className='py-20 text-center'>
         삭제된 게시물이거나 찾을 수 없는 게시물입니다.
       </ContainerBox>
     );
