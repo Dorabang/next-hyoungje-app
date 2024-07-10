@@ -21,6 +21,7 @@ const NotificationWrapper = () => {
     setView(false);
   };
 
+  // DB에 저장되어 있는 전체 공지 불러오기
   useEffect(() => {
     (async () => {
       const data = await getNoticeModal();
@@ -28,6 +29,7 @@ const NotificationWrapper = () => {
     })();
   }, []);
 
+  // 하루동안 보지 않기 기능
   useEffect(() => {
     (async () => {
       const view = await getCookie('block_notification');
@@ -59,15 +61,15 @@ const NotificationWrapper = () => {
         <Swiper
           direction={'vertical'}
           speed={1500}
-          // loop={notice === null || notice.length <= 1 ? false : true}
-          // autoplay={
-          //   notice === null || notice.length <= 1
-          //     ? false
-          //     : {
-          //         delay: 3000,
-          //         disableOnInteraction: false,
-          //       }
-          // }
+          loop={notice === null || notice.length <= 1 ? false : true}
+          autoplay={
+            notice === null || notice.length <= 1
+              ? false
+              : {
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }
+          }
           modules={[Autoplay]}
           className='h-full flex-grow'
         >
