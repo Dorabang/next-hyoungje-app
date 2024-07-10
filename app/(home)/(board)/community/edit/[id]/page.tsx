@@ -23,6 +23,7 @@ import getPostsAmount from '@/apis/posts/getPostsAmount';
 import { imageResize } from '@/utils/imageResize';
 import { uploadImage } from '@/apis/images';
 import Input from '@/components/Edit/Input';
+import LoadingPromise from '@/components/LoadingPromise';
 
 export interface ImageObjProps {
   id: string;
@@ -39,6 +40,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const [title, setTitle] = useState('');
   const [popup, setPopup] = useState(false);
   const [value, setValue] = useRecoilState(editorState);
+  const [isLoading, setIsLoading] = useState(false);
 
   /* 이미지 id, url 정보를 담은 배열 */
   const [selectedImage, setSelectedImage] = useState<ImageObjProps[] | null>(
@@ -48,15 +50,21 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading((prev) => !prev);
+
     if (!user) return;
 
     /* 이미지 업로드 */
-    selectedImage?.map(async (value) => {
-      await uploadImage(
-        `${id}/${user.uid}/post/${value.id}/image`,
-        value.imageUrl,
+    if (selectedImage) {
+      await Promise.all(
+        selectedImage.map(async (value) => {
+          await uploadImage(
+            `${id}/${user.uid}/post/${value.id}/image`,
+            value.imageUrl,
+          );
+        }),
       );
-    });
+    }
 
     /* 이미지 ID 저장 */
     const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
@@ -87,6 +95,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     setTitle('');
     setValue('');
     setPopup(false);
+    setIsLoading(false);
     router.back();
   };
 
@@ -94,13 +103,15 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     const {
       target: { files },
     } = e;
-
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
       fileList.map(async (file) => {
         const resizingImage = await imageResize(file);
-        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
+        const imageObj: ImageObjProps = {
+          id: uuid(),
+          imageUrl: resizingImage,
+        };
 
         setSelectedImage((prev) =>
           prev !== null ? [...prev, imageObj] : [imageObj],
@@ -108,6 +119,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       });
     }
   };
+
   const handleDeleteImage = (id: string) => {
     if (selectedImage?.length === 0 || selectedImage === null) {
       return setSelectedImage(null);
@@ -122,6 +134,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <ContainerBox>
+      {isLoading && <LoadingPromise />}
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
         <form
           onSubmit={(e) => handleSubmit(e)}
@@ -163,7 +176,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             </Input.Label>
             <div className='flex flex-grow flex-wrap pl-3'>
               <div className='flex gap-2 items-center'>
-                <Input.File onChange={onFileChange}>파일 선택</Input.File>
+                <Input.File onChange={onFileChange} multiple>
+                  파일 선택
+                </Input.File>
                 {selectedImage && (
                   <span
                     className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'

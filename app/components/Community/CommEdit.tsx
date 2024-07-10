@@ -17,6 +17,7 @@ import Editor from '../Editor';
 import { imageResize } from '@/utils/imageResize';
 import { getPostImageURL, uploadImage } from '@/apis/images';
 import Input from '../Edit/Input';
+import LoadingPromise from '../LoadingPromise';
 
 const CommEdit = ({
   post,
@@ -34,7 +35,7 @@ const CommEdit = ({
   const [prevImages, setPrevImages] = useState<string[] | null>(null);
   const [newImages, setNewImages] = useState<ImageObjProps[] | null>(null);
   const [value, setValue] = useRecoilState(editorState);
-
+  const [isLoading, setIsLoading] = useState(false);
   const contents = post.contents;
 
   const postImages = post && post?.image;
@@ -57,14 +58,20 @@ const CommEdit = ({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading((prev) => !prev);
+
     if (!user) return;
 
-    newImages?.map(async (value) => {
-      await uploadImage(
-        `${pathname}/${post.creatorId}/post/${value.id}/image`,
-        value.imageUrl,
+    if (newImages) {
+      await Promise.all(
+        newImages?.map(async (value) => {
+          await uploadImage(
+            `${pathname}/${post.creatorId}/post/${value.id}/image`,
+            value.imageUrl,
+          );
+        }),
       );
-    });
+    }
 
     const newnewImages = newImages && newImages.map((item) => item.id);
 
@@ -94,6 +101,7 @@ const CommEdit = ({
     setTitle('');
     setValue('');
     setPopup(false);
+    setIsLoading(false);
     router.back();
   };
 
@@ -101,19 +109,25 @@ const CommEdit = ({
     const {
       target: { files },
     } = e;
+    try {
+      if (files) {
+        const fileList = Object.values(files).slice(0, 8);
 
-    if (files) {
-      const fileList = Object.values(files).slice(0, 8);
+        fileList.map(async (file) => {
+          const resizingImage = await imageResize(file);
 
-      fileList.map(async (file) => {
-        const resizingImage = await imageResize(file);
+          const imageObj: ImageObjProps = {
+            id: uuid(),
+            imageUrl: resizingImage,
+          };
 
-        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
-
-        setNewImages((prev) =>
-          prev !== null ? [...prev, imageObj] : [imageObj],
-        );
-      });
+          setNewImages((prev) =>
+            prev !== null ? [...prev, imageObj] : [imageObj],
+          );
+        });
+      }
+    } catch (err) {
+      console.log('🚀 ~ onFileChange ~ err:', err);
     }
   };
 
@@ -162,6 +176,7 @@ const CommEdit = ({
 
   return (
     <ContainerBox>
+      {isLoading && <LoadingPromise />}
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
         <form
           onSubmit={(e) => handleSubmit(e)}

@@ -18,6 +18,7 @@ import { imageResize } from '@/utils/imageResize';
 import ContainerBox from '../ContainerBox';
 import Editor from '../Editor';
 import Input from './Input';
+import LoadingPromise from '../LoadingPromise';
 
 interface PostDataState {
   title: string;
@@ -55,6 +56,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
   const [prevImages, setPrevImages] = useState<PrevImages>(null);
   const [newImages, setNewImages] = useState<NewImages>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     title,
@@ -92,15 +94,20 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading((prev) => !prev);
+
     if (!user) return;
 
-    newImages &&
-      newImages.map(async ({ id, imageUrl }) => {
-        await uploadImage(
-          `${pathname}/${post.creatorId}/post/${id}/image`,
-          imageUrl,
-        );
-      });
+    if (newImages) {
+      await Promise.all(
+        newImages.map(async ({ id, imageUrl }) => {
+          await uploadImage(
+            `${pathname}/${post.creatorId}/post/${id}/image`,
+            imageUrl,
+          );
+        }),
+      );
+    }
 
     const newImagesId = newImages && newImages.map((item) => item.id);
 
@@ -150,6 +157,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       amount: post.width,
       place: post.place,
     });
+    setIsLoading(false);
     router.back();
   };
 
@@ -231,6 +239,7 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
 
   return (
     <ContainerBox>
+      {isLoading && <LoadingPromise />}
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
         <form
           onSubmit={(e) => handleSubmit(e)}
