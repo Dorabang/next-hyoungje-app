@@ -16,10 +16,13 @@ const Notification = ({ data }: { data: NotificationData }) => {
   const { id, title, createdAt } = data;
 
   return (
-    <Link href={`community/notice/${id}`} className='inline-block w-full'>
-      <h3>
-        <Badge variant='primary'>전체 공지</Badge>{' '}
-        <span className='pl-2 pr-5'>{title}</span>
+    <Link
+      href={`/community/notice/${id}`}
+      className='w-full h-full flex flex-grow items-center'
+    >
+      <h3 className='flex h-full items-center'>
+        <Badge variant='primary'>전체 공지</Badge>
+        <span className='pl-2 pr-5 font-semibold'>{title}</span>
         <span className='text-sm text-grayColor-300'>
           {new Date(createdAt).toLocaleDateString()}
         </span>
