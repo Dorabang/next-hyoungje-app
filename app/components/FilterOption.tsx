@@ -57,7 +57,7 @@ const FilterOption = ({
           </li>
         ))}
       {user &&
-        adminFilterRoutes.filter((route) => route === pathname).length < 0 && (
+        adminFilterRoutes.filter((route) => route === pathname).length <= 0 && (
           <>
             {applyFilterRoutes.filter((route) => route === pathname).length >
               0 &&

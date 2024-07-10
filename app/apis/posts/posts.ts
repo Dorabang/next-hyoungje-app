@@ -1,5 +1,4 @@
 import { dbService, storageService } from '@/firebase';
-import { User } from 'firebase/auth';
 import {
   DocumentData,
   collection,
@@ -11,9 +10,9 @@ import {
   deleteDoc,
   limit,
   where,
-  startAt,
 } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
+import { getNickname } from '../user';
 
 export interface PostProps {
   image: string[] | null;
@@ -50,7 +49,14 @@ export const getPosts = async (pathname: string) => {
     return post.push({ id: doc.id, ...doc.data() });
   });
 
-  return post;
+  const posts = await Promise.all(
+    post.map(async (item) => {
+      const nickname = await getNickname(item.creatorId);
+      return { ...item, creatorName: nickname };
+    }),
+  );
+
+  return posts as PostProps[];
 };
 
 export const getCommunityPosts = async (pathname: string) => {
@@ -65,17 +71,24 @@ export const getCommunityPosts = async (pathname: string) => {
     return post.push({ id: doc.id, ...doc.data() });
   });
 
-  return post;
+  const posts = await Promise.all(
+    post.map(async (item) => {
+      const nickname = await getNickname(item.creatorId);
+      return { ...item, creatorName: nickname };
+    }),
+  );
+
+  return posts as PostProps[];
 };
 
 export const getPost = async (pathname: string, postId: string) => {
   const docRef = doc(dbService, `${pathname}/${postId}`);
   const docSnapshot = await getDoc(docRef);
 
-  const res = docSnapshot.data();
-  if (res) {
-    return { id: docSnapshot.id, ...res } as PostProps;
-  }
+  const res = { id: docSnapshot.id, ...docSnapshot.data() } as PostProps;
+
+  const nickname = await getNickname(res.creatorId);
+  return { ...res, creatorName: nickname } as PostProps;
 };
 
 export const deletePost = async (
@@ -99,7 +112,7 @@ export const deletePost = async (
     const postRef = doc(dbService, pathname, id);
     await deleteDoc(postRef);
   } catch (err) {
-    console.log('🚀 ~ err:', err);
+    // console.log('🚀 ~ err:', err);
   }
 };
 

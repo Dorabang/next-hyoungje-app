@@ -10,18 +10,23 @@ import {
 } from 'firebase/firestore';
 import { getNickname } from '../user';
 
-interface CommentsProps {
+interface NewCommentsProps {
   userId: string;
   comment: string;
 }
 
-export const addComments = async (pathname: string, data: CommentsProps) => {
+interface CommentsProps extends NewCommentsProps {
+  id: string;
+  createdAt: number;
+  nickname: string;
+  updatedAt?: number;
+}
+
+export const addComments = async (pathname: string, data: NewCommentsProps) => {
   const commentsRef = collection(dbService, pathname, 'comments');
-  const nickname = await getNickname(data.userId);
   await addDoc(commentsRef, {
-    createdAt: Date.now(),
-    nickname,
     ...data,
+    createdAt: Date.now(),
   });
 };
 
@@ -40,7 +45,13 @@ export const getComments = async (pathname: string) => {
       });
     });
 
-  return commentsArr;
+  const transformComments = await Promise.all(
+    commentsArr.map(async (comment) => {
+      const nickname = await getNickname(comment.userId);
+      return { ...comment, nickname: nickname };
+    }),
+  );
+  return transformComments as CommentsProps[];
 };
 
 export const updateComments = async (

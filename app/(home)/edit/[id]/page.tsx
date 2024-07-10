@@ -93,7 +93,6 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       like: [],
       views: 0,
       num: postAmount?.amount + 1,
-      creatorName: user?.displayName,
       creatorId: user?.uid,
       createdAt: Date.now(),
       updatedAt: Date.now(),
