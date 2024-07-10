@@ -16,7 +16,7 @@ const Notification = ({ data }: { data: NotificationData }) => {
   const { id, title, createdAt } = data;
 
   return (
-    <Link href={`community/notice/${id}`} className='inline-block w-full'>
+    <Link href={`/community/notice/${id}`} className='inline-block w-full'>
       <h3>
         <Badge variant='primary'>전체 공지</Badge>{' '}
         <span className='pl-2 pr-5'>{title}</span>
