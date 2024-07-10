@@ -20,7 +20,6 @@ interface Inputs {
 
 const ChangeProfile = ({ user }: { user: User }) => {
   const [image, setImage] = useState<string>('');
-  console.log('🚀 ~ ChangeProfile ~ image:', image);
 
   const {
     control,
@@ -54,40 +53,37 @@ const ChangeProfile = ({ user }: { user: User }) => {
     const { displayName, phone } = data;
 
     if (!user) return;
+    try {
+      if (image !== '') {
+        const photo =
+          user && (await uploadImage(`/profile/${user.uid}/photo`, image));
 
-    if (image !== '') {
-      const photo =
-        user && (await uploadImage(`/profile/${user.uid}/photo`, image));
+        user && (await updateProfile(user, { photoURL: photo }));
+      }
 
-      user && (await updateProfile(user, { photoURL: photo }));
-    }
+      if (phone !== '') {
+        const phoneRef = doc(dbService, 'users', user?.uid);
 
-    if (phone !== '') {
-      const phoneRef = doc(dbService, 'users', user?.uid);
+        await setDoc(phoneRef, { phoneNumber: phone }, { merge: true });
+      }
 
-      await setDoc(
-        phoneRef,
-        {
-          phoneNumber: phone,
-        },
-        { merge: true },
-      ).then(() => alert('수정이 완료되었습니다.'));
-    }
+      if (displayName !== '' && displayName !== user.displayName) {
+        const displayNameRef = doc(dbService, 'users', user?.uid);
 
-    if (displayName !== '' && displayName !== user.displayName) {
-      const displayNameRef = doc(dbService, 'users', user?.uid);
-
-      await updateProfile(user, { displayName: displayName }).then(
-        async (err) => {
-          // console.log(err);
-          await setDoc(
-            displayNameRef,
-            { displayName: displayName },
-            { merge: true },
-          );
-          alert('수정이 완료되었습니다.');
-        },
-      );
+        await updateProfile(user, { displayName: displayName }).then(
+          async (err) => {
+            // console.log(err);
+            await setDoc(
+              displayNameRef,
+              { displayName: displayName },
+              { merge: true },
+            );
+          },
+        );
+      }
+      alert('수정이 완료되었습니다.');
+    } catch (err) {
+      console.log('🚀 ~ onSubmit ~ err:', err);
     }
   };
 

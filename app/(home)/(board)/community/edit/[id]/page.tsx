@@ -22,6 +22,8 @@ import Editor from '@/components/Editor';
 import getPostsAmount from '@/apis/posts/getPostsAmount';
 import { imageResize } from '@/utils/imageResize';
 import { uploadImage } from '@/apis/images';
+import Input from '@/components/Edit/Input';
+import LoadingPromise from '@/components/LoadingPromise';
 
 export interface ImageObjProps {
   id: string;
@@ -36,7 +38,9 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const router = useRouter();
 
   const [title, setTitle] = useState('');
+  const [popup, setPopup] = useState(false);
   const [value, setValue] = useRecoilState(editorState);
+  const [isLoading, setIsLoading] = useState(false);
 
   /* 이미지 id, url 정보를 담은 배열 */
   const [selectedImage, setSelectedImage] = useState<ImageObjProps[] | null>(
@@ -46,15 +50,21 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading((prev) => !prev);
+
     if (!user) return;
 
     /* 이미지 업로드 */
-    selectedImage?.map(async (value) => {
-      await uploadImage(
-        `${id}/${user.uid}/post/${value.id}/image`,
-        value.imageUrl,
+    if (selectedImage) {
+      await Promise.all(
+        selectedImage.map(async (value) => {
+          await uploadImage(
+            `${id}/${user.uid}/post/${value.id}/image`,
+            value.imageUrl,
+          );
+        }),
       );
-    });
+    }
 
     /* 이미지 ID 저장 */
     const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
@@ -66,11 +76,11 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     const newPostObj = {
       title: title,
       ...(imageIdArr !== null && { image: imageIdArr }),
+      popup: popup,
       contents: value,
       like: [],
       views: 0,
       num: postAmount?.amount + 1,
-      creatorName: user?.displayName,
       creatorId: user?.uid,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -84,22 +94,24 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
     setTitle('');
     setValue('');
+    setPopup(false);
+    setIsLoading(false);
     router.back();
   };
-
-  const inputWrapClass = 'flex items-start w-full border-b border-[#ddd] p-2';
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
-
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
       fileList.map(async (file) => {
         const resizingImage = await imageResize(file);
-        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
+        const imageObj: ImageObjProps = {
+          id: uuid(),
+          imageUrl: resizingImage,
+        };
 
         setSelectedImage((prev) =>
           prev !== null ? [...prev, imageObj] : [imageObj],
@@ -107,6 +119,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       });
     }
   };
+
   const handleDeleteImage = (id: string) => {
     if (selectedImage?.length === 0 || selectedImage === null) {
       return setSelectedImage(null);
@@ -121,54 +134,51 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <ContainerBox>
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
+      {isLoading && <LoadingPromise />}
+      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
         <form
           onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-grayColor-300'
+          className='mb-3 flex flex-col justify-center'
         >
-          <div className={`${inputWrapClass}`}>
-            <label htmlFor='phone'>제목 *</label>
-            <input
-              type='text'
+          <Input required>
+            <Input.Label>제목</Input.Label>
+            <Input.Text
               value={title}
+              name='title'
               onChange={(e) => setTitle(e.target.value)}
               placeholder='제목을 입력해주세요.'
-              className='outline-none pl-3'
-              required
             />
-          </div>
+          </Input>
 
-          <div className={`${inputWrapClass}`}>
-            <p className='w-[90px] border-r border-grayColor-300 cursor-default flex flex-col gap-2'>
-              파일 첨부
-              <span className='text-grayColor-300 text-sm'>
-                {'('}
-                {selectedImage ? selectedImage.length : '0'}/8{')'}
-              </span>
-            </p>
+          {id.includes('notice') && (
+            <Input>
+              <Input.Label>공지 등록</Input.Label>
+              <Input.Radio
+                checked={popup}
+                name='popup'
+                onChange={(e) => setPopup(e.target.checked)}
+              >
+                공지 등록하기
+              </Input.Radio>
+            </Input>
+          )}
+
+          <Input>
+            <Input.Label>
+              <p>
+                파일 첨부
+                <br />
+                <span className='text-grayColor-300 text-sm'>
+                  {'('}
+                  {selectedImage ? selectedImage.length : '0'}/8{')'}
+                </span>
+              </p>
+            </Input.Label>
             <div className='flex flex-grow flex-wrap pl-3'>
               <div className='flex gap-2 items-center'>
-                <label
-                  htmlFor='addFile'
-                  className={`py-1 w-[100px_!important] text-center
-                border border-[#ddd] transition-colors
-                ${selectedImage && selectedImage.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
-                `}
-                >
+                <Input.File onChange={onFileChange} multiple>
                   파일 선택
-                  <input
-                    id='addFile'
-                    name='addFile'
-                    type='file'
-                    multiple
-                    disabled={
-                      selectedImage && selectedImage.length >= 8 ? true : false
-                    }
-                    accept='image/*'
-                    onChange={onFileChange}
-                    className='outline-none w-full hidden group'
-                  />
-                </label>
+                </Input.File>
                 {selectedImage && (
                   <span
                     className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
@@ -203,7 +213,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                 </ul>
               )}
             </div>
-          </div>
+          </Input>
 
           <Editor />
 

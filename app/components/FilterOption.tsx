@@ -1,8 +1,9 @@
-import { allRoutes } from '@/constant/Routes';
-import { authState } from '@/recoil/atoms';
 import Link from 'next/link';
 import { HiOutlinePencilSquare } from 'react-icons/hi2';
 import { useRecoilValue } from 'recoil';
+
+import { useAdmin } from '@/hooks/queries/useUserInfo';
+import { authState } from '@/recoil/atoms';
 
 interface FilterOptionProps {
   selectedCategory: string;
@@ -32,6 +33,10 @@ const FilterOption = ({
     'natural-herb',
   ];
 
+  const adminFilterRoutes = ['notice'];
+
+  const { data: admin } = useAdmin(user?.uid);
+
   return (
     <ul
       className='flex justify-end items-center gap-4 pt-10 pb-5
@@ -51,10 +56,26 @@ const FilterOption = ({
             {filter.value}
           </li>
         ))}
-      {user && (
-        <>
-          {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
-            user && <li className='cursor-default'>|</li>}
+      {user &&
+        adminFilterRoutes.filter((route) => route === pathname).length <= 0 && (
+          <>
+            {applyFilterRoutes.filter((route) => route === pathname).length >
+              0 &&
+              user && <li className='cursor-default'>|</li>}
+            <li>
+              <Link
+                href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
+                className='text-grayColor-500 hover:text-grayColor-800 flex items-center transition-colors'
+              >
+                <HiOutlinePencilSquare size={18} className='mr-1' />
+                글쓰기
+              </Link>
+            </li>
+          </>
+        )}
+      {user &&
+        adminFilterRoutes.filter((route) => route === pathname).length > 0 &&
+        admin && (
           <li>
             <Link
               href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}
@@ -64,8 +85,7 @@ const FilterOption = ({
               글쓰기
             </Link>
           </li>
-        </>
-      )}
+        )}
     </ul>
   );
 };

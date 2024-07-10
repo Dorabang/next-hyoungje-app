@@ -27,7 +27,7 @@ const MainSlide = ({
         className={`w-full text-center ${
           variant === 'left' ? 'xl:w-[25%] mx-3 xl:mx-0 xl:text-left' : ''
         }
-        ${variant === 'center' ? 'pb-5' : ''}
+        ${variant === 'center' ? 'xl:pb-5' : ''}
         `}
       >
         <p className='text-grayColor-400 text-lg'>{subTitle}</p>

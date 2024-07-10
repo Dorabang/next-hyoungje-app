@@ -24,6 +24,7 @@ import getPostsAmount from '@/apis/posts/getPostsAmount';
 import statusList from '@/constant/StatusLists';
 import { imageResize } from '@/utils/imageResize';
 import { uploadImage } from '@/apis/images';
+import LoadingPromise from '@/components/LoadingPromise';
 
 export interface ImageObjProps {
   id: string;
@@ -50,6 +51,8 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const [amount, setAmount] = useState('');
   const [value, setValue] = useRecoilState(editorState);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   /* 이미지 id, url 정보를 담은 배열 */
   const [selectedImage, setSelectedImage] = useState<ImageObjProps[] | null>(
     null,
@@ -58,15 +61,21 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading((prev) => !prev);
+
     if (!user) return;
 
     /* 이미지 업로드 */
-    selectedImage?.map(async (value) => {
-      await uploadImage(
-        `${id}/${user.uid}/post/${value.id}/image`,
-        value.imageUrl,
+    if (selectedImage) {
+      await Promise.all(
+        selectedImage?.map(async (value) => {
+          await uploadImage(
+            `${id}/${user.uid}/post/${value.id}/image`,
+            value.imageUrl,
+          );
+        }),
       );
-    });
+    }
 
     /* 이미지 ID 저장 */
     const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
@@ -93,7 +102,6 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
       like: [],
       views: 0,
       num: postAmount?.amount + 1,
-      creatorName: user?.displayName,
       creatorId: user?.uid,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -114,6 +122,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     setPrice('');
     setAmount('');
     setStatus('');
+    setIsLoading(false);
     router.back();
   };
 
@@ -153,6 +162,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <ContainerBox>
+      {isLoading && <LoadingPromise />}
       <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
         <form
           onSubmit={(e) => handleSubmit(e)}

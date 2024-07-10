@@ -1,3 +1,4 @@
+'use server';
 import {
   addDoc,
   collection,
@@ -18,6 +19,7 @@ import {
 } from '@/components/Youtube/type';
 import { OrderType } from '@/components/Youtube/GeneralChannelWrapper';
 import { getPlaylist } from './playlistItems';
+import { getImageURL } from '../images';
 
 export const postYoutubeChannel = async (data: YoutubeChannelType) => {
   const youtubeChannelRef = collection(dbService, 'youtube');
@@ -32,7 +34,7 @@ export const postYoutubeChannel = async (data: YoutubeChannelType) => {
 };
 
 export const getGeneralChannel = async (order: OrderType) => {
-  const generalChannel: YoutubeChannelData[] = [];
+  const channel: YoutubeChannelData[] = [];
   const fieldPath = order === 'latest' ? 'createdAt' : 'name';
 
   try {
@@ -45,7 +47,7 @@ export const getGeneralChannel = async (order: OrderType) => {
 
     const generalChannelSnap = await getDocs(q);
     generalChannelSnap.forEach((doc) => {
-      generalChannel.push({
+      channel.push({
         id: doc.id,
         ...doc.data(),
       } as YoutubeChannelData);
@@ -53,11 +55,18 @@ export const getGeneralChannel = async (order: OrderType) => {
   } catch (err) {
     // console.log('🚀 ~ getGeneralChannel ~ err:', err);
   }
-  return generalChannel;
+
+  const transformChannelData = await Promise.all(
+    channel.map(async (data) => {
+      const profile = await getChannelProfile(data.profile);
+      return { ...data, profile: profile };
+    }),
+  );
+  return transformChannelData;
 };
 
 export const getSpecialChannel = async () => {
-  const specialChannel: SpecialChannelData[] = [];
+  const channel: SpecialChannelData[] = [];
 
   try {
     const q = query(
@@ -67,7 +76,7 @@ export const getSpecialChannel = async () => {
 
     const specialChannelSnap = await getDocs(q);
     specialChannelSnap.forEach((doc) => {
-      specialChannel.push({
+      channel.push({
         id: doc.id,
         ...doc.data(),
       } as SpecialChannelData);
@@ -75,7 +84,15 @@ export const getSpecialChannel = async () => {
   } catch (err) {
     // console.log('🚀 ~ getGeneralChannel ~ err:', err);
   }
-  return specialChannel;
+
+  const transformChannelData = await Promise.all(
+    channel.map(async (data) => {
+      const profile = await getChannelProfile(data.profile);
+      return { ...data, profile: profile };
+    }),
+  );
+
+  return transformChannelData;
 };
 
 export const postVideos = async (id: string, channelId: string) => {

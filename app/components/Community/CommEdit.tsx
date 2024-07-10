@@ -16,6 +16,8 @@ import { authState, editorState } from '@/recoil/atoms';
 import Editor from '../Editor';
 import { imageResize } from '@/utils/imageResize';
 import { getPostImageURL, uploadImage } from '@/apis/images';
+import Input from '../Edit/Input';
+import LoadingPromise from '../LoadingPromise';
 
 const CommEdit = ({
   post,
@@ -29,10 +31,11 @@ const CommEdit = ({
   const user = useRecoilValue(authState);
 
   const [title, setTitle] = useState(post.title);
-  const [images, setImages] = useState<string[] | null>(null);
-  const [imageArr, setImageArr] = useState<ImageObjProps[] | null>(null);
+  const [popup, setPopup] = useState(post.popup);
+  const [prevImages, setPrevImages] = useState<string[] | null>(null);
+  const [newImages, setNewImages] = useState<ImageObjProps[] | null>(null);
   const [value, setValue] = useRecoilState(editorState);
-
+  const [isLoading, setIsLoading] = useState(false);
   const contents = post.contents;
 
   const postImages = post && post?.image;
@@ -41,7 +44,7 @@ const CommEdit = ({
     if (postImages) {
       postImages.forEach(async (img: string) => {
         const url = await getPostImageURL(pathname, post.creatorId, img);
-        setImages((prev) =>
+        setPrevImages((prev) =>
           prev ? (!prev?.includes(url) ? [...prev, url] : prev) : [url],
         );
       });
@@ -52,43 +55,43 @@ const CommEdit = ({
     setValue(contents);
   }, [setValue, contents]);
 
-  const inputWrapperClass =
-    'flex items-start w-full border-b border-grayColor-200 p-2';
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading((prev) => !prev);
+
     if (!user) return;
 
-    imageArr?.map(async (value) => {
-      await uploadImage(
-        `${pathname}/${post.creatorId}/post/${value.id}/image`,
-        value.imageUrl,
+    if (newImages) {
+      await Promise.all(
+        newImages?.map(async (value) => {
+          await uploadImage(
+            `${pathname}/${post.creatorId}/post/${value.id}/image`,
+            value.imageUrl,
+          );
+        }),
       );
-    });
+    }
 
-    const newImageArr = imageArr && imageArr.map((item) => item.id);
+    const newnewImages = newImages && newImages.map((item) => item.id);
 
     const prevImage = postImages?.filter((item: string) =>
-      images?.filter((items) => items.includes(item)),
+      prevImages?.filter((items) => items.includes(item)),
     );
 
     const imageIdArr = postImages
-      ? newImageArr
-        ? [...newImageArr, ...prevImage]
+      ? newnewImages
+        ? [...newnewImages, ...prevImage]
         : [...prevImage]
-      : newImageArr
-        ? [...newImageArr]
+      : newnewImages
+        ? [...newnewImages]
         : null;
 
     const newPostObj = {
       title: title,
       contents: value,
-      image: imageIdArr,
-      like: [],
-      views: 0,
-      creatorName: user?.displayName,
-      creatorId: user?.uid,
+      ...(imageIdArr !== null && { image: imageIdArr }),
+      popup: popup,
       updatedAt: Date.now(),
     };
 
@@ -97,6 +100,8 @@ const CommEdit = ({
     await updateDoc(docRef, newPostObj);
     setTitle('');
     setValue('');
+    setPopup(false);
+    setIsLoading(false);
     router.back();
   };
 
@@ -104,48 +109,65 @@ const CommEdit = ({
     const {
       target: { files },
     } = e;
+    try {
+      if (files) {
+        const fileList = Object.values(files).slice(0, 8);
 
-    if (files) {
-      const fileList = Object.values(files).slice(0, 8);
+        fileList.map(async (file) => {
+          const resizingImage = await imageResize(file);
 
-      fileList.map(async (file) => {
-        const resizingImage = await imageResize(file);
+          const imageObj: ImageObjProps = {
+            id: uuid(),
+            imageUrl: resizingImage,
+          };
 
-        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
-
-        setImageArr((prev) =>
-          prev !== null ? [...prev, imageObj] : [imageObj],
-        );
-      });
+          setNewImages((prev) =>
+            prev !== null ? [...prev, imageObj] : [imageObj],
+          );
+        });
+      }
+    } catch (err) {
+      console.log('🚀 ~ onFileChange ~ err:', err);
     }
   };
 
   const handleDeleteImage = (id: string) => {
-    if (imageArr?.length === 0 || imageArr === null) {
-      return setImageArr(null);
+    if (newImages?.length === 0 || newImages === null) {
+      return setNewImages(null);
     } else {
-      const modifyImageArr = imageArr.filter((imageObj) => imageObj.id !== id);
+      const modifynewImages = newImages.filter(
+        (imageObj) => imageObj.id !== id,
+      );
 
-      return setImageArr(modifyImageArr);
+      return setNewImages(modifynewImages);
     }
+  };
+
+  const handleDeleteImageAll = () => {
+    setNewImages(null);
+
+    prevImages?.forEach(async (image) => {
+      await handleDBDeleteImage(image);
+      setPrevImages(null);
+    });
   };
 
   const handleDBDeleteImage = async (id: string) => {
     if (postImages.filter((item: string) => id.includes(item))) {
-      if (images?.length === 0 || images === null) {
-        return setImages(null);
+      if (prevImages?.length === 0 || prevImages === null) {
+        return setPrevImages(null);
       } else {
         if (!user) return;
 
         const deleteImageRef = ref(
           storageService,
-          `${pathname}/${user.uid}/post/${id}/image`,
+          `${pathname}/${post.creatorId}/post/${id}/image`,
         );
 
         await deleteObject(deleteImageRef);
 
-        const deleteImages = images.filter((image) => image !== id);
-        return setImages(deleteImages);
+        const deleteImages = prevImages.filter((image) => image !== id);
+        return setPrevImages(deleteImages);
       }
     }
   };
@@ -154,67 +176,69 @@ const CommEdit = ({
 
   return (
     <ContainerBox>
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
+      {isLoading && <LoadingPromise />}
+      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
         <form
           onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center [&_label]:w-[90px] [&_label]:border-r [&_label]:border-grayColor-300'
+          className='mb-3 flex flex-col justify-center'
         >
-          <div className={`${inputWrapperClass}`}>
-            <label htmlFor='title'>* 제목</label>
-            <input
-              type='text'
+          <Input required>
+            <Input.Label>제목</Input.Label>
+            <Input.Text
               value={title}
               name='title'
               onChange={(e) => setTitle(e.target.value)}
               placeholder='* 제목을 입력해주세요.'
-              className='outline-none'
-              required
             />
-          </div>
+          </Input>
 
-          <div className={`${inputWrapperClass}`}>
-            <p className='w-[90px] border-r border-grayColor-300 cursor-default flex flex-col gap-2'>
-              파일 첨부
-              <span className='text-grayColor-300 text-sm'>
-                {'('}
-                {imageArr ? imageArr.length : '0'}
-                /8{')'}
-              </span>
-            </p>
+          {pathname.includes('notice') && (
+            <Input>
+              <Input.Label>공지 등록</Input.Label>
+              <Input.Radio
+                checked={popup}
+                name='popup'
+                onChange={(e) => setPopup(e.target.checked)}
+              >
+                공지 등록하기
+              </Input.Radio>
+            </Input>
+          )}
+
+          <Input>
+            <Input.Label>
+              <p>
+                파일 첨부
+                <br />
+                <span className='text-grayColor-300 text-sm'>
+                  {'('}
+                  {newImages?.length || prevImages?.length
+                    ? newImages?.length ??
+                      0 + (prevImages ? prevImages.length : 0)
+                    : 0}
+                  /8
+                  {')'}
+                </span>
+              </p>
+            </Input.Label>
             <div className='flex flex-col pl-3'>
               <div className='flex gap-2 items-center'>
-                <label
-                  htmlFor='addFile'
-                  className={`py-1 w-[100px_!important] text-center
-                border border-[#ddd] transition-colors
-                ${imageArr && imageArr.length >= 8 ? '' : ' cursor-pointer hover:border-[#333]'}
-                `}
-                >
+                <Input.File onChange={onFileChange} multiple>
                   파일 선택
-                  <input
-                    id='addFile'
-                    name='addFile'
-                    type='file'
-                    accept='image/*'
-                    multiple
-                    disabled={imageArr && imageArr.length >= 8 ? true : false}
-                    onChange={onFileChange}
-                    className='outline-none w-full hidden group'
-                  />
-                </label>
-                {imageArr && (
+                </Input.File>
+                {(newImages || prevImages) && (
                   <span
                     className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
-                    onClick={() => setImageArr(null)}
+                    onClick={() => handleDeleteImageAll()}
                   >
                     파일 전체 삭제
                   </span>
                 )}
               </div>
-              {(images || imageArr) && (
+              {(prevImages || newImages) && (
                 <ul className='w-full py-4 flex flex-wrap gap-2'>
-                  {images &&
-                    images.map((item) => (
+                  {prevImages &&
+                    prevImages.map((item) => (
                       <li key={item}>
                         <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
                           <Image
@@ -234,8 +258,8 @@ const CommEdit = ({
                         </div>
                       </li>
                     ))}
-                  {imageArr &&
-                    imageArr.map((item) => (
+                  {newImages &&
+                    newImages.map((item) => (
                       <li key={item.id}>
                         <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
                           <Image
@@ -258,7 +282,7 @@ const CommEdit = ({
                 </ul>
               )}
             </div>
-          </div>
+          </Input>
 
           <Editor />
 
