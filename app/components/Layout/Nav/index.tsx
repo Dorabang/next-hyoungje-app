@@ -11,7 +11,6 @@ import {
   Stack,
   Toolbar,
 } from '@mui/material';
-import { MUIStyledCommonProps } from '@mui/system';
 import { LightTooltip, btnStyle } from './StyleComponents';
 
 /* next */
@@ -37,6 +36,7 @@ import { PagesRoutes } from '@/constant/PagesRoutes';
 
 /* image */
 import logoImg from '@/assets/common/logo.png';
+import NotificationWrapper from '@/components/Main/NotificationWrapper';
 
 const LogoButton = ({ className = '' }: { className?: string }) => {
   return (
@@ -97,6 +97,7 @@ const Nav = () => {
 
   return (
     <Fragment>
+      <NotificationWrapper />
       <div className={`h-[80px] ${isScrolled ? 'block' : 'hidden'}`} />
       <AppBar
         position={isScrolled ? 'fixed' : 'static'}
