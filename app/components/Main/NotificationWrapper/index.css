@@ -5,10 +5,6 @@
   @apply bg-grayColor-500 text-white w-full h-11;
 }
 
-.noticeWrapper h3 {
-  @apply font-semibold flex-grow;
-}
-
 .noticeWrapper div > span {
   @apply text-grayColor-200;
 }
