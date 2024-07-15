@@ -36,7 +36,6 @@ import { PagesRoutes } from '@/constant/PagesRoutes';
 
 /* image */
 import logoImg from '@/assets/common/logo.png';
-import NotificationWrapper from '@/components/Main/NotificationWrapper';
 
 const LogoButton = ({ className = '' }: { className?: string }) => {
   return (
@@ -97,7 +96,6 @@ const Nav = () => {
 
   return (
     <Fragment>
-      <NotificationWrapper />
       <div className={`h-[80px] ${isScrolled ? 'block' : 'hidden'}`} />
       <AppBar
         position={isScrolled ? 'fixed' : 'static'}
