@@ -1,17 +1,13 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Card, Stack, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { dbService } from '@/firebase';
-import { doc, setDoc } from 'firebase/firestore';
-import { User, updateProfile } from 'firebase/auth';
 
 import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import { getUser } from '@/apis/user';
-import { imageResize } from '@/utils/imageResize';
-import { uploadImage } from '@/apis/images';
+import { User } from '@/recoil/atoms';
+import { CreateUserData, getUser, updateUser } from '@/apis/users';
 
 interface Inputs {
   displayName: string;
@@ -19,7 +15,16 @@ interface Inputs {
 }
 
 const ChangeProfile = ({ user }: { user: User }) => {
-  const [image, setImage] = useState<string>('');
+  const [image, setImage] = useState<{
+    data: File | null;
+    preview: string | null;
+  }>({ data: null, preview: null });
+
+  const imageMemo = useMemo(() => {
+    if (image.preview) return image.preview;
+    if (user.profile) return user.profile;
+    return defaultProfile.src;
+  }, [image.preview, user.profile]);
 
   const {
     control,
@@ -30,9 +35,11 @@ const ChangeProfile = ({ user }: { user: User }) => {
 
   useEffect(() => {
     if (user) {
-      getUser(user.uid).then(
-        (response) => response && setValue('phone', response?.phoneNumber),
-      );
+      (async () => {
+        const user = await getUser();
+        setValue('displayName', user.displayName);
+        setValue('phone', user.phone);
+      })();
     }
   }, [user, setValue]);
 
@@ -43,9 +50,13 @@ const ChangeProfile = ({ user }: { user: User }) => {
 
     if (files) {
       const theFile = files[0];
-      const resizingImage = await imageResize(theFile);
-
-      setImage(resizingImage);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = (e.target as FileReader).result;
+        setImage((prev) => ({ ...prev, preview: result as string }));
+      };
+      reader.readAsDataURL(theFile);
+      setImage((prev) => ({ ...prev, data: theFile }));
     }
   };
 
@@ -53,35 +64,18 @@ const ChangeProfile = ({ user }: { user: User }) => {
     const { displayName, phone } = data;
 
     if (!user) return;
+
     try {
-      if (image !== '') {
-        const photo =
-          user && (await uploadImage(`/profile/${user.uid}/photo`, image));
+      const userObj: Partial<CreateUserData> = {
+        displayName,
+        phone,
+        ...(image?.data && { profile: image?.data }),
+      };
 
-        user && (await updateProfile(user, { photoURL: photo }));
+      const response = await updateUser(userObj);
+      if (response?.result === 'SUCCESS') {
+        alert('수정이 완료되었습니다.');
       }
-
-      if (phone !== '') {
-        const phoneRef = doc(dbService, 'users', user?.uid);
-
-        await setDoc(phoneRef, { phoneNumber: phone }, { merge: true });
-      }
-
-      if (displayName !== '' && displayName !== user.displayName) {
-        const displayNameRef = doc(dbService, 'users', user?.uid);
-
-        await updateProfile(user, { displayName: displayName }).then(
-          async (err) => {
-            // console.log(err);
-            await setDoc(
-              displayNameRef,
-              { displayName: displayName },
-              { merge: true },
-            );
-          },
-        );
-      }
-      alert('수정이 완료되었습니다.');
     } catch (err) {
       console.log('🚀 ~ onSubmit ~ err:', err);
     }
@@ -127,13 +121,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
           '
             >
               <AutoHeightImageWrapper
-                src={
-                  user.photoURL
-                    ? image !== ''
-                      ? image
-                      : user.photoURL
-                    : defaultProfile
-                }
+                src={imageMemo}
                 alt='프로필 이미지 미리보기'
               />
             </div>
