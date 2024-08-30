@@ -1,3 +1,6 @@
+import { redirect } from 'next/navigation';
+import { reissueAccessToken } from './auth';
+
 export interface FetchOptions extends RequestInit {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   headers?: HeadersInit;
@@ -35,12 +38,36 @@ export const fetchData = async <T>(
   try {
     const response = await fetch(`${baseUrl}${url}`, config);
     const result = await response.json();
+
+    // accessToken이 만료되어 401 에러가 발생할 경우
+    if (response.status === 401) {
+      // refreshToken으로 accessToken 재발급 시도
+      const reissueToken = await reissueAccessToken();
+
+      if (reissueToken.result === 'ERROR') {
+        alert('로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
+        redirect('/login');
+      }
+      // 재발급 후 데이터 패칭
+      const res = await fetch(`${baseUrl}${url}`, config);
+      const result = await res.json();
+
+      if (result.result === 'ERROR') {
+        throw new Error(result.message);
+      }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return result as { result: 'SUCCESS' | 'ERROR'; data?: T };
+    }
+
     if (result.result === 'ERROR') {
       throw new Error(result.message);
     }
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
     return result as { result: 'SUCCESS' | 'ERROR'; data?: T };
   } catch (error) {
     throw error;
@@ -55,6 +82,11 @@ export async function upload<T>(
   Object.entries(options.body).forEach(([key, value]) => {
     if (value === '' || !value) return;
     if (key === 'profile' || key === 'image' || key === 'updateImage') {
+      if (Array.isArray(value)) {
+        return value.forEach((file: File) => {
+          return formData.append(key, file); // 'updateImage'는 서버에서 기대하는 필드 이름
+        });
+      }
       return formData.append(key, value);
     }
     return formData.append(key, String(value));
@@ -64,7 +96,7 @@ export async function upload<T>(
     url,
     {
       method: options.method,
-      body: formData, // JSON 문자열로 변환
+      body: formData,
     },
     'upload',
   );

@@ -8,6 +8,7 @@ export interface User {
   displayName: string;
   createdAt: string;
   updatedAt: string;
+  isAdmin: boolean;
 }
 
 export const authState = atom<boolean | null>({
