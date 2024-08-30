@@ -1,8 +1,9 @@
 // comments
 export const useCommentsQueryKey = 'useCommentsQueryKey';
 
-// likes
-export const useHasLikesQueryKey = 'useHasLikesQueryKey';
+// bookmark
+export const useBookmarkKey = 'useBookmarkKey';
+export const useBookmarkByPostKey = 'useBookmarkByPostKey';
 
 // posts
 export const usePostsQueryKey = 'usePostsQueryKey';

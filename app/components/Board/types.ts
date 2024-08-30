@@ -33,4 +33,5 @@ export interface Post {
   documentNumber: number;
   createdAt: number;
   updatedAt: number;
+  marketType: string;
 }

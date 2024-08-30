@@ -1,30 +1,25 @@
 'use client';
 import React, { Suspense } from 'react';
-import { useRecoilValue } from 'recoil';
 import { LiaHeart } from 'react-icons/lia';
 
 import ContainerBox from '@/components/ContainerBox';
 import Loading from '@/components/Loading';
-import { useUserInfo } from '@/hooks/queries/useUserInfo';
-import { authState } from '@/recoil/atoms';
-import Bookmark from '@/components/Likes/Bookmark';
+import { useBookmark } from '@/hooks/queries/useBookmark';
+import MyBookmark from '@/components/Bookmark/MyBookmark';
 
 const BookmarkPage = () => {
-  const user = useRecoilValue(authState);
-  const { data, isLoading } = useUserInfo(user?.uid);
+  const { data, isSuccess } = useBookmark();
 
-  if (isLoading) return <Loading />;
+  if (!isSuccess) return <Loading />;
 
   return (
     <Suspense fallback={<Loading />}>
       <ContainerBox className='flex flex-wrap gap-5'>
-        {data?.like.length > 0 ? (
-          data?.like.map((path: string) => {
-            const pathname = path.split('/')[0];
-            const postId = path.split('/')[1];
+        {data?.data.length > 0 ? (
+          data?.data.map((postId) => {
             return (
-              <div key={path} className='w-full md:w-[calc((100%-60px)/3)]'>
-                <Bookmark pathname={pathname} postId={postId} />
+              <div key={postId} className='w-full md:w-[calc((100%-60px)/3)]'>
+                <MyBookmark postId={postId} />
               </div>
             );
           })

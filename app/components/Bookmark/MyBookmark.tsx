@@ -1,42 +1,16 @@
 'use client';
-
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useRecoilValue } from 'recoil';
 
-import { useGetPost } from '@/hooks/queries/usePosts';
+import { usePost } from '@/hooks/queries/usePosts';
 import Logo from '@/assets/common/footer_logo.png';
 import statusOptions from '../StatusOptions';
-import HasLikes from '../HasLikes';
-import { authState } from '@/recoil/atoms';
+import HasLikes from './BookmarkButton';
 import { allRoutes } from '@/constant/Routes';
-import { getPostImageURL } from '@/apis/images';
 
-const Bookmark = ({
-  pathname,
-  postId,
-}: {
-  pathname: string;
-  postId: string;
-}) => {
+const MyBookmark = ({ postId }: { postId: number }) => {
   const router = useRouter();
-  const user = useRecoilValue(authState);
-  const { data } = useGetPost(pathname, postId);
-  const [image, setImage] = useState<string | null>(null);
-
-  const path = allRoutes.filter((route) => route.link.includes(pathname));
-
-  useEffect(() => {
-    if (image === null && data?.image) {
-      const img = data.image[0];
-      const getPreviewImage = async () => {
-        const url = await getPostImageURL(pathname, data.creatorId, img);
-        setImage(url);
-      };
-      getPreviewImage();
-    }
-  }, [image, data, pathname]);
+  const { data } = usePost(postId);
 
   const handleClickBookmark = async () => {
     const market = [
@@ -46,7 +20,7 @@ const Bookmark = ({
       'natural-herb',
       'single-leaf',
     ];
-    const path = `${pathname}/${postId}`;
+    const path = `${data?.post.marketType}/${postId}`;
     const route =
       market.filter((route: string) => path.includes(route)).length > 0
         ? path
@@ -62,12 +36,12 @@ const Bookmark = ({
         className='w-full h-[350px] bg-grayColor-500 flex items-center justify-center cursor-pointer'
         onClick={() => handleClickBookmark()}
       >
-        {image ? (
+        {data.post.image ? (
           <Image
             fill
             className='object-cover'
-            alt={`${data.title} 대표 이미지`}
-            src={image}
+            alt={`${data.post.title} 대표 이미지`}
+            src={data.post.image[0]}
           />
         ) : (
           <Image
@@ -83,23 +57,29 @@ const Bookmark = ({
         <div className='flex flex-col gap-2'>
           <div className='flex justify-between'>
             <h3 className='text-lg font-semibold'>
-              {data.status ? statusOptions(data.status) : null}
+              {data.post.status ? statusOptions(data.post.status) : null}
               <span
-                className={`${data.status && 'pl-3'} cursor-pointer hover:text-black active:text-black transition-colors hover:underline active:underline`}
+                className={`${data.post.status && 'pl-3'} cursor-pointer hover:text-black active:text-black transition-colors hover:underline active:underline`}
                 onClick={() => handleClickBookmark()}
               >
-                {data.title}
+                {data.post.title}
               </span>
             </h3>
-            <HasLikes pathname={pathname} postId={postId} userId={user?.uid} />
+            <HasLikes postId={postId} />
           </div>
-          <p className='text-grayColor-500 text-sm'>{path[0].name}</p>
+          <p className='text-grayColor-500 text-sm'>
+            {
+              allRoutes.filter((route) =>
+                route.link.includes(data.post.marketType),
+              )[0].name
+            }
+          </p>
           <div className='flex justify-between text-grayColor-500 text-sm'>
             <p>
-              {data.creatorName}
-              {data.price ? ' / ' + data.price : null}
+              {data.post.user.displayName}
+              {data.post.price ? ' / ' + data.post.price : null}
             </p>
-            <p>{new Date(data.createdAt).toLocaleDateString()}</p>
+            <p>{new Date(data.post.createdAt).toLocaleDateString()}</p>
           </div>
         </div>
       </div>
@@ -107,4 +87,4 @@ const Bookmark = ({
   );
 };
 
-export default Bookmark;
+export default MyBookmark;
