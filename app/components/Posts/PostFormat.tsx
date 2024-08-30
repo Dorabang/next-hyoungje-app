@@ -77,11 +77,13 @@ const PostFormat = () => {
         />
       </Board>
 
-      <PaginationComponets
-        totalPages={data.totalPages}
-        page={page}
-        setPage={(value) => setPage(value)}
-      />
+      {data.totalResult > 0 && (
+        <PaginationComponets
+          totalPages={data.totalPages}
+          page={page}
+          setPage={(value) => setPage(value)}
+        />
+      )}
     </ContainerBox>
   );
 };

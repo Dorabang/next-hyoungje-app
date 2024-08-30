@@ -131,7 +131,8 @@ const Comments = ({ postId }: { postId: number }) => {
                 {isModify !== id ? (
                   <p>
                     {content}
-                    {createdAt !== updatedAt && (
+                    {createdAt.substring(0, 19) !==
+                      updatedAt.substring(0, 19) && (
                       <span className='text-grayColor-300 pl-1 text-sm'>
                         {'(편집됨)'}
                       </span>
@@ -152,7 +153,7 @@ const Comments = ({ postId }: { postId: number }) => {
           ),
         )}
       </ul>
-      {data && (
+      {data.totalResult > 0 && (
         <PaginationComponets
           page={page}
           setPage={(page) => setPage(page)}
