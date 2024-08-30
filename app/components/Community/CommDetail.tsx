@@ -11,7 +11,7 @@ import PrevNextPost, {
   PrevNextPostData,
 } from '@/components/Posts/PrevNextPost';
 import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
-import HasLikes from '../Bookmark/HasLikes';
+import HasLikes from '../Bookmark/BookmarkButton';
 import Comments from '../Comment/Comments';
 import { Post } from '../Board/types';
 import EditorReadOnly from '../Editor/ReadOnly';

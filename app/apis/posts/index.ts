@@ -1,5 +1,5 @@
 import { Post } from '@/components/Board/types';
-import { get, upload } from '../fetchAPI';
+import { del, get, upload } from '../fetchAPI';
 import { Status } from '@/components/StatusOptions';
 import { PrevNextPostData } from '@/components/Posts/PrevNextPost';
 
@@ -107,4 +107,8 @@ export const putPost = async (postId: number, updateData: UpdatePostData) => {
     method: 'PUT',
     body: updateData,
   });
+};
+
+export const deletePost = async (postId: number) => {
+  return await del(`/posts/${postId}`);
 };

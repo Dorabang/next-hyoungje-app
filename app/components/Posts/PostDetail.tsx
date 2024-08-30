@@ -5,7 +5,6 @@ import { User, authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { usePost } from '@/hooks/queries/usePosts';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/ContainerBox';
 import statusOptions from '@/components/StatusOptions';
@@ -14,11 +13,11 @@ import PrevNextPost, {
 } from '@/components/Posts/PrevNextPost';
 import Comments from '../Comment/Comments';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
-import Loading from '../Loading';
-import HasLikes from '../HasLikes';
+import HasLikes from '../Bookmark/BookmarkButton';
 import EditorReadOnly from '../Editor/ReadOnly';
 import { getUser } from '@/apis/users';
 import { Post } from '../Board/types';
+import { deletePost } from '@/apis/posts';
 
 interface DetailPageProps {
   postId: number;
@@ -46,14 +45,16 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
     }
   }, []);
 
-  const handleDeletePost = (id: number) => {
+  const handleDeletePost = async (id: number) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
     if (!data) return;
 
     if (ok) {
-      // deletePost(data, pathname, id);
-      router.push(`/${pathname}`);
+      const res = await deletePost(id);
+      if (res.result === 'SUCCESS') {
+        router.push(`/${pathname}`);
+      }
     }
   };
 
@@ -118,7 +119,7 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
           {data.post.views}
         </li>
         <li>
-          {/* <HasLikes postId={postId} userId={user?.id} pathname={pathname} /> */}
+          <HasLikes postId={postId} />
         </li>
       </ul>
 
