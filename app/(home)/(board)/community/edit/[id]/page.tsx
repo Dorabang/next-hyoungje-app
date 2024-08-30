@@ -1,34 +1,19 @@
 'use client';
-
-import React, { FormEvent, useState } from 'react';
-import ContainerBox from '@/components/ContainerBox';
-import useRedirect from '@/hooks/useRedirect';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { authState, editorState } from '@/recoil/atoms';
-import { Button } from '@mui/material';
-import { dbService } from '@/firebase';
-import {
-  DocumentData,
-  addDoc,
-  collection,
-  doc,
-  updateDoc,
-} from 'firebase/firestore';
-import uuid from 'react-uuid';
-import { useRouter } from 'next/navigation';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Button } from '@mui/material';
+
+import useRedirect from '@/hooks/useRedirect';
+import { authState, editorState } from '@/recoil/atoms';
+import ContainerBox from '@/components/ContainerBox';
 import Editor from '@/components/Editor';
-import getPostsAmount from '@/apis/posts/getPostsAmount';
-import { imageResize } from '@/utils/imageResize';
-import { uploadImage } from '@/apis/images';
 import Input from '@/components/Edit/Input';
 import LoadingPromise from '@/components/LoadingPromise';
-
-export interface ImageObjProps {
-  id: string;
-  imageUrl: string;
-}
+import { UpdateImage } from '@/components/Edit';
+import { createPost } from '@/apis/posts';
 
 const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   useRedirect();
@@ -38,99 +23,74 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   const router = useRouter();
 
   const [title, setTitle] = useState('');
-  const [popup, setPopup] = useState(false);
   const [value, setValue] = useRecoilState(editorState);
   const [isLoading, setIsLoading] = useState(false);
 
-  /* 이미지 id, url 정보를 담은 배열 */
-  const [selectedImage, setSelectedImage] = useState<ImageObjProps[] | null>(
-    null,
-  );
+  const [image, setImage] = useState<UpdateImage[]>([]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setIsLoading((prev) => !prev);
 
-    if (!user) return;
-
-    /* 이미지 업로드 */
-    if (selectedImage) {
-      await Promise.all(
-        selectedImage.map(async (value) => {
-          await uploadImage(
-            `${id}/${user.uid}/post/${value.id}/image`,
-            value.imageUrl,
-          );
-        }),
-      );
-    }
-
-    /* 이미지 ID 저장 */
-    const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
-
-    const postAmount: DocumentData | undefined = await getPostsAmount(
-      `postsAmount/${id}`,
-    );
+    const imageData = image.map((item) => item.data);
 
     const newPostObj = {
       title: title,
-      ...(imageIdArr !== null && { image: imageIdArr }),
-      popup: popup,
       contents: value,
-      like: [],
-      views: 0,
-      num: postAmount?.amount + 1,
-      creatorId: user?.uid,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      image: imageData,
+      marketType: id,
     };
 
-    await addDoc(collection(dbService, `${id}`), newPostObj);
+    const response = await createPost(newPostObj);
 
-    const postsAmountRef = doc(dbService, `postsAmount/${id}`);
-
-    updateDoc(postsAmountRef, { amount: postAmount?.amount + 1 });
-
-    setTitle('');
-    setValue('');
-    setPopup(false);
-    setIsLoading(false);
-    router.back();
+    if (response) {
+      setValue('');
+      setIsLoading(false);
+      router.back();
+    } else {
+      alert(
+        '문제가 발생하여 게시물 업데이트가 실패하였습니다. 다시 시도해주세요. \n\r지속적으로 문제 발생 시 관리자에 문의 부탁드립니다.',
+      );
+      router.back();
+    }
   };
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
+
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
-      fileList.map(async (file) => {
-        const resizingImage = await imageResize(file);
-        const imageObj: ImageObjProps = {
-          id: uuid(),
-          imageUrl: resizingImage,
+      fileList.map((file, idx) => {
+        const id = image.length > 0 ? image.length + 1 : idx + 1;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = (e.target as FileReader).result;
+          const images = { id, data: file, preview: result as string };
+          setImage((prev) => [...prev, images]);
+          return (images.preview = result as string);
         };
-
-        setSelectedImage((prev) =>
-          prev !== null ? [...prev, imageObj] : [imageObj],
-        );
+        reader.readAsDataURL(file);
       });
     }
   };
 
-  const handleDeleteImage = (id: string) => {
-    if (selectedImage?.length === 0 || selectedImage === null) {
-      return setSelectedImage(null);
-    } else {
-      const modifyImageArr = selectedImage.filter(
-        (imageObj) => imageObj.id !== id,
-      );
-
-      return setSelectedImage(modifyImageArr);
-    }
+  const handleDeleteImage = (id: string | number) => {
+    const filteredImage = image.filter((item) => item.id !== id);
+    return setImage(filteredImage);
   };
+
+  const handleDeleteImageAll = () => {
+    setImage([]);
+  };
+
+  if (!id || !user) {
+    alert('접근 권한이 없는 사용자입니다. 로그인 후 이용해주세요.');
+    router.back();
+  }
 
   return (
     <ContainerBox>
@@ -150,19 +110,6 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
             />
           </Input>
 
-          {id.includes('notice') && (
-            <Input>
-              <Input.Label>공지 등록</Input.Label>
-              <Input.Radio
-                checked={popup}
-                name='popup'
-                onChange={(e) => setPopup(e.target.checked)}
-              >
-                공지 등록하기
-              </Input.Radio>
-            </Input>
-          )}
-
           <Input>
             <Input.Label>
               <p>
@@ -170,7 +117,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                 <br />
                 <span className='text-grayColor-300 text-sm'>
                   {'('}
-                  {selectedImage ? selectedImage.length : '0'}/8{')'}
+                  {image.length}/8{')'}
                 </span>
               </p>
             </Input.Label>
@@ -179,22 +126,22 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
                 <Input.File onChange={onFileChange} multiple>
                   파일 선택
                 </Input.File>
-                {selectedImage && (
+                {image && (
                   <span
                     className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
-                    onClick={() => setSelectedImage(null)}
+                    onClick={handleDeleteImageAll}
                   >
                     파일 전체 삭제
                   </span>
                 )}
               </div>
-              {selectedImage && (
+              {image && (
                 <ul className='w-full py-4 flex gap-2'>
-                  {selectedImage.map((item) => (
+                  {image.map((item) => (
                     <li key={item.id}>
                       <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
                         <Image
-                          src={item.imageUrl}
+                          src={item.preview}
                           alt={`${item} 이미지`}
                           fill
                           className='object-cover'
@@ -217,7 +164,16 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
 
           <Editor />
 
-          <div className='flex justify-center pt-[80px]'>
+          <div className='flex gap-2 justify-center pt-[80px]'>
+            <Button
+              type='reset'
+              size='large'
+              variant='contained'
+              onClick={() => router.back()}
+            >
+              취소
+            </Button>
+
             <Button type='submit' size='large' variant='contained'>
               등록하기
             </Button>

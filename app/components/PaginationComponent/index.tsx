@@ -2,24 +2,13 @@ import { Stack } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 
 interface PaginationProp {
-  totalPosts: number;
-  limit: number;
+  totalPages: number;
   page: number;
   setPage: (page: number) => void;
 }
 
-const PaginationComponets = ({
-  totalPosts,
-  limit,
-  page,
-  setPage,
-}: PaginationProp) => {
-  const numPages =
-    totalPosts % limit === 0
-      ? totalPosts / limit
-      : Math.floor(totalPosts / limit) + 1;
-
-  const handlePageUpDown = (e: React.ChangeEvent<unknown>, page: number) => {
+const PaginationComponets = ({ totalPages, page, setPage }: PaginationProp) => {
+  const handlePageUpDown = (_: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
   };
   return (
@@ -28,7 +17,7 @@ const PaginationComponets = ({
       justifyContent={'center'}
       sx={{ padding: '40px 0' }}
     >
-      <Pagination page={page} count={numPages} onChange={handlePageUpDown} />
+      <Pagination page={page} count={totalPages} onChange={handlePageUpDown} />
     </Stack>
   );
 };

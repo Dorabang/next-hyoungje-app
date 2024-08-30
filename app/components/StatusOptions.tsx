@@ -1,6 +1,7 @@
-const statusOptions = (
-  status: 'sale' | 'sold-out' | 'reservation' | string,
-) => {
+export type Status = 'sale' | 'sold-out' | 'reservation' | 'all';
+
+const statusOptions = (status?: Status) => {
+  if (!status) return;
   let value;
 
   if (status === 'sale') {

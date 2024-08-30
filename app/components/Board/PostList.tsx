@@ -2,19 +2,18 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AiOutlineFileImage } from 'react-icons/ai';
-import { User } from 'firebase/auth';
-import { DocumentData } from 'firebase/firestore';
 
 import statusOptions from '@/components/StatusOptions';
 import DateFormat from '@/utils/DateFormat';
-import { useAdmin } from '@/hooks/queries/useUserInfo';
+import { User } from '@/recoil/atoms';
+import { Post } from './types';
 
 interface PostListProps {
   type?: 'etc' | 'community';
   pathname: string;
-  post: DocumentData;
+  post: Post;
   user: User | null;
-  handleDeletePost: (id: string) => void;
+  handleDeletePost: (id: number) => void;
 }
 
 const PostList = ({
@@ -27,30 +26,28 @@ const PostList = ({
   const router = useRouter();
 
   const {
-    id,
+    postId,
     variant,
     status,
     title,
-    creatorId,
-    creatorName,
+    userId,
+    user: userInfo,
     date,
     createdAt,
     views,
     place,
     price,
     image,
-    num,
+    documentNumber,
   } = post;
-
-  const { data: admin } = useAdmin(user?.uid);
 
   return (
     <li
-      key={id}
+      key={postId}
       className='flex items-center border-b border-grayColor-300 text-center text-gray-700 [&_>_div]:py-3 [&_>_div]:truncate'
     >
       {/* 문서 번호 */}
-      <div className='w-[4%] hidden lg:block'>{num ? num : null}</div>
+      <div className='w-[4%] hidden lg:block'>{documentNumber}</div>
 
       {/* 종류 */}
       {type === 'etc' ? (
@@ -68,7 +65,7 @@ const PostList = ({
       {/* 제목 */}
       <div className='flex-grow h-full flex justify-between items-center'>
         <Link
-          href={`${pathname}/${id}`}
+          href={`${pathname}/${postId}`}
           className='flex w-full h-full items-center whitespace-nowrap hover:underline active:underline'
         >
           {image && image?.length !== 0 && (
@@ -78,18 +75,18 @@ const PostList = ({
             {title}
           </div>
         </Link>
-        {(user?.uid === creatorId || admin) && (
+        {(user?.id === userId || user?.isAdmin) && (
           <div className='text-gray-400 text-xs flex [&_span]:px-1 ml-4'>
             <span
               className='hover:text-gray-700 cursor-pointer'
-              onClick={() => router.push(`${pathname}/edit/${id}`)}
+              onClick={() => router.push(`${pathname}/edit/${postId}`)}
             >
               편집
             </span>
             <span>/</span>
             <span
               className='hover:text-gray-700 cursor-pointer'
-              onClick={() => handleDeletePost(id)}
+              onClick={() => handleDeletePost(postId)}
             >
               삭제
             </span>
@@ -106,15 +103,17 @@ const PostList = ({
           <div className='w-[6%] hidden md:block'>{price}</div>
 
           {/* 산채일 */}
-          <div className='w-[6%] hidden lg:block'>{DateFormat(date)}</div>
+          {date ? (
+            <div className='w-[6%] hidden lg:block'>{DateFormat(date)}</div>
+          ) : null}
         </>
       ) : null}
 
       {/* 작성자 */}
       <div className='w-[10%] hidden md:block'>
-        {creatorName?.length > 8
-          ? creatorName.substring(0, 8) + '...'
-          : creatorName}
+        {userInfo.displayName?.length > 8
+          ? userInfo.displayName.substring(0, 8) + '...'
+          : userInfo.displayName}
       </div>
       <div className='w-[6%] hidden lg:block'>{DateFormat(createdAt)}</div>
       <div className='w-[6%] hidden lg:block'>{views.toLocaleString()}</div>

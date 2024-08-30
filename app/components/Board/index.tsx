@@ -1,13 +1,10 @@
 'use client';
 import { createContext, useContext } from 'react';
-import { DocumentData } from 'firebase/firestore';
-import { BoardProps, PostContextType } from './types';
-import { authState } from '@/recoil/atoms';
-import { useRecoilValue } from 'recoil';
 import { usePathname } from 'next/navigation';
+
+import { BoardProps, Post, PostContextType } from './types';
 import PostsLoading from '../Posts/PostsLoading';
 import PostsNotFound from '../Posts/PostsNotFound';
-import { deletePost } from '@/apis/posts/posts';
 import PostList from './PostList';
 
 const defaultPostContext: PostContextType = {
@@ -19,10 +16,9 @@ export const PostContext = createContext(defaultPostContext);
 
 export const usePostContext = () => useContext(PostContext);
 
-const Board = ({ children }: BoardProps) => {
+const Board = ({ user, children }: BoardProps) => {
   const path = usePathname().split('/');
   const pathname = path[2] ? path[2] : path[1];
-  const user = useRecoilValue(authState);
 
   return (
     <PostContext.Provider value={{ user, pathname }}>
@@ -58,27 +54,22 @@ const Headers = ({ type = 'etc' }: { type?: 'community' | 'etc' }) => {
 
 export const Bodys = ({
   posts,
-  editPosts,
+  refetch,
   isLoading,
   type = 'etc',
 }: {
-  posts: DocumentData[] | null;
-  editPosts: (value: DocumentData[]) => void;
+  posts: Post[] | null;
+  refetch: () => void;
   isLoading: boolean;
   type?: 'etc' | 'community';
 }) => {
   const { user, pathname } = useContext(PostContext);
 
-  const handleDeletePost = (id: string) => {
-    const post = posts?.find((item) => item.id === id);
-    if (!post || !posts) return;
-
+  const handleDeletePost = (id: number) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
     if (ok) {
-      deletePost(post, pathname, id);
-      const deletePosts = posts.filter((item) => item.id !== id);
-      editPosts(deletePosts);
+      refetch();
     }
   };
 
@@ -90,7 +81,7 @@ export const Bodys = ({
         posts.map((post) => {
           return (
             <PostList
-              key={post.id}
+              key={post.postId}
               type={type}
               pathname={pathname}
               post={post}

@@ -1,12 +1,12 @@
 // comments
-export const useGetCommentsQueryKey = 'useGetCommentsQueryKey';
+export const useCommentsQueryKey = 'useCommentsQueryKey';
 
 // likes
 export const useHasLikesQueryKey = 'useHasLikesQueryKey';
 
 // posts
-export const useGetPostsQueryKey = 'useGetPostsQueryKey';
-export const useGetPostQueryKey = 'useGetPostQueryKey';
+export const usePostsQueryKey = 'usePostsQueryKey';
+export const usePostQueryKey = 'usePostQueryKey';
 
 // user
 export const useUserInfoQueryKey = 'useUserInfoQueryKey';
