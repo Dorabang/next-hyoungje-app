@@ -57,9 +57,18 @@ export interface PostsOptions {
   order?: 'asc' | 'desc';
 }
 
+export interface PostsData {
+  result: 'SUCCESS' | 'ERROR';
+  data: Post[];
+  totalResult: number;
+  currentPage: number;
+  totalPages: number;
+  isLast: boolean;
+}
+
 export const getPosts = async ({
   marketType,
-  sort = 'postId',
+  sort = 'documentNumber',
   page = 1,
   status = 'all',
   size = 15,
@@ -68,22 +77,17 @@ export const getPosts = async ({
   const url = `/posts?marketType=${marketType}&status=${status}&sort=${sort}&page=${page}&size=${size}&order=${order}`;
   const response = await get(url);
 
-  return response as {
-    result: 'SUCCESS' | 'ERROR';
-    data: Post[];
-    totalResult: number;
-    currentPage: number;
-    totalPages: number;
-    isLast: boolean;
-  };
+  return response as PostsData;
 };
 
+export interface PostData {
+  previous: PrevNextPostData | null;
+  next: PrevNextPostData | null;
+  post: Post;
+}
+
 export const getPost = async (postId: number) => {
-  return (await get(`/posts/${postId}`)).data as {
-    previous: PrevNextPostData | null;
-    next: PrevNextPostData | null;
-    post: Post;
-  };
+  return (await get(`/posts/${postId}`)).data as PostData;
 };
 
 export interface UpdatePostData {
