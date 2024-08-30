@@ -9,9 +9,6 @@ export const useBookmarkByPostKey = 'useBookmarkByPostKey';
 export const usePostsQueryKey = 'usePostsQueryKey';
 export const usePostQueryKey = 'usePostQueryKey';
 
-// user
-export const useUserInfoQueryKey = 'useUserInfoQueryKey';
-
 // youtube
 export const useGeneralChannelQueryKey = 'useGeneralChannelQueryKey';
 export const useSpecialChannelQueryKey = 'useSpecialChannelQueryKey';

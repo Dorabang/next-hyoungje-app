@@ -13,7 +13,7 @@ const useAuthStateChanged = () => {
       const authState = await authStateChanged();
       setAuth(authState);
     })();
-  }, []);
+  }, [setAuth]);
 };
 
 export default useAuthStateChanged;

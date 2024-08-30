@@ -1,13 +1,13 @@
 'use client';
-
-import { getCommunityPosts, getPosts } from '@/apis/posts/posts';
-import BoardForm from '@/components/Community/BoardForm';
-import { DocumentData } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
+import BoardForm from '@/components/Community/BoardForm';
+import { Post } from '@/components/Board/types';
+import { getPosts } from '@/apis/posts';
+
 export interface communityState {
-  boast: DocumentData[];
-  'wild-catch': DocumentData[];
+  boast: Post[];
+  'wild-catch': Post[];
 }
 
 export interface communityLoadingState {
@@ -29,7 +29,7 @@ const MainCommunity = () => {
     const communityList = ['boast', 'wild-catch'];
 
     communityList.forEach(async (category) => {
-      const response = await getCommunityPosts(category);
+      const response = (await getPosts({ marketType: category })).data;
       setCommunity((prev) => ({ ...prev, [category]: [...response] }));
       setIsLoading((prev) => ({ ...prev, [category]: false }));
     });

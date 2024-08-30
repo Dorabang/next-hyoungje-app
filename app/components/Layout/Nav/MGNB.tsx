@@ -1,12 +1,12 @@
 'use client';
 import React, { Fragment, useState } from 'react';
-import { LightTooltip, mgnbBtnStyle } from './StyleComponents';
-import { useRecoilValue } from 'recoil';
-import { authState } from '@/recoil/atoms';
-import { User } from 'firebase/auth';
-import { Box, Button, MenuItem, MenuList } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useRecoilValue } from 'recoil';
+import { Box, Button, MenuItem, MenuList } from '@mui/material';
 import { AiOutlineClose } from 'react-icons/ai';
+
+import { LightTooltip, mgnbBtnStyle } from './StyleComponents';
+import { authState } from '@/recoil/atoms';
 import { PagesRoutes } from '@/constant/PagesRoutes';
 import UtilBtn from './UtilBtn';
 
@@ -15,7 +15,7 @@ interface MGNBProps {
   setIsOpen: (value: boolean) => void;
 }
 const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
-  const user = useRecoilValue<User | null>(authState);
+  const user = useRecoilValue(authState);
   const router = useRouter();
   const [subMenu, setSubMenu] = useState<null | string>(null);
 

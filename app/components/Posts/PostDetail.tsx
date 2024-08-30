@@ -43,7 +43,7 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
         setUser(user ?? null);
       })();
     }
-  }, []);
+  }, [auth]);
 
   const handleDeletePost = async (id: number) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
