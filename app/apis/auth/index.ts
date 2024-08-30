@@ -21,3 +21,23 @@ export const logout = async () => {
   await post('/auth/logout', { refresh_token: refreshToken });
   sessionStorage.removeItem('authUser');
 };
+
+export const reissueAccessToken = async () => {
+  const defaultHeaders: HeadersInit = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_API_PROD_URL
+      : process.env.NEXT_PUBLIC_API_DEV_URL;
+
+  const response = await fetch(`${baseUrl}/auth/refresh`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: defaultHeaders,
+  });
+
+  return await response.json();
+};

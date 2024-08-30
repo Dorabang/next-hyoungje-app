@@ -40,7 +40,10 @@ export const fetchData = async <T>(
     const result = await response.json();
 
     // accessToken이 만료되어 401 에러가 발생할 경우
-    if (response.status === 401) {
+    if (
+      response.status === 401 &&
+      (result.code === 'T001' || result.code === 'T002')
+    ) {
       // refreshToken으로 accessToken 재발급 시도
       const reissueToken = await reissueAccessToken();
 
