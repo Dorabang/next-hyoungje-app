@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -93,94 +93,96 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   }
 
   return (
-    <ContainerBox>
+    <>
       {isLoading && <LoadingPromise />}
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
-        <form
-          onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center'
-        >
-          <Input required>
-            <Input.Label>제목</Input.Label>
-            <Input.Text
-              value={title}
-              name='title'
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder='제목을 입력해주세요.'
-            />
-          </Input>
+      <ContainerBox>
+        <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
+          <form
+            onSubmit={(e) => handleSubmit(e)}
+            className='mb-3 flex flex-col justify-center'
+          >
+            <Input required>
+              <Input.Label>제목</Input.Label>
+              <Input.Text
+                value={title}
+                name='title'
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder='제목을 입력해주세요.'
+              />
+            </Input>
 
-          <Input>
-            <Input.Label>
-              <p>
-                파일 첨부
-                <br />
-                <span className='text-grayColor-300 text-sm'>
-                  {'('}
-                  {image.length}/8{')'}
-                </span>
-              </p>
-            </Input.Label>
-            <div className='flex flex-grow flex-wrap pl-3'>
-              <div className='flex gap-2 items-center'>
-                <Input.File onChange={onFileChange} multiple>
-                  파일 선택
-                </Input.File>
-                {image && (
-                  <span
-                    className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
-                    onClick={handleDeleteImageAll}
-                  >
-                    파일 전체 삭제
+            <Input>
+              <Input.Label>
+                <p>
+                  파일 첨부
+                  <br />
+                  <span className='text-grayColor-300 text-sm'>
+                    {'('}
+                    {image.length}/8{')'}
                   </span>
-                )}
-              </div>
-              {image && (
-                <ul className='w-full py-4 flex gap-2'>
-                  {image.map((item) => (
-                    <li key={item.id}>
-                      <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                        <Image
-                          src={item.preview}
-                          alt={`${item} 이미지`}
-                          fill
-                          className='object-cover'
-                        />
-                        <div
-                          className='absolute right-0 top-0 w-5 h-5
+                </p>
+              </Input.Label>
+              <div className='flex flex-grow flex-wrap pl-3'>
+                <div className='flex gap-2 items-center'>
+                  <Input.File onChange={onFileChange} multiple>
+                    파일 선택
+                  </Input.File>
+                  {image.length > 0 && (
+                    <span
+                      className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
+                      onClick={handleDeleteImageAll}
+                    >
+                      파일 전체 삭제
+                    </span>
+                  )}
+                </div>
+                {image && (
+                  <ul className='w-full py-4 flex gap-2'>
+                    {image.map((item) => (
+                      <li key={item.id}>
+                        <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
+                          <Image
+                            src={item.preview}
+                            alt={`${item} 이미지`}
+                            fill
+                            className='object-cover'
+                          />
+                          <div
+                            className='absolute right-0 top-0 w-5 h-5
                           bg-black hover:bg-gray-900 transition-colors
                           flex justify-center items-center cursor-pointer'
-                          onClick={() => handleDeleteImage(item.id)}
-                        >
-                          <AiOutlineClose className='text-white' />
+                            onClick={() => handleDeleteImage(item.id)}
+                          >
+                            <AiOutlineClose className='text-white' />
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </Input>
+
+            <Editor />
+
+            <div className='flex gap-2 justify-center pt-[80px]'>
+              <Button
+                type='reset'
+                size='large'
+                variant='contained'
+                onClick={() => router.back()}
+              >
+                취소
+              </Button>
+
+              <Button type='submit' size='large' variant='contained'>
+                등록하기
+              </Button>
             </div>
-          </Input>
-
-          <Editor />
-
-          <div className='flex gap-2 justify-center pt-[80px]'>
-            <Button
-              type='reset'
-              size='large'
-              variant='contained'
-              onClick={() => router.back()}
-            >
-              취소
-            </Button>
-
-            <Button type='submit' size='large' variant='contained'>
-              등록하기
-            </Button>
-          </div>
-        </form>
-      </div>
-    </ContainerBox>
+          </form>
+        </div>
+      </ContainerBox>
+    </>
   );
 };
 
