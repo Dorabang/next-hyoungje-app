@@ -5,13 +5,14 @@ import { Button, Card, Stack, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 
-import { User } from '@/recoil/atoms';
+import { User, authState } from '@/recoil/atoms';
 import {
   checkPasswordValidation,
   deleteUser,
   updatePassword,
 } from '@/apis/users';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
+import { useSetRecoilState } from 'recoil';
 
 interface Inputs {
   userId: string;
@@ -22,6 +23,8 @@ interface Inputs {
 
 const ChangeUserInfo = ({ user }: { user: User }) => {
   const router = useRouter();
+
+  const setUser = useSetRecoilState(authState);
 
   const [error, setError] = useState<string | null>(null);
   const [showPw, setShowPw] = useState<boolean>(false);
@@ -73,6 +76,7 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
     if (ok && user) {
       const result = await deleteUser();
       if (result) {
+        setUser(false);
         router.push('/');
       }
     }

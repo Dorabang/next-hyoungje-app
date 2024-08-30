@@ -53,26 +53,9 @@ const LogoButton = ({ className = '' }: { className?: string }) => {
 const Nav = () => {
   useAuthStateChanged();
   const user = useRecoilValue(authState);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const router = useRouter();
-
-  useEffect(() => {
-    /* scroll event */
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [user]);
 
   useEffect(() => {
     if (isOpen) {
@@ -84,9 +67,9 @@ const Nav = () => {
 
   return (
     <Fragment>
-      <div className={`h-[80px] ${isScrolled ? 'block' : 'hidden'}`} />
+      <div className='min-h-[80px]' />
       <AppBar
-        position={isScrolled ? 'fixed' : 'static'}
+        position={'fixed'}
         sx={{
           background: 'rgba(255,255,255,0.85)',
           padding: '10px 0',
@@ -95,7 +78,7 @@ const Nav = () => {
           zIndex: '30',
         }}
         color='transparent'
-        style={{ backdropFilter: isScrolled ? 'blur(10px)' : 'none' }}
+        style={{ backdropFilter: 'blur(10px)' }}
       >
         <Container maxWidth='xl'>
           <Toolbar
