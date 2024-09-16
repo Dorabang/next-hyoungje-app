@@ -13,7 +13,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { DocumentData } from 'firebase/firestore';
 
-import { getSlidePosts } from '@/apis/slides';
+// import { getSlidePosts } from '@/apis/slides';
 
 const Slide = ({
   pathname,
@@ -30,8 +30,8 @@ const Slide = ({
 
   useEffect(() => {
     const getPosts = async () => {
-      const leastPosts = await getSlidePosts(pathname);
-      setPosts(leastPosts);
+      // const leastPosts = await getSlidePosts(pathname);
+      // setPosts(leastPosts);
     };
     getPosts();
   }, [pathname, slidesPerView]);

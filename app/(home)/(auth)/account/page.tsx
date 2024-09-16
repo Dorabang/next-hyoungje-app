@@ -18,7 +18,7 @@ interface Inputs {
   password2: string;
   photoUrl: string;
   displayName: string;
-  phone: string;
+  email: string;
   agree: boolean;
 }
 
@@ -38,27 +38,28 @@ const AccountPage = () => {
   } = useForm<Inputs>();
 
   const onSubmit = async (data: Inputs) => {
-    const { userId, password2, displayName, phone } = data;
+    const { userId, password2, displayName, email } = data;
 
     try {
       const userObj: CreateUserData = {
         userId,
         password: password2,
         displayName,
-        phone,
+        email,
         ...(image?.data && { profile: image?.data }),
       };
       const response = await createUser(userObj);
       if (response?.result === 'SUCCESS') {
-        alert('회원가입이 완료되었습니다.');
-        router.push('/login');
+        router.push('/welcome');
       }
     } catch (error) {
       if (error) {
         const { message } = error as { message: string };
         alert(message);
       } else {
-        alert('회원가입 실패');
+        alert(
+          '회원가입 중 문제가 발생하였습니다.\n\r잠시 후 다시 시도해주세요.',
+        );
       }
     }
   };
@@ -204,26 +205,34 @@ const AccountPage = () => {
             />
           )}
         />
+
         <Controller
-          name='phone'
+          name='email'
           rules={{
             required: {
-              message: "연락처를 입력해주세요. '-' 제외",
+              message: '이메일을 입력해주세요. 비밀번호 재설정 시 사용됩니다.',
               value: true,
+            },
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message:
+                '유효한 이메일 주소를 입력해주세요. 예: example@domain.com',
             },
           }}
           control={control}
           render={({ field }) => (
             <CssTextField
-              label='* 연락처'
+              label='* 이메일'
               {...field}
-              error={Boolean(errors.phone)}
-              helperText={errors.phone?.message}
+              error={Boolean(errors.email)}
+              helperText={errors.email?.message}
+              fullWidth
             />
           )}
         />
 
         <JoinTerms />
+
         <Controller
           name='agree'
           control={control}

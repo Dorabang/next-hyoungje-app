@@ -3,11 +3,12 @@ import { atom } from 'recoil';
 export interface User {
   id: number;
   userId: string;
-  phone: string;
+  email: string;
   profile: string;
   displayName: string;
   createdAt: string;
   updatedAt: string;
+  isVerified: boolean;
   isAdmin: boolean;
 }
 

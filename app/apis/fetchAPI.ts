@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import { reissueAccessToken } from './auth';
 
 export interface FetchOptions extends RequestInit {
@@ -48,8 +47,8 @@ export const fetchData = async <T>(
       const reissueToken = await reissueAccessToken();
 
       if (reissueToken.result === 'ERROR') {
-        alert('로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
-        redirect('/login');
+        alert('로그인 정보가 만료되었습니다. 로그인 후 이용해주세요.');
+        throw new Error(reissueToken.message);
       }
       // 재발급 후 데이터 패칭
       const res = await fetch(`${baseUrl}${url}`, config);

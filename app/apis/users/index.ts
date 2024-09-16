@@ -5,7 +5,7 @@ export interface CreateUserData {
   userId: string;
   password: string;
   displayName: string;
-  phone: string;
+  email: string;
   profile?: File;
 }
 

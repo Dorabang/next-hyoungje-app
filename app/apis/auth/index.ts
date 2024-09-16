@@ -41,3 +41,11 @@ export const reissueAccessToken = async () => {
 
   return await response.json();
 };
+
+export const sendCode = async (email?: string) => {
+  return await post('/auth/sendcode', { email });
+};
+
+export const confirmVerificationCode = async (verificationCode: string) => {
+  return post('/auth/confirmcode', { verificationCode });
+};
