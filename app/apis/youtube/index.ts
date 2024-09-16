@@ -19,7 +19,6 @@ import {
 } from '@/components/Youtube/type';
 import { OrderType } from '@/components/Youtube/GeneralChannelWrapper';
 import { getPlaylist } from './playlistItems';
-import { getImageURL } from '../images';
 
 export const postYoutubeChannel = async (data: YoutubeChannelType) => {
   const youtubeChannelRef = collection(dbService, 'youtube');

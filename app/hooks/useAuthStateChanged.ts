@@ -1,22 +1,33 @@
 'use client';
-import { authService } from '@/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { authState } from '@/recoil/atoms';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
+
+import { reissueAccessToken } from '@/apis/auth';
+import { authStateChanged } from '@/apis/auth';
+import { authState } from '@/recoil/atoms';
+import { getCookie } from '@/utils/cookieStore';
 
 const useAuthStateChanged = () => {
-  const setUser = useSetRecoilState(authState);
+  const [user, setUser] = useRecoilState(authState);
 
   useEffect(() => {
-    onAuthStateChanged(authService, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
+    (async () => {
+      const authState = await authStateChanged();
+      setUser(authState);
+    })();
   });
+
+  useEffect(() => {
+    if (user) {
+      (async () => {
+        const access = await getCookie('access_token');
+        const refresh = await getCookie('refresh_token');
+        if (!access && refresh) {
+          await reissueAccessToken();
+        }
+      })();
+    }
+  }, [user]);
 };
 
 export default useAuthStateChanged;

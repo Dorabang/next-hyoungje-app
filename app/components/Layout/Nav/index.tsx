@@ -1,6 +1,8 @@
 'use client';
-
-/* mui */
+import { Fragment, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   AppBar,
   Box,
@@ -12,29 +14,15 @@ import {
   Toolbar,
 } from '@mui/material';
 import { LightTooltip, btnStyle } from './StyleComponents';
-
-/* next */
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Fragment, useEffect, useState } from 'react';
-
-/* firebase */
-import { User } from 'firebase/auth';
-
-/* recoil */
 import { useRecoilValue } from 'recoil';
-import { authState } from '@/recoil/atoms';
+import { AiOutlineMenu } from 'react-icons/ai';
 
-/* utils */
-import { noto_serif_kr } from '@/components/NotoSerif';
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
+import { noto_serif_kr } from '@/components/NotoSerif';
 import UtilBtn from './UtilBtn';
 import MGNB from './MGNB';
-import { AiOutlineMenu } from 'react-icons/ai';
 import { PagesRoutes } from '@/constant/PagesRoutes';
-
-/* image */
+import { authState } from '@/recoil/atoms';
 import logoImg from '@/assets/common/logo.png';
 
 const LogoButton = ({ className = '' }: { className?: string }) => {
@@ -64,7 +52,7 @@ const LogoButton = ({ className = '' }: { className?: string }) => {
 
 const Nav = () => {
   useAuthStateChanged();
-  const user = useRecoilValue<User | null>(authState);
+  const user = useRecoilValue(authState);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 

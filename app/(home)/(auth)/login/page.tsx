@@ -1,25 +1,24 @@
 'use client';
+import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { Button, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { authService } from '@/firebase';
-import { useRouter } from 'next/navigation';
-import {
-  browserSessionPersistence,
-  setPersistence,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
 import { CssTextField } from './styleComponents';
-import { useState } from 'react';
+
+import { login } from '@/apis/auth';
+import { authState } from '@/recoil/atoms';
 
 interface Inputs {
-  email: string;
+  userId: string;
   password: string;
 }
 
 const LoginPage = () => {
   const router = useRouter();
   const [error, setError] = useState<string>('');
+  const setUser = useSetRecoilState(authState);
 
   const {
     control,
@@ -28,41 +27,20 @@ const LoginPage = () => {
   } = useForm<Inputs>();
 
   const onSubmit = async (data: Inputs) => {
-    const { email, password } = data;
+    const { userId, password } = data;
+    setError('');
 
-    setPersistence(authService, browserSessionPersistence)
-      .then(async () => {
-        return await signInWithEmailAndPassword(
-          authService,
-          `${email}@hyoungje.kr`,
-          password,
-        ).then(() => {
-          alert('로그인에 성공했습니다.');
-
-          router.push('/');
-        });
-      })
-      .catch((error) => {
-        // console.log('🚀 ~ onSubmit ~ error:', error);
-        const { code } = error as { code: string };
-
-        switch (code) {
-          case 'auth/wrong-password':
-            setError('아이디 또는 비밀번호를 잘못 입력하였습니다.');
-            break;
-          case 'auth/invalid-login-credentials':
-            setError('아이디 또는 비밀번호를 잘못 입력하였습니다.');
-            break;
-          case 'auth/user-not-found':
-            setError('아이디 또는 비밀번호를 잘못 입력하였습니다.');
-            break;
-          case 'auth/too-many-requests':
-            setError(
-              '여러 번의 로그인 시도 실패로 비활성화되었습니다. 잠시 후에 다시 시도해주세요.',
-            );
-            break;
-        }
-      });
+    try {
+      const res = await login({ userId, password });
+      if (res) {
+        setUser(true);
+        alert('로그인에 성공하였습니다.');
+        router.push('/');
+      }
+    } catch (error) {
+      const { message } = error as { message: string };
+      setError(message);
+    }
   };
 
   return (
@@ -85,7 +63,7 @@ const LoginPage = () => {
         autoComplete='off'
       >
         <Controller
-          name='email'
+          name='userId'
           rules={{
             required: { message: '아이디를 입력해주세요', value: true },
             pattern: {
@@ -96,8 +74,8 @@ const LoginPage = () => {
           control={control}
           render={({ field }) => (
             <CssTextField
-              error={Boolean(errors.email)}
-              helperText={errors.email?.message}
+              error={Boolean(errors.userId)}
+              helperText={errors.userId?.message}
               label='* 아이디'
               {...field}
             />

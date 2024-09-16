@@ -1,22 +1,20 @@
 'use client';
-import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
-import { authService } from '@/firebase';
-import { Button, Card, Stack, Typography } from '@mui/material';
-import {
-  AuthError,
-  User,
-  deleteUser,
-  signInWithEmailAndPassword,
-  signOut,
-  updatePassword,
-} from 'firebase/auth';
-import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button, Card, Stack, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 
+import { User } from '@/recoil/atoms';
+import {
+  checkPasswordValidation,
+  deleteUser,
+  updatePassword,
+} from '@/apis/users';
+import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
+
 interface Inputs {
-  email: string;
+  userId: string;
   password: string;
   password2: string;
   passwordCheck: string;
@@ -37,56 +35,46 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: Inputs) => {
+    const { passwordCheck, password, password2 } = data;
     setError(null);
-    if (getValues('passwordCheck') !== '' && !isEdit) {
-      if (!user.email) return;
-      await signInWithEmailAndPassword(
-        authService,
-        user.email,
-        getValues('passwordCheck'),
-      )
-        .then((response) => {
-          setIsEdit(response.user.uid === user.uid);
-          // console.log('response', response);
-          // console.log('user', user);
-        })
-        .catch((error: AuthError) => {
-          const { code } = error as { code: string };
 
-          switch (code) {
-            case 'auth/wrong-password':
-              setError('비밀번호를 잘못 입력하였습니다.');
-              break;
-            case 'auth/user-not-found':
-              setError('비밀번호를 잘못 입력하였습니다.');
-              break;
-            case 'auth/missing-password':
-              setError('비밀번호를 입력해주세요.');
-              break;
-            case 'auth/too-many-requests':
-              setError('요청이 너무 많아 잠시 후에 로그인을 시도해주세요.');
-              break;
-          }
-        });
+    /* 비밀번호 검증 전 */
+    if (passwordCheck === '') {
+      return setError('비밀번호를 입력해주세요.');
     }
 
-    if (getValues('password') !== '' && isEdit) {
-      await updatePassword(user, getValues('password')).then((response) => {
-        alert('성공적으로 비밀번호가 변경되었습니다. 로그인 후, 이용해주세요.');
-        signOut(authService);
+    if (passwordCheck !== '' && !isEdit) {
+      const response = await checkPasswordValidation(passwordCheck);
+      if (!response.data) {
+        return setError('비밀번호를 잘못 입력했습니다.');
+      } else {
+        return setIsEdit((prev) => !prev);
+      }
+    }
+
+    /* 비밀번호 검증 후 */
+    if (password !== '' && isEdit) {
+      const response = await updatePassword(password);
+      if (response) {
+        alert(
+          '비밀번호가 성공적으로 변경되었습니다. 다시 로그인 후 이용해주세요.',
+        );
         router.push('/login');
-      });
+      }
     }
   };
 
   const handleDeleteUser = async () => {
     const ok = confirm(
-      `탈퇴하시겠습니까?\n(이 전에 작성한 게시물 및 댓글은 삭제되지 않습니다. 탈퇴 후에는 형제난원의 서비스를 제한적으로 사용하실 수 있습니다.)`,
+      `탈퇴하시겠습니까?\n(이 전에 작성한 게시물 및 댓글은 삭제되지 않습니다. 탈퇴 후에는 옥동의 서비스를 제한적으로 사용하실 수 있습니다.)`,
     );
 
     if (ok && user) {
-      await deleteUser(user).then(() => router.push('/'));
+      const result = await deleteUser();
+      if (result) {
+        router.push('/');
+      }
     }
     return;
   };
@@ -164,7 +152,7 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
         {isEdit && (
           <>
             <Controller
-              name='email'
+              name='userId'
               rules={{
                 pattern: {
                   message: '잘못된 아이디입니다.',
@@ -174,13 +162,11 @@ const ChangeUserInfo = ({ user }: { user: User }) => {
               control={control}
               render={({ field }) => (
                 <CssTextField
-                  error={Boolean(errors.email)}
-                  helperText={errors.email?.message}
+                  error={Boolean(errors.userId)}
+                  helperText={errors.userId?.message}
                   disabled
                   label='아이디'
-                  defaultValue={
-                    user && user.email ? user.email.split('@')[0] : ''
-                  }
+                  defaultValue={user?.userId}
                   {...field}
                   sx={{ flexGrow: 1 }}
                 />

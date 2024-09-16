@@ -10,5 +10,5 @@ export const imageResize = async (file: File) => {
   const response = await imageCompression(file, options);
   const result = await imageCompression.getDataUrlFromFile(response);
 
-  return result;
+  return { data: response, preview: result };
 };

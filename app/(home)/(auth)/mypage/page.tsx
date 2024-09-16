@@ -1,13 +1,22 @@
 'use client';
-import { useRecoilValue } from 'recoil';
-
-import { authState } from '@/recoil/atoms';
+import { getUser } from '@/apis/users';
 import ContainerBox from '@/components/ContainerBox';
 import ChangeProfile from '@/components/Mypage/ChangeProfile';
 import ChangeUserInfo from '@/components/Mypage/ChangeUserInfo';
+import { User } from '@/recoil/atoms';
+import { useEffect, useState } from 'react';
 
 const MyPage = () => {
-  const user = useRecoilValue(authState);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      (async () => {
+        const user = await getUser();
+        setUser(user ?? null);
+      })();
+    }
+  }, [user]);
 
   if (!user) return;
 

@@ -1,31 +1,29 @@
-import { authService } from '@/firebase';
+'use client';
+import { useMemo } from 'react';
 import { authState } from '@/recoil/atoms';
 import { Box, Button } from '@mui/material';
-import { signOut } from 'firebase/auth';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
+
 import { authBtnStyle } from './StyleComponents';
 import { routes } from '../../../constant/Routes';
-
-import defaultProfile from '@/assets/defaultProfile.jpg';
+import { logout } from '@/apis/auth';
 
 const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
-  const [user, setUser] = useRecoilState(authState);
+  const [auth, setAuth] = useRecoilState(authState);
   const router = useRouter();
 
   return useMemo(() => {
-    const onLogOutClick = () => {
-      signOut(authService);
-      setUser(null);
+    const onLogOutClick = async () => {
+      await logout();
+      setAuth(null);
       onClick && onClick();
       router.push('/');
     };
 
     return (
       <Box sx={{ flexGrow: 0, gap: '4px' }}>
-        {user ? (
+        {auth ? (
           <>
             <Button
               onClick={() => {
@@ -43,17 +41,7 @@ const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
               }}
               sx={authBtnStyle}
             >
-              <div className='flex gap-[6px] items-center'>
-                <div className='relative mt-[1px] w-6 h-6 rounded-full overflow-hidden'>
-                  <Image
-                    src={user.photoURL ? user.photoURL : defaultProfile}
-                    alt={`${user.displayName} 업로드 이미지`}
-                    fill
-                    sizes='100%'
-                  />
-                </div>
-                <p className='normal-case'>{user.displayName}</p>
-              </div>
+              마이페이지
             </Button>
             <Button onClick={onLogOutClick} sx={authBtnStyle}>
               로그아웃
@@ -83,7 +71,7 @@ const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
         )}
       </Box>
     );
-  }, [user, setUser, router, onClick]);
+  }, [auth, setAuth, router, onClick]);
 };
 
 export default UtilBtn;

@@ -1,5 +1,5 @@
-import { InputContext } from '@/components/Edit/Input';
 import { useContext } from 'react';
+import { InputContext } from '@/components/Edit/Input';
 
 const useInputContext = () => {
   const context = useContext(InputContext);

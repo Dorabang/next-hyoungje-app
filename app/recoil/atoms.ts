@@ -1,7 +1,16 @@
-import { User } from 'firebase/auth';
 import { atom } from 'recoil';
 
-export const authState = atom<User | null>({
+export interface User {
+  id: number;
+  userId: string;
+  phone: string;
+  profile: string;
+  displayName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const authState = atom<boolean | null>({
   key: 'authState',
   default: null,
   // TypeError: Cannot freeze 방지

@@ -2,9 +2,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
-import { doc, setDoc } from 'firebase/firestore';
-import { authService, dbService } from '@/firebase';
-import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
 import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { ErrorMessage } from '@hookform/error-message';
@@ -13,23 +10,25 @@ import JoinTerms from '@/components/JoinTerms/JoinTerms';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
-import { imageResize } from '@/utils/imageResize';
-import { uploadImage } from '@/apis/images';
+import { createUser, CreateUserData } from '@/apis/users';
 
 interface Inputs {
-  email: string;
+  userId: string;
   password1: string;
   password2: string;
   photoUrl: string;
-  nickName: string;
-  phoneNumber: string;
+  displayName: string;
+  phone: string;
   agree: boolean;
 }
 
 const AccountPage = () => {
   const router = useRouter();
 
-  const [image, setImage] = useState<string>('');
+  const [image, setImage] = useState<{
+    data: File | null;
+    preview: string | null;
+  }>({ data: null, preview: null });
 
   const {
     control,
@@ -39,52 +38,25 @@ const AccountPage = () => {
   } = useForm<Inputs>();
 
   const onSubmit = async (data: Inputs) => {
-    const { email, password2, nickName, phoneNumber } = data;
+    const { userId, password2, displayName, phone } = data;
 
     try {
-      await createUserWithEmailAndPassword(
-        authService,
-        `${email}@hyoungje.kr`,
-        password2,
-      );
-      const user = authService.currentUser;
-
-      if (user) {
-        const photo = await uploadImage(`/profile/${user.uid}/photo`, image);
-
-        await updateProfile(user, {
-          displayName: nickName,
-          photoURL: photo,
-        });
-
-        const userObj = {
-          id: user.uid,
-          displayName: nickName,
-          phoneNumber: phoneNumber,
-          like: [],
-        };
-
-        await setDoc(doc(dbService, 'users', user.uid), userObj);
-        alert('회원가입에 성공 했습니다.');
-        router.push('/');
+      const userObj: CreateUserData = {
+        userId,
+        password: password2,
+        displayName,
+        phone,
+        ...(image?.data && { profile: image?.data }),
+      };
+      const response = await createUser(userObj);
+      if (response?.result === 'SUCCESS') {
+        alert('회원가입이 완료되었습니다.');
+        router.push('/login');
       }
-
-      // userObj && (await addDoc(collection(dbService, 'users'), userObj));
     } catch (error) {
       if (error) {
-        const { code } = error as { code: string };
-        switch (code) {
-          case 'auth/weak-password':
-            alert('비밀번호는 6자리 이상이어야 합니다.');
-            break;
-          case 'auth/invalid-email':
-            alert('잘못된 이메일 주소입니다.');
-            break;
-          case 'auth/email-already-in-use':
-            alert('이미 가입되어 있는 계정입니다.');
-            break;
-          default:
-        }
+        const { message } = error as { message: string };
+        alert(message);
       } else {
         alert('회원가입 실패');
       }
@@ -98,9 +70,13 @@ const AccountPage = () => {
 
     if (files) {
       const theFile = files[0];
-
-      const resizingImage = await imageResize(theFile);
-      setImage(resizingImage);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = (e.target as FileReader).result;
+        setImage((prev) => ({ ...prev, preview: result as string }));
+      };
+      reader.readAsDataURL(theFile);
+      setImage((prev) => ({ ...prev, data: theFile }));
     }
   };
 
@@ -126,7 +102,7 @@ const AccountPage = () => {
           <p className='text-grayColor-700'>프로필 이미지</p>
           <div className='h-40 w-40 rounded-full overflow-hidden relative'>
             <AutoHeightImageWrapper
-              src={image !== '' ? image : defaultProfile}
+              src={image.preview ? image.preview : defaultProfile}
               alt='프로필 이미지 미리보기'
             />
           </div>
@@ -142,7 +118,7 @@ const AccountPage = () => {
         </div>
 
         <Controller
-          name='email'
+          name='userId'
           rules={{
             required: {
               message: '아이디를 입력해주세요. ex) example',
@@ -156,8 +132,8 @@ const AccountPage = () => {
           control={control}
           render={({ field }) => (
             <CssTextField
-              error={Boolean(errors.email)}
-              helperText={errors.email?.message}
+              error={Boolean(errors.userId)}
+              helperText={errors.userId?.message}
               label='* 아이디'
               {...field}
             />
@@ -214,7 +190,7 @@ const AccountPage = () => {
         />
 
         <Controller
-          name='nickName'
+          name='displayName'
           control={control}
           rules={{
             required: { message: '닉네임을 입력해주세요.', value: true },
@@ -223,13 +199,13 @@ const AccountPage = () => {
             <CssTextField
               label='* 닉네임'
               {...field}
-              error={Boolean(errors.nickName)}
-              helperText={errors.nickName?.message}
+              error={Boolean(errors.displayName)}
+              helperText={errors.displayName?.message}
             />
           )}
         />
         <Controller
-          name='phoneNumber'
+          name='phone'
           rules={{
             required: {
               message: "연락처를 입력해주세요. '-' 제외",
@@ -241,8 +217,8 @@ const AccountPage = () => {
             <CssTextField
               label='* 연락처'
               {...field}
-              error={Boolean(errors.phoneNumber)}
-              helperText={errors.phoneNumber?.message}
+              error={Boolean(errors.phone)}
+              helperText={errors.phone?.message}
             />
           )}
         />
