@@ -1,5 +1,5 @@
 'use client';
-import Loading from '@/components/Loading';
+import Loading from '@/components/common/Loading';
 import PostFormat from '@/components/Posts/PostFormat';
 import useRedirect from '@/hooks/useRedirect';
 import { Suspense } from 'react';

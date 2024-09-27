@@ -1,6 +1,6 @@
 'use client';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 import useRedirect from '@/hooks/useRedirect';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { authState, editorState } from '@/recoil/atoms';
@@ -11,7 +11,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 
 import Editor from '@/components/Editor';
 import statusList from '@/constant/StatusLists';
-import LoadingPromise from '@/components/LoadingPromise';
+import LoadingPromise from '@/components/common/LoadingPromise';
 import { PostDataState, UpdateImage } from '@/components/Edit';
 import { CreateMarketPostsData, createPost } from '@/apis/posts';
 import Input from '@/components/Edit/Input';

@@ -18,7 +18,7 @@ import { useRecoilValue } from 'recoil';
 import { AiOutlineMenu } from 'react-icons/ai';
 
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
-import { noto_serif_kr } from '@/components/NotoSerif';
+import { noto_serif_kr } from '@/components/common/NotoSerif';
 import UtilBtn from './UtilBtn';
 import MGNB from './MGNB';
 import { PagesRoutes } from '@/constant/PagesRoutes';

@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 
 import Edit from '@/components/Edit';
 import { usePost } from '@/hooks/queries/usePosts';
-import Loading from '@/components/Loading';
-import ContainerBox from '@/components/ContainerBox';
+import Loading from '@/components/common/Loading';
+import ContainerBox from '@/components/common/ContainerBox';
 
 const DetailEditPage = ({ params: { id } }: { params: { id: number } }) => {
   const pathname = usePathname().trim().split('/')[1];

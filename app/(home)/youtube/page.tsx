@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { noto_serif_kr } from '@/components/NotoSerif';
-import ContainerBox from '@/components/ContainerBox';
+import { noto_serif_kr } from '@/components/common/NotoSerif';
+import ContainerBox from '@/components/common/ContainerBox';
 import Badge from '@/components/Youtube/Badge';
 import SpecialChannelWrapper from '@/components/Youtube/SpecialChannelWrapper';
 import GeneralChannelWrapper from '@/components/Youtube/GeneralChannelWrapper';

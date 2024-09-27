@@ -8,10 +8,10 @@ import { Button } from '@mui/material';
 
 import useRedirect from '@/hooks/useRedirect';
 import { authState, editorState } from '@/recoil/atoms';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 import Editor from '@/components/Editor';
 import Input from '@/components/Edit/Input';
-import LoadingPromise from '@/components/LoadingPromise';
+import LoadingPromise from '@/components/common/LoadingPromise';
 import { UpdateImage } from '@/components/Edit';
 import { createPost } from '@/apis/posts';
 

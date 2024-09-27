@@ -11,7 +11,6 @@ import 'swiper/css';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { DocumentData } from 'firebase/firestore';
 
 // import { getSlidePosts } from '@/apis/slides';
 
@@ -26,7 +25,7 @@ const Slide = ({
   speed: number;
   community?: boolean;
 }) => {
-  const [posts, setPosts] = useState<DocumentData[] | null>(null);
+  const [posts, setPosts] = useState<any[] | null>(null);
 
   useEffect(() => {
     const getPosts = async () => {

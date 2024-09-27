@@ -2,9 +2,9 @@
 import { Suspense } from 'react';
 
 import CommDetailPage from '@/components/Community/CommDetail';
-import Loading from '@/components/Loading';
+import Loading from '@/components/common/Loading';
 import { usePost } from '@/hooks/queries/usePosts';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 
 interface NoticeDetailPageProps {
   params: { id: number };

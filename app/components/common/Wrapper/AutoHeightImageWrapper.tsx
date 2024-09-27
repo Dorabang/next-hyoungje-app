@@ -1,5 +1,5 @@
 import Image, { ImageProps } from 'next/image';
-import { toBase64, shimmer } from '@/components/ImagePlaceholder';
+import { toBase64, shimmer } from '@/components/common/ImagePlaceholder';
 
 const AutoHeightImageWrapper = ({ src, alt, ...props }: ImageProps) => {
   return (

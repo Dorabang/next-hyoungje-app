@@ -1,17 +1,17 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useRecoilValue } from 'recoil';
 
-import Board from '../Board';
-import ContainerBox from '../ContainerBox';
+import { User, authState } from '@/recoil/atoms';
+import Board from '../common/Board';
+import ContainerBox from '../common/ContainerBox';
 import FilterOption from '../FilterOption';
-import Breadcrumbs from '../Breadcrumbs';
-import PaginationComponets from '../PaginationComponent';
+import Breadcrumbs from '../common/Breadcrumbs';
+import PaginationComponets from '../common/PaginationComponent';
 import { usePosts } from '@/hooks/queries/usePosts';
 import { Status } from '../StatusOptions';
-import Loading from '../Loading';
-import { User, authState } from '@/recoil/atoms';
-import { useRecoilValue } from 'recoil';
+import Loading from '../common/Loading';
 import { getUser } from '@/apis/users';
 
 const PostFormat = () => {

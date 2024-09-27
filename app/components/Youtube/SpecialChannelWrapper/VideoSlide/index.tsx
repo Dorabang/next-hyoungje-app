@@ -10,20 +10,20 @@ import 'swiper/css';
 
 import Link from 'next/link';
 
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import { useVideos } from '@/hooks/queries/useYoutube';
 
 const VideoSlide = ({ id }: { id: string }) => {
-  const { data: videos, isLoading } = useVideos(id);
+  // const { data: videos, isLoading } = useVideos(id);
 
-  if (isLoading)
-    return (
-      <>
-        {Array.from(Array(4)).map((_, idx) => (
-          <VideoSkeleton key={idx} />
-        ))}
-      </>
-    );
+  // if (isLoading)
+  //   return (
+  //     <>
+  //       {Array.from(Array(4)).map((_, idx) => (
+  //         <VideoSkeleton key={idx} />
+  //       ))}
+  //     </>
+  //   );
 
   return (
     <Swiper
@@ -51,7 +51,7 @@ const VideoSlide = ({ id }: { id: string }) => {
       modules={[Autoplay]}
       className='w-full'
     >
-      {videos &&
+      {/* {videos &&
         videos.map(({ id, snippet, contentDetails }) => {
           return (
             <SwiperSlide key={id}>
@@ -71,7 +71,7 @@ const VideoSlide = ({ id }: { id: string }) => {
               </Link>
             </SwiperSlide>
           );
-        })}
+        })} */}
     </Swiper>
   );
 };

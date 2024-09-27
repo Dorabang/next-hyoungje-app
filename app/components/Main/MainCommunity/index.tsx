@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 import BoardForm from '@/components/Community/BoardForm';
-import { Post } from '@/components/Board/types';
+import { Post } from '@/components/common/Board/types';
 import { getPosts } from '@/apis/posts';
 
 export interface communityState {

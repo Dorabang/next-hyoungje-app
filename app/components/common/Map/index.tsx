@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { CustomOverlayMap, Map, MapMarker } from 'react-kakao-maps-sdk';
 import './style.css';
 import Logo from '@/assets/common/logo.png';
-import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '../Wrapper/AutoHeightImageWrapper';
 
 declare global {
   interface Window {

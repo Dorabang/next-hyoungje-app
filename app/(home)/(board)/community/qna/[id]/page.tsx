@@ -2,8 +2,8 @@
 import { Suspense } from 'react';
 
 import CommDetailPage from '@/components/Community/CommDetail';
-import ContainerBox from '@/components/ContainerBox';
-import Loading from '@/components/Loading';
+import ContainerBox from '@/components/common/ContainerBox';
+import Loading from '@/components/common/Loading';
 import { usePost } from '@/hooks/queries/usePosts';
 
 interface QnADetailPageProps {

@@ -1,8 +1,8 @@
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import youtubeBannerPC from '@/assets/banner/youtube/banner_youtube_pc.jpg';
 import youtubeBannerTablet from '@/assets/banner/youtube/banner_youtube_tablet.jpg';
 import youtubeBannerMobile from '@/assets/banner/youtube/banner_youtube_mobile.jpg';
-import ContainerBox from '../ContainerBox';
+import ContainerBox from '../common/ContainerBox';
 import Link from 'next/link';
 
 const YoutubeBanner = () => {

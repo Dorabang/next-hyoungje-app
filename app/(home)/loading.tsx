@@ -1,5 +1,5 @@
-import ContainerBox from '@/components/ContainerBox';
-import Loading from '@/components/Loading';
+import ContainerBox from '@/components/common/ContainerBox';
+import Loading from '@/components/common/Loading';
 import React from 'react';
 
 const LoadingPage = () => {

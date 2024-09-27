@@ -8,12 +8,12 @@ import { Button } from '@mui/material';
 
 import statusList from '@/constant/StatusLists';
 import { authState, editorState } from '@/recoil/atoms';
-import ContainerBox from '../ContainerBox';
+import ContainerBox from '../common/ContainerBox';
 import Editor from '../Editor';
 import Input from './Input';
-import LoadingPromise from '../LoadingPromise';
+import LoadingPromise from '../common/LoadingPromise';
 import { UpdatePostData, putPost } from '@/apis/posts';
-import { Post } from '../Board/types';
+import { Post } from '../common/Board/types';
 import { Status } from '../StatusOptions';
 
 export interface PostDataState {
@@ -287,7 +287,7 @@ const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
                   <span className='text-grayColor-300 text-sm'>
                     {'('}
                     {updateImage?.length || image?.length
-                      ? updateImage?.length ?? 0 + (image ? image.length : 0)
+                      ? (updateImage?.length ?? 0 + (image ? image.length : 0))
                       : 0}
                     /8
                     {')'}

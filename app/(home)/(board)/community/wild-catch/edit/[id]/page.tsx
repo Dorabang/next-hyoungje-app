@@ -2,9 +2,9 @@
 import { Suspense } from 'react';
 
 import CommEdit from '@/components/Community/CommEdit';
-import Loading from '@/components/Loading';
+import Loading from '@/components/common/Loading';
 import { usePost } from '@/hooks/queries/usePosts';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 
 const ModifyPostPage = ({ params: { id } }: { params: { id: number } }) => {
   const { data, isLoading } = usePost(id);

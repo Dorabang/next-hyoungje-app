@@ -6,17 +6,17 @@ import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter } from 'next/navigation';
 
 import DateFormat from '@/utils/DateFormat';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 import statusOptions from '@/components/StatusOptions';
 import PrevNextPost, {
   PrevNextPostData,
 } from '@/components/Posts/PrevNextPost';
 import Comments from '../Comment/Comments';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import HasLikes from '../Bookmark/BookmarkButton';
 import EditorReadOnly from '../Editor/ReadOnly';
 import { getUser } from '@/apis/users';
-import { Post } from '../Board/types';
+import { Post } from '../common/Board/types';
 import { deletePost } from '@/apis/posts';
 
 interface DetailPageProps {

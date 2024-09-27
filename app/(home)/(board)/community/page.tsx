@@ -1,5 +1,5 @@
 import Community from '@/components/Community';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 
 const CommunityPage = () => {
   return (

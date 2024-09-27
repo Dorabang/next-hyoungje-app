@@ -2,8 +2,8 @@
 import React, { Suspense } from 'react';
 import { LiaHeart } from 'react-icons/lia';
 
-import ContainerBox from '@/components/ContainerBox';
-import Loading from '@/components/Loading';
+import ContainerBox from '@/components/common/ContainerBox';
+import Loading from '@/components/common/Loading';
 import { useBookmark } from '@/hooks/queries/useBookmark';
 import MyBookmark from '@/components/Bookmark/MyBookmark';
 

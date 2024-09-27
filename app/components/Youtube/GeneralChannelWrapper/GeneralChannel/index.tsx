@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { BsArrowUpRight } from 'react-icons/bs';
 
 import { YoutubeChannelData } from '../../type';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
 const GeneralChannel = ({ data }: { data: YoutubeChannelData }) => {
   return (

@@ -6,14 +6,14 @@ import { IoArrowBack } from 'react-icons/io5';
 import { User, authState } from '@/recoil/atoms';
 
 import DateFormat from '@/utils/DateFormat';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 import PrevNextPost, {
   PrevNextPostData,
 } from '@/components/Posts/PrevNextPost';
-import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
 import HasLikes from '../Bookmark/BookmarkButton';
 import Comments from '../Comment/Comments';
-import { Post } from '../Board/types';
+import { Post } from '../common/Board/types';
 import EditorReadOnly from '../Editor/ReadOnly';
 import { deletePost } from '@/apis/posts';
 import { getUser } from '@/apis/users';

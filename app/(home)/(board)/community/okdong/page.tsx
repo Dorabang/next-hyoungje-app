@@ -1,8 +1,8 @@
-import ContainerBox from '@/components/ContainerBox';
-import { noto_serif_kr } from '@/components/NotoSerif';
-import Breadcrumbs from '@/components/Breadcrumbs';
+import ContainerBox from '@/components/common/ContainerBox';
+import { noto_serif_kr } from '@/components/common/NotoSerif';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 import MainVisual from '@/components/Main/MainVisual';
-import Maps from '@/components/Map';
+import Maps from '@/components/common/Map';
 
 const HyoungjePage = () => {
   return (

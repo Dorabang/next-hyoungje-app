@@ -6,6 +6,7 @@ import { useGeneralChannel } from '@/hooks/queries/useYoutube';
 import GeneralChannel from './GeneralChannel';
 import Skeleton from './Skeleton';
 import Order from './Order';
+import { YoutubeChannelData } from '../type';
 
 export type OrderType = 'latest' | 'text';
 
@@ -27,7 +28,7 @@ const GeneralChannelWrapper = () => {
       <Order order={order} setOrder={(value) => setOrder(value)} />
       <div className='flex flex-wrap gap-5'>
         {data && data.length > 0 ? (
-          data.map((channel) => (
+          data.map((channel: YoutubeChannelData) => (
             <GeneralChannel data={channel} key={channel.id} />
           ))
         ) : (

@@ -4,6 +4,7 @@ import React from 'react';
 import { useSpecialChannel } from '@/hooks/queries/useYoutube';
 import SpecialChannel from './SpecialChannel';
 import Skeleton from './Skeleton';
+import { SpecialChannelData } from '../type';
 
 const SpecialChannelWrapper = () => {
   const { data, isLoading } = useSpecialChannel();
@@ -12,7 +13,7 @@ const SpecialChannelWrapper = () => {
   return (
     <div>
       {data && data.length > 0
-        ? data?.map((channel) => (
+        ? data?.map((channel: SpecialChannelData) => (
             <SpecialChannel key={channel.id} data={channel} />
           ))
         : null}

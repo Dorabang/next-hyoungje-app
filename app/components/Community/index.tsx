@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import BoardForm from './BoardForm';
-import { Post } from '../Board/types';
+import { Post } from '../common/Board/types';
 import { getPosts } from '@/apis/posts';
 
 export interface PostData {

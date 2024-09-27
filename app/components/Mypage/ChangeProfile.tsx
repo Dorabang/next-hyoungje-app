@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Card, Stack, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 
-import AutoHeightImageWrapper from '../AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { User } from '@/recoil/atoms';

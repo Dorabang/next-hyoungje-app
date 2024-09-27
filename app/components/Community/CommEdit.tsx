@@ -6,14 +6,14 @@ import { useRouter } from 'next/navigation';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Button } from '@mui/material';
 
-import ContainerBox from '../ContainerBox';
+import ContainerBox from '../common/ContainerBox';
 import { authState, editorState } from '@/recoil/atoms';
 import Editor from '../Editor';
 import Input from '../Edit/Input';
-import LoadingPromise from '../LoadingPromise';
+import LoadingPromise from '../common/LoadingPromise';
 import { UpdateImage } from '../Edit';
 import { putPost } from '@/apis/posts';
-import { Post } from '../Board/types';
+import { Post } from '../common/Board/types';
 
 const CommEdit = ({ post }: { post: Post }) => {
   const router = useRouter();
@@ -131,8 +131,8 @@ const CommEdit = ({ post }: { post: Post }) => {
                   <span className='text-grayColor-300 text-sm'>
                     {'('}
                     {updateImage?.length || prevImage?.length
-                      ? updateImage?.length ??
-                        0 + (prevImage ? prevImage.length : 0)
+                      ? (updateImage?.length ??
+                        0 + (prevImage ? prevImage.length : 0))
                       : 0}
                     /8
                     {')'}

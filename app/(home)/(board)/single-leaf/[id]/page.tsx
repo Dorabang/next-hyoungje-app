@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 
-import Loading from '@/components/Loading';
+import Loading from '@/components/common/Loading';
 import PostDetail from '@/components/Posts/PostDetail';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 import { usePost } from '@/hooks/queries/usePosts';
 
 interface DetailPageProps {

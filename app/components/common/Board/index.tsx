@@ -3,8 +3,8 @@ import { createContext, useContext } from 'react';
 import { usePathname } from 'next/navigation';
 
 import { BoardProps, Post, PostContextType } from './types';
-import PostsLoading from '../Posts/PostsLoading';
-import PostsNotFound from '../Posts/PostsNotFound';
+import PostsLoading from '../../Posts/PostsLoading';
+import PostsNotFound from '../../Posts/PostsNotFound';
 import PostList from './PostList';
 
 const defaultPostContext: PostContextType = {

@@ -1,6 +1,6 @@
 'use client';
 import { getUser } from '@/apis/users';
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 import ChangeProfile from '@/components/Mypage/ChangeProfile';
 import ChangeUserInfo from '@/components/Mypage/ChangeUserInfo';
 import { User } from '@/recoil/atoms';

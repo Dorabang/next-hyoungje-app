@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { AiOutlineFileImage, AiOutlinePlus } from 'react-icons/ai';
 
-import { noto_serif_kr } from '../NotoSerif';
+import { noto_serif_kr } from '../common/NotoSerif';
 import DateFormat from '@/utils/DateFormat';
 import PostsLoading from '../Posts/PostsLoading';
 import PostsNotFound from '../Posts/PostsNotFound';
-import { Post } from '../Board/types';
+import { Post } from '../common/Board/types';
 
 const BoardForm = ({
   data,

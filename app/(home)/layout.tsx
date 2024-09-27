@@ -3,9 +3,9 @@ import { Noto_Sans_KR } from 'next/font/google';
 import Nav from '@/components/Layout/Nav';
 import Footer from '@/components/Layout/Footer/Footer';
 import './globals.css';
-import RecoilRootWrapper from '@/components/RecoilRootWrapper';
+import RecoilRootWrapper from '@/components/common/Wrapper/RecoilRootWrapper';
 import Script from 'next/script';
-import QueryClientWrapper from '@/components/QueryClientWrapper';
+import QueryClientWrapper from '@/components/common/Wrapper/QueryClientWrapper';
 import { URL } from 'url';
 
 const noto_sans_kr = Noto_Sans_KR({

@@ -6,9 +6,9 @@ import { useRecoilValue } from 'recoil';
 import { useComments } from '@/hooks/queries/useComments';
 import { getUser } from '@/apis/users';
 import InputComment from './InputComment';
-import Loading from '../Loading';
+import Loading from '../common/Loading';
 import { User, authState } from '@/recoil/atoms';
-import PaginationComponets from '../PaginationComponent';
+import PaginationComponets from '../common/PaginationComponent';
 import { createComment, deleteComment, updateComment } from '@/apis/comments';
 
 export interface Comment {

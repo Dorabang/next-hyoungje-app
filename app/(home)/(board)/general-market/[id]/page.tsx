@@ -1,8 +1,8 @@
 'use client';
 import { Suspense } from 'react';
 
-import ContainerBox from '@/components/ContainerBox';
-import Loading from '@/components/Loading';
+import ContainerBox from '@/components/common/ContainerBox';
+import Loading from '@/components/common/Loading';
 import PostDetail from '@/components/Posts/PostDetail';
 import { usePost } from '@/hooks/queries/usePosts';
 

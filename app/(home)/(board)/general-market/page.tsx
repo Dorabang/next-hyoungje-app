@@ -1,4 +1,4 @@
-import Loading from '@/components/Loading';
+import Loading from '@/components/common/Loading';
 import PostFormat from '@/components/Posts/PostFormat';
 import { Suspense } from 'react';
 

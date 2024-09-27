@@ -1,4 +1,4 @@
-import { Post } from '@/components/Board/types';
+import { Post } from '@/components/common/Board/types';
 import { del, get, upload } from '../fetchAPI';
 import { Status } from '@/components/StatusOptions';
 import { PrevNextPostData } from '@/components/Posts/PrevNextPost';

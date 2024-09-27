@@ -2,11 +2,11 @@ import React from 'react';
 import Link from 'next/link';
 import { TfiArrowCircleRight } from 'react-icons/tfi';
 
-import { noto_serif_kr } from '@/components/NotoSerif';
+import { noto_serif_kr } from '@/components/common/NotoSerif';
 import { SpecialChannelData } from '../../type';
 import VideoSlide from '../VideoSlide';
 import Badge from '../../Badge';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
 const SpecialChannel = ({ data }: { data: SpecialChannelData }) => {
   return (
