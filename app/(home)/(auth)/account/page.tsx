@@ -6,11 +6,13 @@ import { Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { ErrorMessage } from '@hookform/error-message';
 
-import JoinTerms from '@/components/JoinTerms/JoinTerms';
+import JoinTerms from '@/components/Auth/JoinTerms/JoinTerms';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import { createUser, CreateUserData } from '@/apis/users';
+import { confirmVerificationCode, sendEmailVerifyCode } from '@/apis/auth';
+import Timer from '@/components/common/Timer';
 
 interface Inputs {
   userId: string;
@@ -20,6 +22,7 @@ interface Inputs {
   displayName: string;
   email: string;
   agree: boolean;
+  authCode: string;
 }
 
 const AccountPage = () => {
@@ -29,13 +32,47 @@ const AccountPage = () => {
     data: File | null;
     preview: string | null;
   }>({ data: null, preview: null });
+  const [emailVerify, setEmailVerify] = useState(false);
+  const [getAuthCode, setGetAuthCode] = useState(false);
 
   const {
     control,
     handleSubmit,
     getValues,
+    setError,
     formState: { errors },
   } = useForm<Inputs>();
+
+  const handleSendMail = async () => {
+    const email = getValues('email');
+
+    if (email !== '') {
+      await sendEmailVerifyCode(email);
+      setGetAuthCode(true);
+    } else {
+      setError('email', { message: '이메일을 입력해주세요.' });
+    }
+  };
+
+  const handleClickEmailVerified = async () => {
+    const authCode = getValues('authCode');
+    const email = getValues('email');
+
+    if (authCode !== '') {
+      try {
+        const res = await confirmVerificationCode(email, authCode);
+        console.log('🚀 ~ handleClickEmailVerified ~ res:', res);
+        if (res.result === 'SUCCESS') {
+          setEmailVerify(true);
+        }
+      } catch (error) {
+        setError('authCode', { message: 'error' });
+        console.log('🚀 ~ handleClickEmailVerified ~ error22:', error);
+      }
+    } else {
+      setError('authCode', { message: '인증코드를 입력해주세요.' });
+    }
+  };
 
   const onSubmit = async (data: Inputs) => {
     const { userId, password2, displayName, email } = data;
@@ -50,7 +87,7 @@ const AccountPage = () => {
       };
       const response = await createUser(userObj);
       if (response?.result === 'SUCCESS') {
-        router.push('/welcome');
+        router.push('/');
       }
     } catch (error) {
       if (error) {
@@ -206,30 +243,77 @@ const AccountPage = () => {
           )}
         />
 
-        <Controller
-          name='email'
-          rules={{
-            required: {
-              message: '이메일을 입력해주세요. 비밀번호 재설정 시 사용됩니다.',
-              value: true,
-            },
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message:
-                '유효한 이메일 주소를 입력해주세요. 예: example@domain.com',
-            },
-          }}
-          control={control}
-          render={({ field }) => (
-            <CssTextField
-              label='* 이메일'
-              {...field}
-              error={Boolean(errors.email)}
-              helperText={errors.email?.message}
-              fullWidth
+        <Stack
+          flexDirection={'row'}
+          gap={2}
+          sx={{ justifyContent: 'space-between' }}
+        >
+          <Controller
+            name='email'
+            rules={{
+              required: {
+                message:
+                  '이메일을 입력해주세요. 비밀번호 재설정 시 사용됩니다.',
+                value: true,
+              },
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message:
+                  '유효한 이메일 주소를 입력해주세요. 예: email@example.com',
+              },
+            }}
+            control={control}
+            render={({ field }) => (
+              <div className='w-full relative'>
+                <CssTextField
+                  label='* 이메일'
+                  {...field}
+                  error={Boolean(errors.email)}
+                  helperText={errors.email?.message}
+                  fullWidth
+                />
+                {getAuthCode && (
+                  <Timer className='absolute right-2 top-1/2 -translate-y-1/2' />
+                )}
+              </div>
+            )}
+          />
+
+          <Button type='button' onClick={handleSendMail}>
+            메일
+          </Button>
+        </Stack>
+        {getAuthCode && (
+          <Stack
+            flexDirection={'row'}
+            gap={2}
+            sx={{ justifyContent: 'space-between' }}
+          >
+            <Controller
+              name='authCode'
+              rules={{
+                required: {
+                  message: '인증코드를 입력해주세요.',
+                  value: true,
+                },
+              }}
+              control={control}
+              render={({ field }) => (
+                <CssTextField
+                  label='* 인증코드'
+                  {...field}
+                  error={Boolean(errors.authCode)}
+                  helperText={errors.authCode?.message}
+                  fullWidth
+                />
+              )}
             />
-          )}
-        />
+
+            <Button type='button' onClick={handleClickEmailVerified}>
+              확인
+            </Button>
+          </Stack>
+        )}
 
         <JoinTerms />
 
@@ -258,7 +342,12 @@ const AccountPage = () => {
           />
         </Stack>
         <Stack direction={'row'} spacing={1} paddingBottom={'100px'}>
-          <Button type='submit' variant='contained' sx={{ width: '100%' }}>
+          <Button
+            type='submit'
+            disabled={!emailVerify}
+            variant='contained'
+            sx={{ width: '100%' }}
+          >
             회원가입
           </Button>
           <Button
