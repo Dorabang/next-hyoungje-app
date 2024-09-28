@@ -77,7 +77,7 @@ const Comments = ({ postId }: { postId: number }) => {
   if (!isSuccess) return <Loading />;
 
   return (
-    <Fragment>
+    <div className='w-full px-5 md:px-0 md:max-w-[1016px] mx-auto'>
       {user && (
         <InputComment
           placeholder='댓글을 입력해주세요'
@@ -160,7 +160,7 @@ const Comments = ({ postId }: { postId: number }) => {
           totalPages={data.totalPages}
         />
       )}
-    </Fragment>
+    </div>
   );
 };
 
