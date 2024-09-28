@@ -15,8 +15,8 @@ import Comments from '../Comment/Comments';
 import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import HasLikes from '../Bookmark/BookmarkButton';
 import EditorReadOnly from '../Editor/ReadOnly';
-import { getUser } from '@/apis/users';
 import { Post } from '../common/Board/types';
+import { getUser } from '@/apis/users';
 import { deletePost } from '@/apis/posts';
 
 interface DetailPageProps {

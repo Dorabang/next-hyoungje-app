@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
+import Script from 'next/script';
+import { URL } from 'url';
+
+import './globals.css';
 import Nav from '@/components/Layout/Nav';
 import Footer from '@/components/Layout/Footer/Footer';
-import './globals.css';
 import RecoilRootWrapper from '@/components/common/Wrapper/RecoilRootWrapper';
-import Script from 'next/script';
 import QueryClientWrapper from '@/components/common/Wrapper/QueryClientWrapper';
-import { URL } from 'url';
 
 const noto_sans_kr = Noto_Sans_KR({
   weight: ['400', '500', '700'],
