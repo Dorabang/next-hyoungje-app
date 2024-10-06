@@ -1,60 +1,34 @@
-type ThumbnailsType = { url: string; width: number; height: number };
+export type ChannelType = 'special' | 'general';
 
-export interface PlaylistItems {
-  kind: string;
-  etag: string;
-  id: string;
-  snippet: {
-    publishedAt: string;
-    channelId: string;
-    title: string;
-    description: string;
-    thumbnails: {
-      default: ThumbnailsType;
-      medium: ThumbnailsType;
-      high: ThumbnailsType;
-      standard: ThumbnailsType;
-      maxres: ThumbnailsType;
-    };
-    channelTitle: string;
-    playlistId: string;
-    position: number;
-    resourceId: { kind: string; videoId: string };
-    videoOwnerChannelTitle: string;
-    videoOwnerChannelId: string;
-  };
-  contentDetails: { videoId: string; videoPublishedAt: string };
-}
-
-export interface YoutubeType {
-  kind: string;
-  etag: string;
-  nextPageToken: string;
-  items: PlaylistItems[];
-}
-
-export interface VideoData extends PlaylistItems {
-  id: string;
+export interface ChannelState {
+  name: string;
+  summary: string;
+  url: string;
+  profile: File | null;
 }
 
 export interface YoutubeChannelType {
   name: string;
   summary: string;
   url: string;
+  profile: string | null;
   channelId: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface YoutubeChannelData extends YoutubeChannelType {
-  profile: string;
-  id: string;
-  createdAt: number;
-  updatedAt: number;
+export interface YoutubeChannelDataType extends YoutubeChannelType {
+  id: number;
 }
 
-export interface SpecialChannelData extends YoutubeChannelType {
-  profile: string;
-  id: string;
-  createdAt: number;
-  updatedAt: number;
-  videos: VideoData;
+export interface Playlist {
+  id: number;
+  channelId: number;
+  title: string;
+  thumbnail: string;
+  description: string;
+  videoId: string;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }

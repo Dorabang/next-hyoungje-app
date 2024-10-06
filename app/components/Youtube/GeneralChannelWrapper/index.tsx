@@ -6,12 +6,11 @@ import { useGeneralChannel } from '@/hooks/queries/useYoutube';
 import GeneralChannel from './GeneralChannel';
 import Skeleton from './Skeleton';
 import Order from './Order';
-import { YoutubeChannelData } from '../type';
 
-export type OrderType = 'latest' | 'text';
+export type SortType = 'name' | 'createdAt';
 
 const GeneralChannelWrapper = () => {
-  const [order, setOrder] = useState<OrderType>('text');
+  const [order, setOrder] = useState<SortType>('name');
   const { data, isLoading } = useGeneralChannel(order);
 
   if (isLoading)
@@ -28,7 +27,7 @@ const GeneralChannelWrapper = () => {
       <Order order={order} setOrder={(value) => setOrder(value)} />
       <div className='flex flex-wrap gap-5'>
         {data && data.length > 0 ? (
-          data.map((channel: YoutubeChannelData) => (
+          data.map((channel) => (
             <GeneralChannel data={channel} key={channel.id} />
           ))
         ) : (

@@ -5,6 +5,7 @@ import ContainerBox from '@/components/common/ContainerBox';
 import Badge from '@/components/Youtube/Badge';
 import SpecialChannelWrapper from '@/components/Youtube/SpecialChannelWrapper';
 import GeneralChannelWrapper from '@/components/Youtube/GeneralChannelWrapper';
+import AdminYoutube from '@/components/Youtube/AdminYoutube';
 
 const YoutubePage = () => {
   return (
@@ -23,6 +24,7 @@ const YoutubePage = () => {
           </p>
         </div>
         <GeneralChannelWrapper />
+        <AdminYoutube />
       </ContainerBox>
     </div>
   );
