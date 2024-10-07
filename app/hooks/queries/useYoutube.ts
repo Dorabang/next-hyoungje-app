@@ -1,36 +1,30 @@
 'use client';
-import {
-  getGeneralChannel,
-  getSpecialChannel,
-  getVideos,
-} from '@/apis/youtube';
-import { OrderType } from '@/components/Youtube/GeneralChannelWrapper';
+import { getChannels, getPlaylist } from '@/apis/youtube';
+import { SortType } from '@/components/Youtube/GeneralChannelWrapper';
 import {
   useGeneralChannelQueryKey,
   useSpecialChannelQueryKey,
 } from '@/constant/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 
-export const useGeneralChannel = (order: OrderType) => {
+export const useGeneralChannel = (sort: SortType) => {
   return useQuery({
-    queryKey: [useGeneralChannelQueryKey, order],
-    queryFn: () => getGeneralChannel(order),
-    refetchInterval: 10 * 60 * 1000, // 10분
+    queryKey: [useGeneralChannelQueryKey, sort],
+    queryFn: () => getChannels('general', sort),
   });
 };
 
 export const useSpecialChannel = () => {
   return useQuery({
     queryKey: [useSpecialChannelQueryKey],
-    queryFn: () => getSpecialChannel(),
-    refetchInterval: 10 * 60 * 1000, // 10분
+    queryFn: () => getChannels('special'),
   });
 };
 
-export const useVideos = (id: string) => {
+export const useVideos = (id: number) => {
   return useQuery({
     queryKey: [useSpecialChannelQueryKey, id],
-    queryFn: () => getVideos(id),
+    queryFn: () => getPlaylist(id),
     refetchInterval: 10 * 60 * 1000, // 10분
   });
 };
