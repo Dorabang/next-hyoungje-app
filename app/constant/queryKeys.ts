@@ -12,3 +12,6 @@ export const usePostQueryKey = 'usePostQueryKey';
 // youtube
 export const useGeneralChannelQueryKey = 'useGeneralChannelQueryKey';
 export const useSpecialChannelQueryKey = 'useSpecialChannelQueryKey';
+
+// user
+export const useAdminKey = 'useAdmin';
