@@ -4,7 +4,7 @@ export const livingVegetable = [
 ];
 
 export const community = [
-  { link: '/community/hyoungje', name: '난원소개' },
+  { link: '/community/okdong', name: '난원소개' },
   { link: '/community/notice', name: '공지사항' },
   { link: '/community/qna', name: '문의사항' },
   { link: '/community/wild-catch', name: '산채기' },
@@ -34,7 +34,7 @@ export const routes = {
     path: '/community',
     name: '커뮤니티',
     depth1: [
-      { path: '/community/hyoungje', name: '난원소개' },
+      { path: '/community/okdong', name: '난원소개' },
       { path: '/community/notice', name: '공지사항' },
       { path: '/community/qna', name: '문의사항' },
       { path: '/community/wild-catch', name: '산채기' },
@@ -53,7 +53,7 @@ export const allRoutes = [
   { link: '/general-market', name: '일반장터' },
   { link: '/natural-herb', name: '자연산약초' },
   { link: '/single-leaf', name: '단엽산채기' },
-  { link: '/community/hyoungje', name: '난원소개' },
+  { link: '/community/okdong', name: '난원소개' },
   { link: '/community/notice', name: '공지사항' },
   { link: '/community/qna', name: '문의사항' },
   { link: '/community/wild-catch', name: '산채기' },

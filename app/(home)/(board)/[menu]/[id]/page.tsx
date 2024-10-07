@@ -54,9 +54,7 @@ export const generateMetadata = async ({
   };
 };
 
-const WildMarketDetailPage = async ({
-  params: { id },
-}: WildMarketDetailPageProps) => {
+const DetailPage = async ({ params: { id } }: WildMarketDetailPageProps) => {
   const data = await getPost(id);
 
   return (
@@ -72,4 +70,4 @@ const WildMarketDetailPage = async ({
   );
 };
 
-export default WildMarketDetailPage;
+export default DetailPage;

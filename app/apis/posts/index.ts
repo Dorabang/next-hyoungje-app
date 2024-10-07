@@ -32,7 +32,7 @@ export type MarketType =
   | 'notice'
   | 'okdong'
   | 'qna'
-  | 'whild-catch';
+  | 'wild-catch';
 
 export const createPost = async (
   createPostsData: CreatePostsData | CreateMarketPostsData,
@@ -56,6 +56,15 @@ export interface PostsOptions {
   size?: number;
   order?: 'asc' | 'desc';
 }
+
+export const getAllPosts = async () => {
+  const url = `/posts/sitemap`;
+  return (await get(url)).data as {
+    id: number;
+    marketType: string;
+    updatedAt: string;
+  }[];
+};
 
 export interface PostsData {
   result: 'SUCCESS' | 'ERROR';

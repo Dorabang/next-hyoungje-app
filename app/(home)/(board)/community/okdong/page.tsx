@@ -1,13 +1,29 @@
+'use client';
 import ContainerBox from '@/components/common/ContainerBox';
 import { noto_serif_kr } from '@/components/common/NotoSerif';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 import MainVisual from '@/components/Main/MainVisual';
 import Maps from '@/components/common/Map';
+import Link from 'next/link';
+import { useAdmin } from '@/hooks/queries/useAdmin';
+import { HiOutlinePencilSquare } from 'react-icons/hi2';
 
 const HyoungjePage = () => {
+  const { data: user } = useAdmin();
   return (
     <ContainerBox>
-      <Breadcrumbs />
+      <div className='flex justify-between'>
+        <Breadcrumbs />
+        {user?.isAdmin && (
+          <Link
+            href='/community/okdong/edit'
+            className='text-grayColor-500 hover:text-grayColor-800 flex items-center transition-colors'
+          >
+            <HiOutlinePencilSquare size={18} className='mr-1' />
+            수정하기
+          </Link>
+        )}
+      </div>
       <div className='border-t border-grayColor-200 mt-2 mb-10'></div>
       <div
         className={`flex flex-col gap-4
