@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import Script from 'next/script';
-import { URL } from 'url';
 
 import './globals.css';
 import Nav from '@/components/Layout/Nav';
@@ -19,21 +18,12 @@ export const metadata: Metadata = {
   description: '한국춘란 산채품 전문 직거래장터',
   metadataBase: new URL('https://www.hyoungje.kr'),
   openGraph: {
-    title: '옥동',
+    title: '춘란의 아름다움, 신뢰로 이어지는 산채품 거래 || 옥동',
     description: '한국춘란 산채품 전문 직거래장터',
     images: '/open_graph.jpg',
     siteName: '옥동',
   },
-  robots: {
-    index: false,
-    follow: true,
-    nocache: true,
-    googleBot: {
-      index: true,
-      follow: false,
-      noimageindex: true,
-    },
-  },
+
   keywords: [
     '옥동',
     '형제난원',
@@ -41,8 +31,7 @@ export const metadata: Metadata = {
     '한국춘란',
     '난',
     '난초',
-    '산채품 직거래',
-    '난초 직거래',
+    '직거래',
     '산채',
     '집채',
     '춘란',
