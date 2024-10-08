@@ -50,5 +50,8 @@ export const confirmVerificationCode = async (
   email: string,
   verificationCode: string,
 ) => {
-  return post('/auth/confirmcode', { email, verificationCode });
+  return (await post('/auth/confirmcode', { email, verificationCode })) as {
+    result: 'SUCCESS' | 'ERROR';
+    message?: string;
+  };
 };

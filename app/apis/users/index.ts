@@ -6,6 +6,7 @@ export interface CreateUserData {
   password: string;
   displayName: string;
   email: string;
+  name: string;
   profile?: File;
 }
 
@@ -47,4 +48,13 @@ export const deleteUser = async () => {
     return true;
   }
   return false;
+};
+
+export const initPassword = async (data: {
+  code: string;
+  email: string;
+  password: string;
+}) => {
+  const url = `/users/init-password`;
+  return await put(url, data);
 };
