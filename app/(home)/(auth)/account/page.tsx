@@ -12,10 +12,10 @@ import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import { createUser, CreateUserData } from '@/apis/users';
 import { confirmVerificationCode, sendEmailVerifyCode } from '@/apis/auth';
-import Timer from '@/components/common/Timer';
 
 interface Inputs {
   userId: string;
+  name: string;
   password1: string;
   password2: string;
   photoUrl: string;
@@ -40,6 +40,7 @@ const AccountPage = () => {
     handleSubmit,
     getValues,
     setError,
+    setValue,
     formState: { errors },
   } = useForm<Inputs>();
 
@@ -64,10 +65,15 @@ const AccountPage = () => {
         console.log('🚀 ~ handleClickEmailVerified ~ res:', res);
         if (res.result === 'SUCCESS') {
           setEmailVerify(true);
+          alert('이메일 인증이 완료되었습니다.');
+        } else {
+          setError('authCode', res);
         }
       } catch (error) {
-        setError('authCode', { message: 'error' });
-        console.log('🚀 ~ handleClickEmailVerified ~ error22:', error);
+        alert('이메일 인증 중 문제가 발생했습니다. 다시 시도해주세요.');
+        setValue('authCode', '');
+        setGetAuthCode(false);
+        // console.log('🚀 ~ handleClickEmailVerified ~ error22:', error);
       }
     } else {
       setError('authCode', { message: '인증코드를 입력해주세요.' });
@@ -75,7 +81,7 @@ const AccountPage = () => {
   };
 
   const onSubmit = async (data: Inputs) => {
-    const { userId, password2, displayName, email } = data;
+    const { userId, password2, displayName, email, name } = data;
 
     try {
       const userObj: CreateUserData = {
@@ -83,6 +89,7 @@ const AccountPage = () => {
         password: password2,
         displayName,
         email,
+        name,
         ...(image?.data && { profile: image?.data }),
       };
       const response = await createUser(userObj);
@@ -91,6 +98,7 @@ const AccountPage = () => {
       }
     } catch (error) {
       if (error) {
+        // console.log('🚀 ~ onSubmit ~ error:', error);
         const { message } = error as { message: string };
         alert(message);
       } else {
@@ -155,6 +163,24 @@ const AccountPage = () => {
           </label>
         </div>
 
+        <Controller
+          name='name'
+          rules={{
+            required: {
+              message: '성함을 입력해주세요.',
+              value: true,
+            },
+          }}
+          control={control}
+          render={({ field }) => (
+            <CssTextField
+              error={Boolean(errors.name)}
+              helperText={errors.name?.message}
+              label='* 성함'
+              {...field}
+            />
+          )}
+        />
         <Controller
           name='userId'
           rules={{
@@ -252,8 +278,7 @@ const AccountPage = () => {
             name='email'
             rules={{
               required: {
-                message:
-                  '이메일을 입력해주세요. 비밀번호 재설정 시 사용됩니다.',
+                message: '이메일을 입력해주세요.',
                 value: true,
               },
               pattern: {
@@ -262,24 +287,20 @@ const AccountPage = () => {
                   '유효한 이메일 주소를 입력해주세요. 예: email@example.com',
               },
             }}
+            disabled={emailVerify}
             control={control}
             render={({ field }) => (
-              <div className='w-full relative'>
-                <CssTextField
-                  label='* 이메일'
-                  {...field}
-                  error={Boolean(errors.email)}
-                  helperText={errors.email?.message}
-                  fullWidth
-                />
-                {getAuthCode && (
-                  <Timer className='absolute right-2 top-1/2 -translate-y-1/2' />
-                )}
-              </div>
+              <CssTextField
+                label='* 이메일'
+                {...field}
+                error={Boolean(errors.email)}
+                helperText={errors.email?.message}
+                fullWidth
+              />
             )}
           />
 
-          <Button type='button' onClick={handleSendMail}>
+          <Button type='button' disabled={emailVerify} onClick={handleSendMail}>
             메일
           </Button>
         </Stack>
@@ -297,19 +318,31 @@ const AccountPage = () => {
                   value: true,
                 },
               }}
+              disabled={emailVerify}
               control={control}
               render={({ field }) => (
-                <CssTextField
-                  label='* 인증코드'
-                  {...field}
-                  error={Boolean(errors.authCode)}
-                  helperText={errors.authCode?.message}
-                  fullWidth
-                />
+                <div className='w-full relative'>
+                  <CssTextField
+                    label='* 인증코드'
+                    {...field}
+                    error={Boolean(errors.authCode)}
+                    helperText={errors.authCode?.message}
+                    fullWidth
+                  />
+                  {getAuthCode && !emailVerify && (
+                    <p className='text-sm text-grayColor-300 pl-1'>
+                      이메일 인증 유효시간은 5분입니다.
+                    </p>
+                  )}
+                </div>
               )}
             />
 
-            <Button type='button' onClick={handleClickEmailVerified}>
+            <Button
+              type='button'
+              disabled={emailVerify}
+              onClick={handleClickEmailVerified}
+            >
               확인
             </Button>
           </Stack>
