@@ -9,6 +9,7 @@ import { CssTextField } from './styleComponents';
 
 import { login } from '@/apis/auth';
 import { authState } from '@/recoil/atoms';
+import Link from 'next/link';
 
 interface Inputs {
   userId: string;
@@ -106,7 +107,7 @@ const LoginPage = () => {
           <p className='text-center text-sm text-rose-500'>{error}</p>
         )}
 
-        <Stack direction={'row'} spacing={1}>
+        <Stack direction={'row'} spacing={1} paddingBottom={2}>
           <Button type='submit' variant='contained' sx={{ width: '100%' }}>
             로그인
           </Button>
@@ -120,6 +121,23 @@ const LoginPage = () => {
           >
             회원가입
           </Button>
+        </Stack>
+
+        <hr />
+
+        <Stack
+          direction={'row'}
+          justifyContent={'center'}
+          spacing={1}
+          paddingY={2}
+        >
+          <Link href='/id' className='text-grayColor-400 hover:underline'>
+            아이디 찾기
+          </Link>
+          <span className='cursor-default text-grayColor-200'>|</span>
+          <Link href='/password' className='text-grayColor-400 hover:underline'>
+            비밀번호 찾기
+          </Link>
         </Stack>
       </Stack>
     </Stack>
