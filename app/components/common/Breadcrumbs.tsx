@@ -70,16 +70,15 @@ const pages: pagesTypes = [
  *
  * @return pathname과 동일한 path를 routes에서 찾아 breadcrumbs를 반환
  */
-const Breadcrumbs = () => {
-  const pathname = usePathname().trim().split('/');
-
+const Breadcrumbs = ({
+  pathname,
+  isCommunity,
+}: {
+  pathname: string;
+  isCommunity: boolean;
+}) => {
   const memoizedCurrentPage = useMemo(() => {
-    const findPage = pages.filter((page) =>
-      pathname[2]
-        ? page.path.includes(pathname[2])
-        : page.path.includes(pathname[1]),
-    )[0];
-    return findPage;
+    return pages.filter((page) => page.path.includes(pathname))[0];
   }, [pathname]);
 
   return (
@@ -88,7 +87,7 @@ const Breadcrumbs = () => {
         <Link href='/'>Home</Link>
       </li>
       <li className='cursor-default'>{'>'}</li>
-      {pathname[2] && (
+      {isCommunity && (
         <>
           <li className='hover:underline'>
             <Link href='/community'>커뮤니티</Link>

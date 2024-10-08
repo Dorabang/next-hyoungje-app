@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { IoArrowBack } from 'react-icons/io5';
 import { User, authState } from '@/recoil/atoms';
@@ -25,15 +25,13 @@ interface CommDetailPageProps {
     next: PrevNextPostData | null;
     post: Post;
   };
+  pathname: string;
 }
 
-const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
+const CommDetailPage = ({ postId, data, pathname }: CommDetailPageProps) => {
   const router = useRouter();
   const auth = useRecoilValue(authState);
   const [user, setUser] = useState<User | null>(null);
-
-  const path = usePathname().split('/');
-  const pathname = path[3] ? path[2] : path[1];
 
   useEffect(() => {
     if (auth) {

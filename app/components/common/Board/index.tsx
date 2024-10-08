@@ -1,11 +1,12 @@
 'use client';
 import { createContext, useContext } from 'react';
-import { usePathname } from 'next/navigation';
 
 import { BoardProps, Post, PostContextType } from './types';
 import PostsLoading from '../../Posts/PostsLoading';
 import PostsNotFound from '../../Posts/PostsNotFound';
 import PostList from './PostList';
+import { deletePost } from '@/apis/posts';
+import { QueryObserverResult } from '@tanstack/react-query';
 
 const defaultPostContext: PostContextType = {
   user: null,
@@ -16,10 +17,7 @@ export const PostContext = createContext(defaultPostContext);
 
 export const usePostContext = () => useContext(PostContext);
 
-const Board = ({ user, children }: BoardProps) => {
-  const path = usePathname().split('/');
-  const pathname = path[2] ? path[2] : path[1];
-
+const Board = ({ pathname, user, children }: BoardProps) => {
   return (
     <PostContext.Provider value={{ user, pathname }}>
       <ul className='w-full border-b border-grayColor-500'>{children}</ul>
@@ -59,17 +57,20 @@ export const Bodys = ({
   type = 'etc',
 }: {
   posts: Post[] | null;
-  refetch: () => void;
+  refetch: () => Promise<QueryObserverResult<any, any>>;
   isLoading: boolean;
   type?: 'etc' | 'community';
 }) => {
   const { user, pathname } = useContext(PostContext);
 
-  const handleDeletePost = (id: number) => {
+  const handleDeletePost = async (id: number) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
 
     if (ok) {
-      refetch();
+      const res = await deletePost(id);
+      if (res.result === 'SUCCESS') {
+        refetch();
+      }
     }
   };
 

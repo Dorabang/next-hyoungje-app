@@ -8,7 +8,7 @@ import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import defaultProfile from '@/assets/defaultProfile.jpg';
 import { User } from '@/recoil/atoms';
 import { CreateUserData, getUser, updateUser } from '@/apis/users';
-import { confirmVerificationCode, sendCode } from '@/apis/auth';
+import { confirmVerificationCode, sendEmailVerifyCode } from '@/apis/auth';
 
 interface Inputs {
   displayName: string;
@@ -82,7 +82,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
     setTimeout(() => {
       setCheckVerify(false);
     }, 5000);
-    const res = await sendCode();
+    const res = await sendEmailVerifyCode(email);
     if (res.result === 'SUCCESS') {
       return setCheckVerify(true);
     }
@@ -90,6 +90,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
 
   const handleConfirmVerificationCode = async () => {
     const authCode = getValues('verifyCode');
+    const email = getValues('email');
 
     if (!authCode || authCode === '' || authCode.length > 6) {
       return setError('verifyCode', {
@@ -98,7 +99,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
     }
 
     try {
-      await confirmVerificationCode(authCode);
+      await confirmVerificationCode(email, authCode);
       alert('이메일 인증이 완료되었습니다.');
     } catch (error) {
       setEmailVerify(error as string);

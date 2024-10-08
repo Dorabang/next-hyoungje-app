@@ -39,6 +39,7 @@ const PostList = ({
     price,
     image,
     documentNumber,
+    displayName,
   } = post;
 
   return (
@@ -65,7 +66,11 @@ const PostList = ({
       {/* 제목 */}
       <div className='flex-grow h-full flex justify-between items-center'>
         <Link
-          href={`${pathname}/${postId}`}
+          href={
+            type === 'community'
+              ? `/community/${pathname}/${postId}`
+              : `/${pathname}/${postId}`
+          }
           className='flex w-full h-full items-center whitespace-nowrap hover:underline active:underline'
         >
           {image && image?.length !== 0 && (
@@ -111,9 +116,11 @@ const PostList = ({
 
       {/* 작성자 */}
       <div className='w-[10%] hidden md:block'>
-        {userInfo.displayName?.length > 8
-          ? userInfo.displayName.substring(0, 8) + '...'
-          : userInfo.displayName}
+        {displayName
+          ? displayName
+          : userInfo.displayName?.length > 8
+            ? userInfo.displayName.substring(0, 8) + '...'
+            : userInfo.displayName}
       </div>
       <div className='w-[6%] hidden lg:block'>{DateFormat(createdAt)}</div>
       <div className='w-[6%] hidden lg:block'>{views.toLocaleString()}</div>

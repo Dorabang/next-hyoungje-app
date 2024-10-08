@@ -55,7 +55,7 @@ const PrevNextPost = ({ pathname, prev, next }: PrevNextPostProps) => {
               >
                 <p>
                   {next.title.length > 7
-                    ? next.title.substr(0, 7) + '...'
+                    ? next.title.substring(0, 7) + '...'
                     : next.title}{' '}
                   ・ 다음 글
                 </p>

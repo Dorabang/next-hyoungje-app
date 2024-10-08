@@ -1,12 +1,12 @@
 import { Fragment } from 'react';
 
+import CommDetailPage from '@/components/Community/CommDetail';
 import ContainerBox from '@/components/common/ContainerBox';
-import PostDetail from '@/components/Posts/PostDetail';
 import { getPost } from '@/apis/posts';
 import { allRoutes } from '@/constant/Routes';
 
-interface DetailPageProps {
-  params: { menu: string; id: string };
+interface CommunityDetailPageProps {
+  params: { menu: string; id: number };
 }
 
 export const generateMetadata = async ({
@@ -38,21 +38,20 @@ export const generateMetadata = async ({
       '한국춘란',
       '난',
       '난초',
-      '산채품 직거래',
-      '난초 직거래',
+      post.title,
+      '직거래',
       '산채',
       '집채',
       '춘란',
       '약초',
-      post.variant,
-      post.place,
-      post.title,
     ],
   };
 };
 
-const DetailPage = async ({ params }: DetailPageProps) => {
-  const postId = Number(params.id);
+const CommunityDetailPage = async ({
+  params: { menu, id },
+}: CommunityDetailPageProps) => {
+  const postId = Number(id);
   const data = await getPost(postId);
 
   return (
@@ -62,10 +61,10 @@ const DetailPage = async ({ params }: DetailPageProps) => {
           삭제된 게시물이거나 찾을 수 없는 게시물입니다.
         </ContainerBox>
       ) : (
-        <PostDetail postId={postId} data={data} />
+        <CommDetailPage pathname={menu} postId={postId} data={data} />
       )}
     </Fragment>
   );
 };
 
-export default DetailPage;
+export default CommunityDetailPage;

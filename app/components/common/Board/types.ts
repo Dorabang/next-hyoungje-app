@@ -6,6 +6,7 @@ export interface BoardProps {
   user: User | null;
   children?: ReactNode;
   isLoading: boolean;
+  pathname: string;
 }
 
 export interface PostContextType {
@@ -17,6 +18,7 @@ export interface Post {
   postId: number;
   userId: number;
   user: { displayName: string };
+  displayName?: string;
   contents: string;
   variant: string;
   title: string;
@@ -28,7 +30,7 @@ export interface Post {
   height?: string;
   width?: string;
   amount?: string;
-  image: string[] | null;
+  image: string[];
   views: number;
   documentNumber: number;
   createdAt: number;
