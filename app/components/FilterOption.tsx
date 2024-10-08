@@ -34,12 +34,15 @@ const FilterOption = ({
 
   const adminFilterRoutes = ['notice'];
 
+  const isMarketRoute =
+    applyFilterRoutes.filter((route) => route === pathname).length > 0;
+
   return (
     <ul
       className='flex justify-end items-center gap-4 pt-10 pb-5
       text-gray-500 text-sm'
     >
-      {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
+      {isMarketRoute &&
         filters.map((filter) => (
           <li
             key={filter.key}
