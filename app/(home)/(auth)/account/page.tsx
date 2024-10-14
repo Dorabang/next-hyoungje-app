@@ -185,12 +185,16 @@ const AccountPage = () => {
           name='userId'
           rules={{
             required: {
-              message: '아이디를 입력해주세요. ex) example',
+              message: '아이디를 6자 이상 입력해주세요. ex) example',
               value: true,
             },
             pattern: {
               message: '잘못된 아아디 형식입니다.',
               value: /^[A-Z0-9._%+-]/i,
+            },
+            minLength: {
+              message: '아이디는 6자리 이상이어야 합니다.',
+              value: 6,
             },
           }}
           control={control}

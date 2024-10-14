@@ -16,11 +16,6 @@ export const fetchData = async <T>(
     Accept: 'application/json',
   };
 
-  const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_API_PROD_URL
-      : process.env.NEXT_PUBLIC_API_DEV_URL;
-
   const config: FetchOptions = {
     method: options.method,
     body: options.body,
@@ -35,7 +30,7 @@ export const fetchData = async <T>(
   };
 
   try {
-    const response = await fetch(`${baseUrl}${url}`, config);
+    const response = await fetch(`/api${url}`, config);
     const result = await response.json();
 
     // accessToken이 만료되어 401 에러가 발생할 경우
@@ -51,7 +46,7 @@ export const fetchData = async <T>(
         throw new Error(reissueToken.message);
       }
       // 재발급 후 데이터 패칭
-      const res = await fetch(`${baseUrl}${url}`, config);
+      const res = await fetch(`/api${url}`, config);
       const result = await res.json();
 
       if (result.result === 'ERROR') {

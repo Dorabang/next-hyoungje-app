@@ -15,11 +15,14 @@ const statusOptions = (status?: Status) => {
   return (
     <span
       className={`
-        px-3 py-[2px]
+        px-2 py-[2px]
         rounded-full
-        text-sm
+        text-xs
+        md:text-sm
+        md:px-3
         border
         cursor-default
+        
         ${status === 'sale' ? 'border-sky-500 text-sky-500' : ''}
         ${status === 'sold-out' ? 'border-gray-500 text-gray-500' : ''}
         ${status === 'reservation' ? 'border-rose-500 text-rose-500' : ''}

@@ -11,41 +11,51 @@ import { QueryObserverResult } from '@tanstack/react-query';
 const defaultPostContext: PostContextType = {
   user: null,
   pathname: '/',
+  isCommunity: false,
 };
 
 export const PostContext = createContext(defaultPostContext);
-
 export const usePostContext = () => useContext(PostContext);
 
-const Board = ({ pathname, user, children }: BoardProps) => {
+const Board = ({ pathname, user, isCommunity, children }: BoardProps) => {
   return (
-    <PostContext.Provider value={{ user, pathname }}>
-      <ul className='w-full border-b border-grayColor-500'>{children}</ul>
+    <PostContext.Provider value={{ user, pathname, isCommunity }}>
+      <ul
+        className={`border-b border-grayColor-500 ${isCommunity ? '' : 'min-w-[500px]'}`}
+      >
+        {children}
+      </ul>
     </PostContext.Provider>
   );
 };
 
-const Headers = ({ type = 'etc' }: { type?: 'community' | 'etc' }) => {
+const Headers = () => {
+  const { isCommunity } = usePostContext();
+
   return (
-    <li className='border-b border-t border-grayColor-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400 [&_div]:truncate'>
-      <div className='w-[4%] hidden lg:block'>번호</div>
-      {type === 'etc' ? (
+    <li className='text-xs md:text-sm border-b border-t border-grayColor-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400'>
+      <div className='w-[10%] md:w-[6%] block'>번호</div>
+      {!isCommunity ? (
         <>
-          <div className='w-[6%] hidden lg:block'>종류</div>
-          <div className='min-w-[90px] w-[10%]'>분류</div>
+          <div className='w-[15%] md:w-[6%] block'>종류</div>
+          <div className='min-w-[68px] w-[10%]'>분류</div>
         </>
       ) : null}
-      <div className='flex-grow text-left'>제목</div>
-      {type === 'etc' ? (
+      <div
+        className={`${isCommunity ? 'flex-grow' : 'w-[40%] md:flex-grow'} text-left pl-2`}
+      >
+        제목
+      </div>
+      {!isCommunity ? (
         <>
-          <div className='w-[6%] hidden md:block'>산지</div>
-          <div className='w-[6%] hidden md:block'>가격</div>
+          <div className='w-[6%] hidden lg:block'>산지</div>
+          <div className='w-[10%] md:w-[6%] block'>가격</div>
           <div className='w-[6%] hidden lg:block'>산채일</div>
         </>
       ) : null}
-      <div className='w-[10%] hidden md:block'>작성자</div>
+      <div className='w-[20%] md:w-[6%] block'>작성자</div>
       <div className='w-[6%] hidden lg:block'>등록일</div>
-      <div className='w-[6%] hidden lg:block'>조회수</div>
+      <div className='w-[10%] md:w-[6%] lg:block'>조회수</div>
     </li>
   );
 };
@@ -54,14 +64,14 @@ export const Bodys = ({
   posts,
   refetch,
   isLoading,
-  type = 'etc',
+  page,
 }: {
   posts: Post[] | null;
   refetch: () => Promise<QueryObserverResult<any, any>>;
   isLoading: boolean;
-  type?: 'etc' | 'community';
+  page: number;
 }) => {
-  const { user, pathname } = useContext(PostContext);
+  const { user, pathname } = usePostContext();
 
   const handleDeletePost = async (id: number) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
@@ -83,11 +93,11 @@ export const Bodys = ({
           return (
             <PostList
               key={post.postId}
-              type={type}
               pathname={pathname}
               post={post}
               user={user}
               handleDeletePost={handleDeletePost}
+              page={page}
             />
           );
         })

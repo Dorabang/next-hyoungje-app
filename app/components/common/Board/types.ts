@@ -7,11 +7,13 @@ export interface BoardProps {
   children?: ReactNode;
   isLoading: boolean;
   pathname: string;
+  isCommunity?: boolean;
 }
 
 export interface PostContextType {
   user: User | null;
   pathname: string;
+  isCommunity?: boolean;
 }
 
 export interface Post {

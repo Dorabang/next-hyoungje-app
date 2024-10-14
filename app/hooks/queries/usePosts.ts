@@ -15,7 +15,8 @@ export const usePosts = (
     queryKey: [usePostsQueryKey, marketType, page, status, user],
     queryFn: () => getPosts({ marketType, page, status }),
     staleTime: 0,
-    refetchInterval: 10 * 60 * 1000, // 10분
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };
 
@@ -24,6 +25,7 @@ export const usePost = (postId: number) => {
     queryKey: [usePostsQueryKey, postId],
     queryFn: () => getPost(postId),
     staleTime: 0,
-    refetchInterval: 10 * 60 * 1000, // 10분
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };

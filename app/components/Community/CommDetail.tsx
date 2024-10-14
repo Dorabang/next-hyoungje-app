@@ -1,9 +1,9 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Fragment, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
-import { IoArrowBack } from 'react-icons/io5';
 import { User, authState } from '@/recoil/atoms';
+import { IoArrowBack } from 'react-icons/io5';
 
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/common/ContainerBox';
@@ -13,10 +13,10 @@ import PrevNextPost, {
 import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
 import HasLikes from '../Bookmark/BookmarkButton';
 import Comments from '../Comment/Comments';
-import { Post } from '../common/Board/types';
 import EditorReadOnly from '../Editor/ReadOnly';
 import { deletePost } from '@/apis/posts';
 import { getUser } from '@/apis/users';
+import { Post } from '../common/Board/types';
 
 interface CommDetailPageProps {
   postId: number;
@@ -25,13 +25,17 @@ interface CommDetailPageProps {
     next: PrevNextPostData | null;
     post: Post;
   };
-  pathname: string;
 }
 
-const CommDetailPage = ({ postId, data, pathname }: CommDetailPageProps) => {
+const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
   const router = useRouter();
   const auth = useRecoilValue(authState);
   const [user, setUser] = useState<User | null>(null);
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page');
+
+  const path = usePathname().split('/');
+  const pathname = path[3] ? path[2] : path[1];
 
   useEffect(() => {
     if (auth) {
@@ -55,6 +59,12 @@ const CommDetailPage = ({ postId, data, pathname }: CommDetailPageProps) => {
     }
   };
 
+  const handleBack = () => {
+    const isCommunity = path[3] ? `/community/${pathname}` : `/${pathname}`;
+    const pageParam = page ? `?page=${page}` : '';
+    router.push(isCommunity + pageParam);
+  };
+
   return (
     <ContainerBox>
       {/* title */}
@@ -63,10 +73,7 @@ const CommDetailPage = ({ postId, data, pathname }: CommDetailPageProps) => {
           flex gap-4 justify-between items-center
           py-3'
       >
-        <div
-          className='p-2 cursor-pointer'
-          onClick={() => router.push(`/community/${pathname}`)}
-        >
+        <div className='p-2 cursor-pointer' onClick={handleBack}>
           <IoArrowBack size={18} />
         </div>
 

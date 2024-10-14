@@ -28,12 +28,7 @@ export const reissueAccessToken = async () => {
     Accept: 'application/json',
   };
 
-  const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_API_PROD_URL
-      : process.env.NEXT_PUBLIC_API_DEV_URL;
-
-  const response = await fetch(`${baseUrl}/auth/refresh`, {
+  const response = await fetch(`/api/auth/refresh`, {
     method: 'POST',
     credentials: 'include',
     headers: defaultHeaders,

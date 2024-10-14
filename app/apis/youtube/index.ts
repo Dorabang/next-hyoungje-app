@@ -28,6 +28,18 @@ export const createChannel = async (channel: ChannelState) => {
   const url = `/youtube/channels`;
   return await upload(url, { method: 'POST', body: channel });
 };
+interface Channel {
+  name: string;
+  summary: string;
+  url: string;
+  channelId?: string;
+  profile?: string;
+}
+
+export const prevChannel = async (channel: Channel) => {
+  const url = `/youtube/channels`;
+  return await post(url, channel);
+};
 
 export const updateChannel = async (
   id: number,

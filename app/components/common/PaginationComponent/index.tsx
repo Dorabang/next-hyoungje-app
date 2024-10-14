@@ -4,11 +4,18 @@ import Pagination from '@mui/material/Pagination';
 interface PaginationProp {
   totalPages: number;
   page: number;
-  setPage: (page: number) => void;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  handlePageUpDown: (page: number) => void;
 }
 
-const PaginationComponets = ({ totalPages, page, setPage }: PaginationProp) => {
-  const handlePageUpDown = (_: React.ChangeEvent<unknown>, page: number) => {
+const PaginationComponets = ({
+  totalPages,
+  page,
+  setPage,
+  handlePageUpDown,
+}: PaginationProp) => {
+  const onChange = (_: React.ChangeEvent<unknown>, page: number) => {
+    handlePageUpDown(page);
     setPage(page);
   };
   return (
@@ -17,7 +24,7 @@ const PaginationComponets = ({ totalPages, page, setPage }: PaginationProp) => {
       justifyContent={'center'}
       sx={{ padding: '40px 0' }}
     >
-      <Pagination page={page} count={totalPages} onChange={handlePageUpDown} />
+      <Pagination page={page} count={totalPages} onChange={onChange} />
     </Stack>
   );
 };

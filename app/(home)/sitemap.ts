@@ -1,12 +1,9 @@
 import { MetadataRoute } from 'next';
 
-export const getPosts = async () => {
-  const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_API_PROD_URL
-      : process.env.NEXT_PUBLIC_API_DEV_URL;
+import { BASE_API_URL, BASE_FRONT_URL } from '@/constant/api';
 
-  return await fetch(`${baseUrl}/posts/sitemap`, {
+export const getPosts = async () => {
+  return await fetch(`${BASE_API_URL}/posts/sitemap`, {
     next: { revalidate: 24 * 60 * 60 }, // 24시간 캐시
   })
     .then((res) => {
@@ -23,24 +20,18 @@ export const getPosts = async () => {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts: { postId: number; marketType: string; updatedAt: string }[] =
     await getPosts();
-  console.log('🚀 ~ sitemap ~ posts:', posts);
 
-  const community = ['board', 'boast'];
-
-  const BASE_URL =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : process.env.NEXT_PUBLIC_FRONT_URL;
+  const community = ['board', 'boast', 'okdong', 'notice', 'wild-catch', 'qna'];
 
   const defaultSiteMap: MetadataRoute.Sitemap = [
     {
-      url: `${BASE_URL}`,
+      url: `${BASE_FRONT_URL}`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
-      url: `${BASE_URL}/youtube`,
+      url: `${BASE_FRONT_URL}/youtube`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'daily',
       priority: 0.7,
@@ -48,6 +39,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const postsSitemap = posts.map((post) => {
+    if (post.marketType === 'okdong')
+      return {
+        url: `${BASE_FRONT_URL}/community/${post.marketType}`,
+        lastModified: new Date(post.updatedAt),
+        changeFrequench: 'daily',
+        priority: 0.9,
+      };
+
     const category = community.filter(
       (community) => community === post.marketType,
     ).length
@@ -55,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : post.marketType;
 
     return {
-      url: `${BASE_URL}/${category}/${post.postId}`,
+      url: `${BASE_FRONT_URL}/${category}/${post.postId}`,
       lastModified: new Date(post.updatedAt),
       changeFrequench: 'daily',
       priority: 0.9,

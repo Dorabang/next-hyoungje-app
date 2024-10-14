@@ -1,3 +1,4 @@
+import { BASE_FRONT_URL } from '@/constant/api';
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
@@ -14,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
         '/edit',
       ],
     },
-    sitemap: `${process.env.NEXT_PUBLIC_FRONT_URL}/sitemap.xml`,
-    host: `${process.env.NEXT_PUBLIC_FRONT_URL}`,
+    sitemap: `${BASE_FRONT_URL}/sitemap.xml`,
+    host: `${BASE_FRONT_URL}`,
   };
 }

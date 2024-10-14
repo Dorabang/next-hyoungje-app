@@ -11,6 +11,7 @@ import { CreateUserData, getUser, updateUser } from '@/apis/users';
 import { confirmVerificationCode, sendEmailVerifyCode } from '@/apis/auth';
 
 interface Inputs {
+  name: string;
   displayName: string;
   email: string;
   verifyCode: string;
@@ -23,6 +24,9 @@ interface ImageState {
 
 const ChangeProfile = ({ user }: { user: User }) => {
   const [image, setImage] = useState<ImageState>({ data: null, preview: null });
+
+  const [editMyData, setEditMyData] = useState<boolean>(false);
+  console.log('🚀 ~ ChangeProfile ~ editMyData:', editMyData);
 
   const [checkVerify, setCheckVerify] = useState(false);
   const [emailVerify, setEmailVerify] = useState<string | null>(null);
@@ -48,11 +52,14 @@ const ChangeProfile = ({ user }: { user: User }) => {
         const user = await getUser();
         setValue('displayName', user.displayName);
         setValue('email', user.email);
+        setValue('name', user.name);
       })();
     }
   }, [user, setValue]);
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editMyData) return;
+
     const {
       target: { files },
     } = e;
@@ -121,6 +128,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
       const response = await updateUser(userObj);
       if (response?.result === 'SUCCESS') {
         alert('수정이 완료되었습니다.');
+        setEditMyData(false);
       }
     } catch (err) {
       // console.log('🚀 ~ onSubmit ~ err:', err);
@@ -159,26 +167,41 @@ const ChangeProfile = ({ user }: { user: User }) => {
       >
         <div className='flex flex-col gap-4 items-center pb-10'>
           <p className='text-grayColor-700'>프로필 이미지</p>
-          <label className='cursor-pointer'>
+          <label className={`${editMyData ? 'cursor-pointer' : ''}`}>
             <div
-              className='h-32 w-32 flex justify-center items-center border border-grayColor-100
-              rounded-full overflow-hidden
-          hover:opacity-70 transition-opacity
-          '
+              className={`h-32 w-32 flex justify-center items-center border border-grayColor-100
+              rounded-full overflow-hidden ${editMyData ? 'hover:opacity-70 transition-opacity' : ''}
+          `}
             >
               <AutoHeightImageWrapper
                 src={imageMemo}
                 alt='프로필 이미지 미리보기'
               />
             </div>
-            <input
-              type='file'
-              accept='image/*'
-              onChange={onFileChange}
-              className='hidden'
-            />
+            {editMyData && (
+              <input
+                type='file'
+                accept='image/*'
+                onChange={onFileChange}
+                className='hidden'
+              />
+            )}
           </label>
         </div>
+
+        <Controller
+          name='name'
+          control={control}
+          defaultValue={user && user.name ? user.name : ''}
+          render={({ field }) => (
+            <CssTextField
+              label='성함'
+              {...field}
+              error={Boolean(errors.name)}
+              helperText={errors.name?.message}
+            />
+          )}
+        />
 
         <Controller
           name='displayName'
@@ -194,35 +217,34 @@ const ChangeProfile = ({ user }: { user: User }) => {
           )}
         />
 
-        <Controller
-          name='email'
-          control={control}
-          render={({ field }) => (
-            <CssTextField
-              label='이메일'
-              {...field}
-              disabled={user.isVerified}
-              error={Boolean(errors.email) || !user.isVerified}
-              helperText={
-                Boolean(errors.email)
-                  ? errors.email?.message
-                  : !user.isVerified
-                    ? '이메일 인증이 완료되지 않았습니다.'
-                    : '이메일 인증이 완료되었습니다.'
-              }
-              fullWidth
-            />
+        <div className='relative'>
+          <Controller
+            name='email'
+            control={control}
+            render={({ field }) => (
+              <CssTextField
+                label='이메일'
+                {...field}
+                disabled={!editMyData}
+                error={Boolean(errors.email)}
+                helperText={errors.email?.message}
+                fullWidth
+              />
+            )}
+          />
+          {editMyData && (
+            <div className='flex justify-between items-center gap-3 pt-3'>
+              <Button
+                onClick={handleIssuanceAuthCode}
+                variant='contained'
+                sx={{ width: '100%' }}
+                disabled={checkVerify}
+              >
+                이메일 인증하기
+              </Button>
+            </div>
           )}
-        />
-        {!user.isVerified && (
-          <Button
-            onClick={handleIssuanceAuthCode}
-            variant='contained'
-            disabled={user.isVerified || checkVerify}
-          >
-            이메일 인증하기
-          </Button>
-        )}
+        </div>
 
         {checkVerify && (
           <Stack direction={'row'} justifyContent={'space-between'}>
@@ -249,10 +271,31 @@ const ChangeProfile = ({ user }: { user: User }) => {
           </Stack>
         )}
 
-        <Stack direction={'row'}>
-          <Button type='submit' variant='contained' sx={{ width: '100%' }}>
-            수정하기
-          </Button>
+        <Stack direction={'row'} gap={2}>
+          {!editMyData ? (
+            <Button
+              type='button'
+              variant='contained'
+              sx={{ width: '100%' }}
+              onClick={() => setEditMyData(true)}
+            >
+              수정하기
+            </Button>
+          ) : (
+            <>
+              <Button
+                type='reset'
+                onClick={() => setEditMyData(false)}
+                variant='contained'
+                sx={{ width: '100%' }}
+              >
+                취소
+              </Button>
+              <Button type='submit' variant='contained' sx={{ width: '100%' }}>
+                수정하기
+              </Button>
+            </>
+          )}
         </Stack>
       </Stack>
     </Card>
