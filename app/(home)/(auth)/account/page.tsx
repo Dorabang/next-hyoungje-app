@@ -62,7 +62,6 @@ const AccountPage = () => {
     if (authCode !== '') {
       try {
         const res = await confirmVerificationCode(email, authCode);
-        console.log('🚀 ~ handleClickEmailVerified ~ res:', res);
         if (res.result === 'SUCCESS') {
           setEmailVerify(true);
           alert('이메일 인증이 완료되었습니다.');
@@ -291,7 +290,6 @@ const AccountPage = () => {
                   '유효한 이메일 주소를 입력해주세요. 예: email@example.com',
               },
             }}
-            disabled={emailVerify}
             control={control}
             render={({ field }) => (
               <CssTextField

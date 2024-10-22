@@ -8,6 +8,8 @@ import { MdInfo } from 'react-icons/md';
 import { Button, Stack, Typography } from '@mui/material';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import IconCheck from '@/assets/icon_welecome_check.svg';
+import { User } from '@/recoil/atoms';
+import { findUserId } from '@/apis/users';
 
 interface Inputs {
   name: string;
@@ -15,8 +17,11 @@ interface Inputs {
 }
 
 const IdPage = () => {
+  const [user, setUser] = useState<User | null>(null);
+
   const router = useRouter();
-  const [result, setResult] = useState<{ name: string; id: string } | null>(
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{ name: string; userId: string } | null>(
     null,
   );
 
@@ -27,8 +32,12 @@ const IdPage = () => {
   } = useForm<Inputs>();
 
   const onSubmit = async (data: Inputs) => {
-    const res = { name: '김옥동', id: 'te**1' };
-    setResult(res);
+    const res = await findUserId(data);
+    if (res.result === 'ERROR') {
+      setError(res.message ?? null);
+    } else {
+      setResult(res?.data ?? null);
+    }
   };
 
   return (
@@ -46,7 +55,11 @@ const IdPage = () => {
 
       {!result ? (
         <>
-          <Typography component={'p'} variant='body2' sx={{ mb: 3 }}>
+          <Typography
+            component={'p'}
+            variant='body2'
+            sx={{ mb: 3, color: '#999' }}
+          >
             회원가입 시 등록한 성함과 이메일을 입력해주세요.
           </Typography>
           <Stack
@@ -98,20 +111,41 @@ const IdPage = () => {
                 />
               )}
             />
+            {error && <p>{error}</p>}
             <Stack direction={'row'} spacing={1} paddingBottom={2}>
               <Button type='submit' variant='contained' sx={{ width: '100%' }}>
                 아이디 찾기
               </Button>
               <Button
                 type='reset'
-                variant='outlined'
-                onClick={() => {
-                  router.push('/login');
-                }}
+                onClick={() => router.push('/password')}
+                variant='contained'
                 sx={{ width: '100%' }}
               >
-                로그인 하기
+                비밀번호 찾기
               </Button>
+            </Stack>
+            <hr />
+
+            <Stack
+              direction={'row'}
+              justifyContent={'center'}
+              spacing={1}
+              paddingY={2}
+            >
+              <Link
+                href='/login'
+                className='text-grayColor-400 hover:underline'
+              >
+                로그인
+              </Link>
+              <span className='cursor-default text-grayColor-200'>|</span>
+              <Link
+                href='/account'
+                className='text-grayColor-400 hover:underline'
+              >
+                회원가입
+              </Link>
             </Stack>
           </Stack>
         </>
@@ -128,7 +162,7 @@ const IdPage = () => {
             <span className='text-grayColor-500 text-xl'>{result.name}</span>
             님의 아이디는{' '}
             <span className='text-grayColor-500 font-semibold text-xl px-2 bg-primary/10'>
-              {result.id}
+              {result.userId}
             </span>
             입니다.
           </p>

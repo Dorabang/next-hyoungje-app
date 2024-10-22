@@ -19,7 +19,6 @@ const PostFormat = ({ pathname }: { pathname: string }) => {
   const auth = useRecoilValue(authState);
   const searchParams = useSearchParams();
   const initPage = searchParams.get('page') ? searchParams.get('page') : 1;
-  console.log('🚀 ~ PostFormat ~ initPage:', initPage);
   const router = useRouter();
 
   const [page, setPage] = useState(Number(initPage) ?? 1);

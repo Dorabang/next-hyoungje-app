@@ -1,8 +1,7 @@
 'use client';
-import { useState, Fragment, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-// import { addComments, deleteComments, updateComments } from '@/apis/comments';
 import { useComments } from '@/hooks/queries/useComments';
 import { getUser } from '@/apis/users';
 import InputComment from './InputComment';

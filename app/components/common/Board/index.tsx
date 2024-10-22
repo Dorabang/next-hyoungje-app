@@ -34,7 +34,7 @@ const Headers = () => {
 
   return (
     <li className='text-xs md:text-sm border-b border-t border-grayColor-500 flex text-center font-bold [&_>_div]:py-2 text-grayColor-400'>
-      <div className='w-[10%] md:w-[6%] block'>번호</div>
+      <div className='w-[10%] md:w-[6%] lg:w-[8%] block'>번호</div>
       {!isCommunity ? (
         <>
           <div className='w-[15%] md:w-[6%] block'>종류</div>

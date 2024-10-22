@@ -26,10 +26,9 @@ const ChangeProfile = ({ user }: { user: User }) => {
   const [image, setImage] = useState<ImageState>({ data: null, preview: null });
 
   const [editMyData, setEditMyData] = useState<boolean>(false);
-  console.log('🚀 ~ ChangeProfile ~ editMyData:', editMyData);
 
-  const [checkVerify, setCheckVerify] = useState(false);
-  const [emailVerify, setEmailVerify] = useState<string | null>(null);
+  const [sendEmail, setSendEmail] = useState(false);
+  const [emailVerifyError, setEmailVerifyError] = useState<string | null>(null);
 
   const imageMemo = useMemo(() => {
     if (image.preview) return image.preview;
@@ -84,14 +83,17 @@ const ChangeProfile = ({ user }: { user: User }) => {
         message: '유효한 이메일 주소를 입력해주세요. 예: example@domain.com',
       });
     }
-    setCheckVerify(true);
+    setSendEmail(true);
 
-    setTimeout(() => {
-      setCheckVerify(false);
-    }, 5000);
+    setTimeout(
+      () => {
+        setSendEmail(false);
+      },
+      5 * 60 * 1000,
+    );
     const res = await sendEmailVerifyCode(email);
     if (res.result === 'SUCCESS') {
-      return setCheckVerify(true);
+      return setSendEmail(true);
     }
   };
 
@@ -107,21 +109,31 @@ const ChangeProfile = ({ user }: { user: User }) => {
 
     try {
       await confirmVerificationCode(email, authCode);
+      setSendEmail(false);
       alert('이메일 인증이 완료되었습니다.');
     } catch (error) {
-      setEmailVerify(error as string);
+      setEmailVerifyError(error as string);
     }
   };
 
   const onSubmit = async (data: Inputs) => {
     const { displayName, email } = data;
+    if (emailVerifyError) {
+      setError('verifyCode', { message: '이메일 인증을 마쳐주세요.' });
+      const ok = confirm('이메일 변경을 취소하시겠습니까?');
+      if (ok) {
+        setSendEmail(false);
+        setEmailVerifyError(null);
+        return setValue('email', user.email);
+      }
+    }
 
     if (!user) return;
 
     try {
       const userObj: Partial<CreateUserData> = {
         displayName,
-        email,
+        ...(user.email !== email && !emailVerifyError && { email }),
         ...(image?.data && { profile: image?.data }),
       };
 
@@ -238,7 +250,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
                 onClick={handleIssuanceAuthCode}
                 variant='contained'
                 sx={{ width: '100%' }}
-                disabled={checkVerify}
+                disabled={sendEmail}
               >
                 이메일 인증하기
               </Button>
@@ -246,7 +258,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
           )}
         </div>
 
-        {checkVerify && (
+        {sendEmail && (
           <Stack direction={'row'} justifyContent={'space-between'}>
             <Controller
               name='verifyCode'
@@ -255,7 +267,7 @@ const ChangeProfile = ({ user }: { user: User }) => {
                 <CssTextField
                   label='인증 코드'
                   {...field}
-                  error={Boolean(emailVerify)}
+                  error={Boolean(emailVerifyError)}
                   helperText={errors.verifyCode?.message}
                   fullWidth
                 />

@@ -58,3 +58,26 @@ export const initPassword = async (data: {
   const url = `/users/init-password`;
   return await put(url, data);
 };
+
+export const findUserId = async (data: { name: string; email: string }) => {
+  return (await post('/users/findUserId', data)) as {
+    result: 'SUCCESS' | 'ERROR';
+    data?: { name: string; userId: string };
+    message?: string;
+  };
+};
+
+export const sendPasswordEmail = async (data: {
+  userId: string;
+  email: string;
+}) => {
+  return await post('/users/reset-password-email', data);
+};
+
+export const verifyCheckInitPassword = async (data: {
+  userId: string;
+  code: string;
+  password: string;
+}) => {
+  return await put('/users/reset-password', data);
+};

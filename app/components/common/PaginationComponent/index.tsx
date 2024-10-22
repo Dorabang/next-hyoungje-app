@@ -5,7 +5,7 @@ interface PaginationProp {
   totalPages: number;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  handlePageUpDown: (page: number) => void;
+  handlePageUpDown?: (page: number) => void;
 }
 
 const PaginationComponets = ({
@@ -15,7 +15,7 @@ const PaginationComponets = ({
   handlePageUpDown,
 }: PaginationProp) => {
   const onChange = (_: React.ChangeEvent<unknown>, page: number) => {
-    handlePageUpDown(page);
+    handlePageUpDown && handlePageUpDown(page);
     setPage(page);
   };
   return (

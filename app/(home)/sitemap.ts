@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return {
         url: `${BASE_FRONT_URL}/community/${post.marketType}`,
         lastModified: new Date(post.updatedAt),
-        changeFrequench: 'daily',
+        changeFrequench: 'monthly',
         priority: 0.9,
       };
 

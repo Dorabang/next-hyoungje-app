@@ -41,7 +41,7 @@ export const generateMetadata = async ({
       ],
     };
   } catch (error) {
-    console.log('🚀 DetailLayout ~ error:', error);
+    // console.log('🚀 DetailLayout ~ error:', error);
   }
 };
 
