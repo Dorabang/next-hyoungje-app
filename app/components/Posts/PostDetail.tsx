@@ -1,7 +1,5 @@
 'use client';
 import { Fragment, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { User, authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
@@ -18,6 +16,7 @@ import EditorReadOnly from '../Editor/ReadOnly';
 import { getUser } from '@/apis/users';
 import { deletePost } from '@/apis/posts';
 import { Post } from '../common/Board/types';
+import { useAuthStore, User } from '@/stores/useAuthStore';
 
 interface DetailPageProps {
   postId: number;
@@ -30,8 +29,8 @@ interface DetailPageProps {
 
 const PostDetail = ({ postId, data }: DetailPageProps) => {
   const router = useRouter();
-  const auth = useRecoilValue(authState);
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuthStore();
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
 
@@ -39,13 +38,13 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
   const pathname = path[3] ? path[2] : path[1];
 
   useEffect(() => {
-    if (auth) {
+    if (user) {
       (async () => {
-        const user = await getUser();
-        setUser(user ?? null);
+        const userInfo = await getUser();
+        setUserInfo(userInfo ?? null);
       })();
     }
-  }, [auth]);
+  }, [user]);
 
   const handleDeletePost = async (id: number) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
@@ -85,7 +84,7 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
               {data.post.title}
             </h2>
 
-            {(user?.id === data.post.userId || user?.isAdmin) && (
+            {(userInfo?.id === data.post.userId || userInfo?.isAdmin) && (
               <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
                 <li
                   onClick={() =>
@@ -113,7 +112,7 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
           <ul className='flex gap-4 pt-2 pb-6 justify-end items-center text-sm text-gray-500'>
             <li>
               <span className='pr-2 font-semibold'>작성자</span>
-              {data.post.user.displayName}
+              {data.post.displayName ?? data.post.user.displayName}
             </li>
             <li>
               <span className='pr-2 font-semibold'>등록일자</span>

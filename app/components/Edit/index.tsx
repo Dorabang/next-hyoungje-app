@@ -1,13 +1,11 @@
 'use client';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
 
 import statusList from '@/constant/StatusLists';
-import { authState, editorState } from '@/recoil/atoms';
 import ContainerBox from '../common/ContainerBox';
 import Editor from '../Editor';
 import Input from './Input';
@@ -15,6 +13,8 @@ import LoadingPromise from '../common/LoadingPromise';
 import { UpdatePostData, putPost } from '@/apis/posts';
 import { Post } from '../common/Board/types';
 import { Status } from '../StatusOptions';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useEditorStore } from '@/stores/useEditorStore';
 
 export interface PostDataState {
   title: string;
@@ -34,7 +34,7 @@ export type UpdateImage = { id: number; data: File; preview: string };
 const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
   const router = useRouter();
 
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
   const [postData, setPostData] = useState<PostDataState>({
     title: post.title,
@@ -65,7 +65,7 @@ const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
     width,
     place,
   } = postData;
-  const [value, setValue] = useRecoilState(editorState);
+  const { value, setValue } = useEditorStore();
 
   useEffect(() => {
     setValue(post.contents);

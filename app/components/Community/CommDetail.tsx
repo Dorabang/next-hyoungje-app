@@ -1,8 +1,6 @@
 'use client';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useRecoilValue } from 'recoil';
-import { User, authState } from '@/recoil/atoms';
 import { IoArrowBack } from 'react-icons/io5';
 
 import DateFormat from '@/utils/DateFormat';
@@ -17,6 +15,7 @@ import EditorReadOnly from '../Editor/ReadOnly';
 import { deletePost } from '@/apis/posts';
 import { getUser } from '@/apis/users';
 import { Post } from '../common/Board/types';
+import { useAuthStore, User } from '@/stores/useAuthStore';
 
 interface CommDetailPageProps {
   postId: number;
@@ -29,8 +28,8 @@ interface CommDetailPageProps {
 
 const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
   const router = useRouter();
-  const auth = useRecoilValue(authState);
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuthStore();
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
 
@@ -38,13 +37,13 @@ const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
   const pathname = path[3] ? path[2] : path[1];
 
   useEffect(() => {
-    if (auth) {
+    if (user) {
       (async () => {
-        const user = await getUser();
-        setUser(user ?? null);
+        const userInfo = await getUser();
+        setUserInfo(userInfo ?? null);
       })();
     }
-  }, [auth]);
+  }, [user]);
 
   const handleDeletePost = async (id: number) => {
     const ok = window.confirm('이 게시물을 삭제하시겠습니까?');
@@ -79,7 +78,7 @@ const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
 
         <h2 className='text-lg font-bold flex-grow'>{data.post.title}</h2>
 
-        {(user?.id === data.post.userId || user?.isAdmin) && (
+        {(userInfo?.id === data.post.userId || userInfo?.isAdmin) && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
             <li
               onClick={() =>

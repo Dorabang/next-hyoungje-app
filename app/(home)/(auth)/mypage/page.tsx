@@ -1,10 +1,11 @@
 'use client';
+import { useEffect, useState } from 'react';
+
 import { getUser } from '@/apis/users';
 import ContainerBox from '@/components/common/ContainerBox';
 import ChangeProfile from '@/components/Mypage/ChangeProfile';
 import ChangeUserInfo from '@/components/Mypage/ChangeUserInfo';
-import { User } from '@/recoil/atoms';
-import { useEffect, useState } from 'react';
+import { User } from '@/stores/useAuthStore';
 
 const MyPage = () => {
   const [user, setUser] = useState<User | null>(null);

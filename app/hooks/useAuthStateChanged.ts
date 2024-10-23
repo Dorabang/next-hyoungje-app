@@ -1,19 +1,18 @@
 'use client';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { authStateChanged } from '@/apis/auth';
-import { authState } from '@/recoil/atoms';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const useAuthStateChanged = () => {
-  const setAuth = useSetRecoilState(authState);
+  const { setUser } = useAuthStore();
 
   useEffect(() => {
     (async () => {
       const authState = await authStateChanged();
-      setAuth(authState);
+      setUser(authState);
     })();
-  }, [setAuth]);
+  }, [setUser]);
 };
 
 export default useAuthStateChanged;

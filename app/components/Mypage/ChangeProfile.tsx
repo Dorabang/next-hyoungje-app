@@ -6,9 +6,9 @@ import { Controller, useForm } from 'react-hook-form';
 import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import defaultProfile from '@/assets/defaultProfile.jpg';
-import { User } from '@/recoil/atoms';
 import { CreateUserData, getUser, updateUser } from '@/apis/users';
 import { confirmVerificationCode, sendEmailVerifyCode } from '@/apis/auth';
+import { User } from '@/stores/useAuthStore';
 
 interface Inputs {
   name: string;

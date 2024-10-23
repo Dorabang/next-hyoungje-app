@@ -5,10 +5,6 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-      },
-      {
-        protocol: 'https',
         hostname: 'okdong-bucket.s3.ap-northeast-2.amazonaws.com',
       },
       {
@@ -30,7 +26,7 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination:
-          (process.env.NODE_ENV === 'production'
+          (process.env.NODE_ENV === 'development'
             ? process.env.NEXT_PUBLIC_API_PROD_URL
             : process.env.NEXT_PUBLIC_API_DEV_URL) + '/:path*',
       },

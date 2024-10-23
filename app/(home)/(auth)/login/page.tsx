@@ -1,15 +1,14 @@
 'use client';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
+
 import { Button, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { CssTextField } from './styleComponents';
-
 import { login } from '@/apis/auth';
-import { authState } from '@/recoil/atoms';
-import Link from 'next/link';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface Inputs {
   userId: string;
@@ -19,7 +18,7 @@ interface Inputs {
 const LoginPage = () => {
   const router = useRouter();
   const [error, setError] = useState<string>('');
-  const setUser = useSetRecoilState(authState);
+  const { setUser } = useAuthStore();
 
   const {
     control,

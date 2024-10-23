@@ -1,5 +1,5 @@
 import { get, post, put, upload, del } from '@/apis/fetchAPI';
-import { User } from '@/recoil/atoms';
+import { User } from '@/stores/useAuthStore';
 
 export interface CreateUserData {
   userId: string;

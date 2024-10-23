@@ -1,10 +1,10 @@
 'use client';
 import { redirect } from 'next/navigation';
-import { useRecoilValue } from 'recoil';
-import { authState } from '@/recoil/atoms';
+
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const useRedirect = () => {
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
   if (!user) return redirect('/not-found');
 };

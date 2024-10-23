@@ -1,6 +1,7 @@
-import { User } from '@/recoil/atoms';
 import { ReactNode } from 'react';
+
 import { Status } from '../../StatusOptions';
+import { User } from '@/stores/useAuthStore';
 
 export interface BoardProps {
   user: User | null;

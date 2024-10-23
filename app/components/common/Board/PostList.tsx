@@ -5,9 +5,9 @@ import { AiOutlineFileImage } from 'react-icons/ai';
 
 import statusOptions from '@/components/StatusOptions';
 import DateFormat from '@/utils/DateFormat';
-import { User } from '@/recoil/atoms';
 import { Post } from './types';
 import { PostContext } from '.';
+import { User } from '@/stores/useAuthStore';
 
 interface PostListProps {
   pathname: string;
@@ -55,11 +55,11 @@ const PostList = ({
       className='flex items-center w-full border-b border-grayColor-300 text-center text-gray-700 [&_>_div]:py-3 [&_div]:truncate'
     >
       {/* 문서 번호 */}
-      <div className='w-[10%] md:w-[6%] block'>{documentNumber}</div>
+      <div className='w-[10%] md:w-[6%] lg:w-[8%] block'>{documentNumber}</div>
 
-      {/* 종류 */}
       {!isCommunity ? (
         <>
+          {/* 종류 */}
           <div className='w-[15%] md:w-[6%] block'>
             {variant?.length > 5 ? variant.substring(0, 5) + '...' : variant}
           </div>
@@ -76,7 +76,7 @@ const PostList = ({
       >
         <Link
           href={communityUrl + pageParam}
-          className='flex w-full h-full items-center whitespace-nowrap hover:underline active:underline'
+          className='flex flex-grow h-full items-center whitespace-nowrap hover:underline active:underline'
         >
           {image && image?.length !== 0 && (
             <AiOutlineFileImage className='mr-2' />
@@ -107,7 +107,7 @@ const PostList = ({
       {!isCommunity ? (
         <>
           {/* 산지 */}
-          <div className='w-[6%] hidden md:block'>{place}</div>
+          <div className='w-[6%] hidden lg:block'>{place}</div>
 
           {/* 가격 */}
           <div className='w-[10%] md:w-[6%] block'>{price}</div>

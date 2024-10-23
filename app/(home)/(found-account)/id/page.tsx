@@ -8,8 +8,8 @@ import { MdInfo } from 'react-icons/md';
 import { Button, Stack, Typography } from '@mui/material';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import IconCheck from '@/assets/icon_welecome_check.svg';
-import { User } from '@/recoil/atoms';
 import { findUserId } from '@/apis/users';
+import { User } from '@/stores/useAuthStore';
 
 interface Inputs {
   name: string;

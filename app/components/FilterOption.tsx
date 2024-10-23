@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { HiOutlinePencilSquare } from 'react-icons/hi2';
 
-import { User } from '@/recoil/atoms';
 import { Status } from './StatusOptions';
+import { User } from '@/stores/useAuthStore';
 
 interface FilterOptionProps {
   user: User | null;

@@ -1,25 +1,25 @@
 'use client';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
-import ContainerBox from '@/components/common/ContainerBox';
-import useRedirect from '@/hooks/useRedirect';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { authState, editorState } from '@/recoil/atoms';
-import { Button } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { Button } from '@mui/material';
 import { AiOutlineClose } from 'react-icons/ai';
 
+import ContainerBox from '@/components/common/ContainerBox';
+import useRedirect from '@/hooks/useRedirect';
 import Editor from '@/components/Editor';
 import statusList from '@/constant/StatusLists';
 import LoadingPromise from '@/components/common/LoadingPromise';
 import { PostDataState, UpdateImage } from '@/components/Edit';
 import { CreateMarketPostsData, createPost } from '@/apis/posts';
 import Input from '@/components/Edit/Input';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useEditorStore } from '@/stores/useEditorStore';
 
 const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   useRedirect();
 
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -37,7 +37,7 @@ const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
     amount: '',
   });
 
-  const [value, setValue] = useRecoilState(editorState);
+  const { value, setValue } = useEditorStore();
   const [image, setImage] = useState<UpdateImage[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);

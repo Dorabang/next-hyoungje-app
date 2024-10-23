@@ -1,8 +1,8 @@
 'use client';
-import useOutsideClick from '@/hooks/useOutsideClick';
-import { modalState } from '@/recoil/atoms';
 import React, { useRef } from 'react';
-import { useSetRecoilState } from 'recoil';
+
+import useOutsideClick from '@/hooks/useOutsideClick';
+import { useModalStore } from '@/stores/useModalStore';
 
 const ToastifyModal = ({
   children,
@@ -12,7 +12,7 @@ const ToastifyModal = ({
   setOk?: (value: boolean) => void;
 }) => {
   const ref = useRef(null);
-  const setIsOpen = useSetRecoilState(modalState);
+  const { setIsOpen } = useModalStore();
 
   useOutsideClick(ref, () => setIsOpen(false));
 

@@ -1,12 +1,12 @@
 'use client';
-import { editorState } from '@/recoil/atoms';
 import React, { useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useRecoilState } from 'recoil';
+
+import { useEditorStore } from '@/stores/useEditorStore';
 
 const Editor = () => {
-  const [value, setValue] = useRecoilState<string>(editorState);
+  const { value, setValue } = useEditorStore();
 
   useEffect(() => {
     if (value === `<p><br></p>`) {

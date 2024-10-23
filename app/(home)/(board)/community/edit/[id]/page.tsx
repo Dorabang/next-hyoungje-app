@@ -3,27 +3,27 @@ import React, { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { Button } from '@mui/material';
 
 import useRedirect from '@/hooks/useRedirect';
-import { authState, editorState } from '@/recoil/atoms';
 import ContainerBox from '@/components/common/ContainerBox';
 import Editor from '@/components/Editor';
 import Input from '@/components/Edit/Input';
 import LoadingPromise from '@/components/common/LoadingPromise';
 import { UpdateImage } from '@/components/Edit';
 import { createPost } from '@/apis/posts';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useEditorStore } from '@/stores/useEditorStore';
 
 const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
   useRedirect();
 
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
   const router = useRouter();
 
   const [title, setTitle] = useState('');
-  const [value, setValue] = useRecoilState(editorState);
+  const { value, setValue } = useEditorStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const [image, setImage] = useState<UpdateImage[]>([]);

@@ -14,7 +14,6 @@ import {
   Toolbar,
 } from '@mui/material';
 import { LightTooltip, btnStyle } from './StyleComponents';
-import { useRecoilValue } from 'recoil';
 import { AiOutlineMenu } from 'react-icons/ai';
 
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
@@ -22,8 +21,8 @@ import { noto_serif_kr } from '@/components/common/NotoSerif';
 import UtilBtn from './UtilBtn';
 import MGNB from './MGNB';
 import { PagesRoutes } from '@/constant/PagesRoutes';
-import { authState } from '@/recoil/atoms';
 import logoImg from '@/assets/common/logo.png';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const LogoButton = ({ className = '' }: { className?: string }) => {
   return (
@@ -52,7 +51,7 @@ const LogoButton = ({ className = '' }: { className?: string }) => {
 
 const Nav = () => {
   useAuthStateChanged();
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const router = useRouter();
@@ -106,9 +105,7 @@ const Nav = () => {
                       <LightTooltip
                         key={item.name}
                         title={
-                          item.depth.length === 0 ? (
-                            ''
-                          ) : (
+                          item.depth.length === 0 ? null : (
                             <MenuList>
                               {item.depth?.map((item2) => (
                                 <MenuItem
@@ -136,9 +133,7 @@ const Nav = () => {
                     <LightTooltip
                       key={item.name}
                       title={
-                        item.depth.length === 0 ? (
-                          ''
-                        ) : (
+                        item.depth.length === 0 ? null : (
                           <MenuList>
                             {item.depth?.map((item2) => (
                               <MenuItem

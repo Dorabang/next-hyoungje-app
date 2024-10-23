@@ -3,33 +3,32 @@ import { FormEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 import { useRouter } from 'next/navigation';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { Button } from '@mui/material';
 
 import ContainerBox from '../common/ContainerBox';
-import { authState, editorState } from '@/recoil/atoms';
 import Editor from '../Editor';
 import Input from '../Edit/Input';
 import LoadingPromise from '../common/LoadingPromise';
 import { UpdateImage } from '../Edit';
 import { putPost } from '@/apis/posts';
 import { Post } from '../common/Board/types';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useEditorStore } from '@/stores/useEditorStore';
 
 const CommEdit = ({ post }: { post: Post }) => {
   const router = useRouter();
 
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
   const [title, setTitle] = useState(post.title);
   const [prevImage, setPrevImage] = useState<string[]>(post.image ?? []);
   const [updateImage, setUpdateImage] = useState<UpdateImage[]>([]);
-  const [value, setValue] = useRecoilState(editorState);
+  const { value, setValue } = useEditorStore();
   const [isLoading, setIsLoading] = useState(false);
-  const contents = post.contents;
 
   useEffect(() => {
-    setValue(contents);
-  }, [setValue, contents]);
+    setValue(post.contents);
+  }, [setValue, post.contents]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

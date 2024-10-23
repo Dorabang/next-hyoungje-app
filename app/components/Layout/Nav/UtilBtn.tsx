@@ -1,29 +1,28 @@
 'use client';
 import { useMemo } from 'react';
-import { authState } from '@/recoil/atoms';
 import { Box, Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { useRecoilState } from 'recoil';
 
 import { authBtnStyle } from './StyleComponents';
 import { routes } from '../../../constant/Routes';
 import { logout } from '@/apis/auth';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
-  const [auth, setAuth] = useRecoilState(authState);
+  const { user, setUser } = useAuthStore();
   const router = useRouter();
 
   return useMemo(() => {
     const onLogOutClick = async () => {
       await logout();
-      setAuth(null);
+      setUser(null);
       onClick && onClick();
       router.push('/');
     };
 
     return (
       <Box sx={{ flexGrow: 0, gap: '4px' }}>
-        {auth ? (
+        {user ? (
           <>
             <Button
               onClick={() => {
@@ -71,7 +70,7 @@ const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
         )}
       </Box>
     );
-  }, [auth, setAuth, router, onClick]);
+  }, [user, setUser, router, onClick]);
 };
 
 export default UtilBtn;

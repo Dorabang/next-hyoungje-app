@@ -1,14 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useComments } from '@/hooks/queries/useComments';
 import { getUser } from '@/apis/users';
 import InputComment from './InputComment';
 import Loading from '../common/Loading';
-import { User, authState } from '@/recoil/atoms';
 import PaginationComponets from '../common/PaginationComponent';
 import { createComment, deleteComment, updateComment } from '@/apis/comments';
+import { useAuthStore, User } from '@/stores/useAuthStore';
 
 export interface Comment {
   id: number;
@@ -28,23 +27,23 @@ const Comments = ({ postId }: { postId: number }) => {
   const [editValue, setEditValue] = useState('');
   const [page, setPage] = useState(1);
 
-  const auth = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
-  const [user, setUser] = useState<User | null>(null);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
 
   useEffect(() => {
-    if (auth) {
+    if (user) {
       (async () => {
-        const user = await getUser();
-        setUser(user ?? null);
+        const data = await getUser();
+        setUserInfo(data ?? null);
       })();
     }
-  }, [auth]);
+  }, [user]);
 
   const { data, isSuccess, refetch } = useComments(postId, page);
 
   const handleAddComment = async () => {
-    if (!user) return window.alert('로그인 후 사용 가능한 기능입니다.');
+    if (!userInfo) return window.alert('로그인 후 사용 가능한 기능입니다.');
 
     const res = await createComment(postId, addComment);
     if (res.result === 'SUCCESS') {
@@ -77,7 +76,7 @@ const Comments = ({ postId }: { postId: number }) => {
 
   return (
     <div className='w-full px-5 md:px-0 md:max-w-[1016px] mx-auto'>
-      {user && (
+      {userInfo && (
         <InputComment
           placeholder='댓글을 입력해주세요'
           onSubmit={handleAddComment}
@@ -100,7 +99,7 @@ const Comments = ({ postId }: { postId: number }) => {
                       - {new Date(createdAt).toLocaleDateString()}
                     </span>
                   </p>
-                  {(userId === user?.id || user?.isAdmin) && (
+                  {(userId === userInfo?.id || userInfo?.isAdmin) && (
                     <div className='flex gap-1 text-sm'>
                       {isModify === id ? (
                         <span
