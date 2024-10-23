@@ -303,7 +303,7 @@ const AccountPage = () => {
           />
 
           <Button type='button' disabled={emailVerify} onClick={handleSendMail}>
-            메일
+            전송
           </Button>
         </Stack>
         {getAuthCode && (
