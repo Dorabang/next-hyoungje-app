@@ -7,7 +7,7 @@ import { Stack } from '@mui/system';
 import { ErrorMessage } from '@hookform/error-message';
 
 import JoinTerms from '@/components/Auth/JoinTerms/JoinTerms';
-import defaultProfile from '@/assets/defaultProfile.jpg';
+import defaultProfile from '@/assets/common/defaultProfile.jpg';
 import { CssTextField } from '@/(home)/(auth)/login/styleComponents';
 import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import { createUser, CreateUserData } from '@/apis/users';

@@ -11,7 +11,7 @@ import { refreshPlaylist } from '@/apis/youtube';
 import { useAdmin } from '@/hooks/queries/useAdmin';
 import { ChannelState } from '../type';
 import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
-import defaultProfile from '@/assets/defaultProfile.jpg';
+import defaultProfile from '@/assets/common/defaultProfile.jpg';
 
 const AdminYoutube = () => {
   const { data: user } = useAdmin();

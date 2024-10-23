@@ -1,13 +1,15 @@
 'use client';
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 
 import Edit from '@/components/Edit';
 import { usePost } from '@/hooks/queries/usePosts';
 import Loading from '@/components/common/Loading';
 import ContainerBox from '@/components/common/ContainerBox';
+import { PageParams } from '@/constant/type';
 
-const DetailEditPage = ({ params: { id } }: { params: { id: number } }) => {
+const DetailEditPage = ({ params }: { params: PageParams }) => {
+  const { id } = React.use(params);
   const pathname = usePathname().trim().split('/')[1];
   const { data, isLoading } = usePost(id);
 

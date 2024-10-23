@@ -14,8 +14,10 @@ import { UpdateImage } from '@/components/Edit';
 import { createPost } from '@/apis/posts';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useEditorStore } from '@/stores/useEditorStore';
+import { EditPageParams } from '@/constant/type';
 
-const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
+const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
+  const { id } = React.use(params);
   useRedirect();
 
   const { user } = useAuthStore();

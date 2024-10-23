@@ -1,15 +1,13 @@
 'use client';
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 
 import ContainerBox from '@/components/common/ContainerBox';
 import PostDetail from '@/components/Posts/PostDetail';
 import { usePost } from '@/hooks/queries/usePosts';
+import { PageParams } from '@/constant/type';
 
-interface DetailPageProps {
-  params: { menu: string; id: string };
-}
-
-const DetailPage = ({ params: { id } }: DetailPageProps) => {
+const DetailPage = ({ params }: { params: PageParams }) => {
+  const { id } = React.use(params);
   const { data } = usePost(Number(id));
 
   return (

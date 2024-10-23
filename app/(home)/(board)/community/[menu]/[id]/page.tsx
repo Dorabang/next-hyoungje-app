@@ -1,15 +1,13 @@
 'use client';
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 
 import ContainerBox from '@/components/common/ContainerBox';
 import CommDetailPage from '@/components/Community/CommDetail';
 import { usePost } from '@/hooks/queries/usePosts';
+import { PageParams } from '@/constant/type';
 
-interface CommunityDetailPageProps {
-  params: { menu: string; id: number };
-}
-
-const CommunityDetailPage = ({ params: { id } }: CommunityDetailPageProps) => {
+const CommunityDetailPage = ({ params }: { params: PageParams }) => {
+  const { id } = React.use(params);
   const { data } = usePost(Number(id));
 
   return (

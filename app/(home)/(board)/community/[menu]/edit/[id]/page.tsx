@@ -1,12 +1,14 @@
 'use client';
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 
 import CommEdit from '@/components/Community/CommEdit';
 import Loading from '@/components/common/Loading';
 import { usePost } from '@/hooks/queries/usePosts';
 import ContainerBox from '@/components/common/ContainerBox';
+import { PageParams } from '@/constant/type';
 
-const ModifyPostPage = ({ params: { id } }: { params: { id: number } }) => {
+const ModifyPostPage = ({ params }: { params: PageParams }) => {
+  const { id } = React.use(params);
   const { data, isLoading } = usePost(id);
 
   if (isLoading) return <Loading />;

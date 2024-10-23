@@ -1,6 +1,8 @@
 import PostFormat from '@/components/Posts/PostFormat';
+import { PageParams } from '@/constant/type';
 
-const BoardPage = ({ params: { menu } }: { params: { menu: string } }) => {
+const BoardPage = async ({ params }: { params: PageParams }) => {
+  const { menu } = await params;
   return <PostFormat pathname={menu} />;
 };
 
