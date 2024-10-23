@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactQuill from 'react-quill';
+import ReactQuill from 'react-quill-new';
 
 const EditorReadOnly = ({ contents }: { contents: string }) => {
   const modules = {

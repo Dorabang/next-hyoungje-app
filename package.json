@@ -30,7 +30,7 @@
     "react-hook-form": "^7.45.1",
     "react-icons": "^4.11.0",
     "react-kakao-maps-sdk": "^1.1.26",
-    "react-quill": "^2.0.0",
+    "react-quill-new": "^3.3.3",
     "sharp": "^0.33.1",
     "styled-components": "^6.0.4",
     "swiper": "^10.3.1",
