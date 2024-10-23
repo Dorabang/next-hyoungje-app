@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import Script from 'next/script';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 import './globals.css';
 import Nav from '@/components/Layout/Nav';
 import Footer from '@/components/Layout/Footer/Footer';
-import RecoilRootWrapper from '@/components/common/Wrapper/RecoilRootWrapper';
 import QueryClientWrapper from '@/components/common/Wrapper/QueryClientWrapper';
 
 const noto_sans_kr = Noto_Sans_KR({
@@ -53,19 +53,20 @@ export default function RootLayout({
         className={`${noto_sans_kr.className} scrollbar scrollbar-thumb-grayColor-300 scrollbar-track-grayColor-100`}
       >
         <QueryClientWrapper>
-          <RecoilRootWrapper>
-            <div className='flex flex-col w-full h-[100dvh]'>
-              <Nav />
-              <div className='flex-grow'>{children}</div>
-              <Footer />
-            </div>
-          </RecoilRootWrapper>
+          <div className='flex flex-col w-full h-[100dvh]'>
+            <Nav />
+            <div className='flex-grow'>{children}</div>
+            <Footer />
+          </div>
         </QueryClientWrapper>
         <Script
           type='text/javascript'
           src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false`}
         />
       </body>
+      <GoogleAnalytics
+        gaId={`${process.env.NEXT_PUBLIC_GOOGLE_ANALYTIC_KEY}`}
+      />
     </html>
   );
 }
