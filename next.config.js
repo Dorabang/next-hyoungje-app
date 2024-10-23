@@ -26,7 +26,7 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination:
-          (process.env.NODE_ENV === 'development'
+          (process.env.NODE_ENV === 'production'
             ? process.env.NEXT_PUBLIC_API_PROD_URL
             : process.env.NEXT_PUBLIC_API_DEV_URL) + '/:path*',
       },
