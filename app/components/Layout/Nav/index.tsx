@@ -178,7 +178,7 @@ const Nav = () => {
         </Container>
       </AppBar>
 
-      <MGNB isOpen={isOpen} setIsOpen={(value) => setIsOpen(value)} />
+      <MGNB isOpen={isOpen} setIsOpen={setIsOpen} />
     </Fragment>
   );
 };
