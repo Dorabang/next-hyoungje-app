@@ -41,13 +41,8 @@ const MGNB = ({ isOpen, setIsOpen }: MGNBProps) => {
       className={`fixed top-0 left-0 xl:hidden w-full h-[100dvh] z-50
          transition-all duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
-      // className={`${isOpen ? 'fixed top-0 left-0 xl:hidden w-screen h-[100dvh] bg-black/30 z-50' : ''}`}
     >
       <div
-        //  className={`absolute max-w-[500px] h-full
-        //   transition-all delay-100 ease-in-out
-        //   bg-white flex flex-col items-start justify-between p-4
-        //   ${isOpen ? 'left-0 w-4/5' : '-left-full w-0'}`}
         className={`absolute max-w-[500px] h-full
           transition-transform duration-300 ease-in-out
           bg-white flex flex-col items-start justify-between p-4
