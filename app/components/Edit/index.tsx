@@ -92,8 +92,8 @@ const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
         height: height,
         width: width,
       }),
-      prevImage: image,
-      updateImage: updateImageData,
+      ...(image && { prevImage: image }),
+      ...(updateImageData && { updateImage: updateImageData }),
     };
 
     const response = await putPost(post.postId, newPostObj);

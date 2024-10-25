@@ -40,7 +40,7 @@ const CommEdit = ({ post }: { post: Post }) => {
     const newPostObj = {
       title: title,
       contents: value,
-      prevImage,
+      ...(prevImage && { prevImage }),
       updateImage: updateImageData,
     };
 
