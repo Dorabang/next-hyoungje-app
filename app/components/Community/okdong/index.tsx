@@ -1,5 +1,5 @@
 'use client';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { HiOutlinePencilSquare } from 'react-icons/hi2';
 
@@ -15,7 +15,11 @@ import Loading from '@/components/common/Loading';
 
 const OkdongPage = () => {
   const { data: user } = useAdmin();
-  const { data } = usePost(1);
+  const { data, refetch } = usePost(1);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <Suspense fallback={<Loading />}>

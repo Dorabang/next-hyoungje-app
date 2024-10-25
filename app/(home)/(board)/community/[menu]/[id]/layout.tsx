@@ -1,5 +1,5 @@
 import { Fragment, ReactNode } from 'react';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 
 import { PostData } from '@/apis/posts';
 import { BASE_API_URL, BASE_FRONT_URL } from '@/constant/api';
@@ -12,9 +12,9 @@ export const generateMetadata = async ({
   params: PageParams;
 }): Promise<Metadata> => {
   const { id, menu } = await params;
-  const url = `${BASE_API_URL}/api/posts/${id}`;
-  const res = await fetch(url);
-  const { post } = (await res.json()).data as PostData;
+  const url = `${BASE_API_URL}/posts/${id}`;
+  const { post } = (await fetch(url).then((res) => res.json()))
+    .data as PostData;
 
   const menuName = allRoutes.filter(({ link }) => link.includes(menu))[0];
 

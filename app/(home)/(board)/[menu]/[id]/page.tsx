@@ -1,5 +1,5 @@
 'use client';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 
 import ContainerBox from '@/components/common/ContainerBox';
 import PostDetail from '@/components/Posts/PostDetail';
@@ -8,7 +8,11 @@ import { PageParams } from '@/constant/type';
 
 const DetailPage = ({ params }: { params: PageParams }) => {
   const { id } = React.use(params);
-  const { data } = usePost(Number(id));
+  const { data, refetch } = usePost(Number(id));
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <Fragment>
