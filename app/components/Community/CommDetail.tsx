@@ -96,15 +96,15 @@ const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
       <ul className='flex gap-4 pt-2 pb-6 justify-end text-sm text-gray-500'>
         <li>
           <span className='pr-2 font-semibold'>작성자</span>
-          {data.post.user.displayName}
+          <span>{data.post.displayName ?? data.post.user.displayName}</span>
         </li>
         <li>
           <span className='pr-2 font-semibold'>등록일자</span>
-          {DateFormat(data.post.createdAt)}
+          <span>{DateFormat(data.post.createdAt)}</span>
         </li>
         <li>
           <span className='pr-2 font-semibold'>조회수</span>
-          {data.post.views}
+          <span>{data.post.views}</span>
         </li>
         <li>
           <HasLikes postId={postId} />
