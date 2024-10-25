@@ -23,7 +23,12 @@ export const metadata: Metadata = {
     images: '/open_graph.jpg',
     siteName: '옥동',
   },
-
+  verification: {
+    google: 'OG0ONfzZACBZWY317gJ6_GMm01reig-14gXbiFcsjIA',
+    other: {
+      'naver-site-verification': '71bcd9c35e7924167e41233bbaeabff59be62208',
+    },
+  },
   keywords: [
     '옥동',
     '형제난원',
