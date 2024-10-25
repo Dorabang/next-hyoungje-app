@@ -53,13 +53,16 @@ const BoardForm = ({
                 documentNumber,
                 createdAt,
                 views,
+                displayName,
               }) => (
                 <li
                   key={postId}
                   className='flex gap-2 items-center border-b border-grayColor-300 text-center text-gray-700 [&_>_div]:py-3 [&_>_div]:truncate'
                 >
                   <div className='w-[6%]'>{documentNumber}</div>
-                  <div className='w-[15%] md:w-[10%]'>{user.displayName}</div>
+                  <div className='w-[15%] md:w-[10%]'>
+                    {displayName ?? user.displayName}
+                  </div>
                   <div className='flex-grow h-full flex justify-between items-center'>
                     <Link
                       href={`${path}/${postId}`}
