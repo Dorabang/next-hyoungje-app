@@ -69,14 +69,16 @@ const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
       {/* title */}
       <div
         className='border-b border-grayColor-400
-          flex gap-4 justify-between items-center
+          flex gap-2 md:gap-4 justify-between items-center
           py-3'
       >
         <div className='p-2 cursor-pointer' onClick={handleBack}>
           <IoArrowBack size={18} />
         </div>
 
-        <h2 className='text-lg font-bold flex-grow'>{data.post.title}</h2>
+        <h2 className='text-lg font-bold flex-grow min-w-[120px] truncate'>
+          {data.post.title}
+        </h2>
 
         {(userInfo?.id === data.post.userId || userInfo?.isAdmin) && (
           <ul className='flex gap-2 text-gray-500 text-sm [&_li]:cursor-pointer'>
@@ -94,16 +96,18 @@ const CommDetailPage = ({ postId, data }: CommDetailPageProps) => {
 
       {/* post info */}
       <ul className='flex gap-4 pt-2 pb-6 justify-end text-sm text-gray-500'>
-        <li>
-          <span className='pr-2 font-semibold'>작성자</span>
+        <li className='flex flex-wrap gap-1 md:gap-2'>
+          <span className='flex-grow lg:flex-grow-0 font-semibold'>작성자</span>
           <span>{data.post.displayName ?? data.post.user.displayName}</span>
         </li>
-        <li>
-          <span className='pr-2 font-semibold'>등록일자</span>
+        <li className='flex flex-wrap gap-1 md:gap-2'>
+          <span className='flex-grow lg:flex-grow-0 font-semibold'>
+            등록일자
+          </span>
           <span>{DateFormat(data.post.createdAt)}</span>
         </li>
-        <li>
-          <span className='pr-2 font-semibold'>조회수</span>
+        <li className='flex flex-wrap gap-1 md:gap-2'>
+          <span className='flex-grow lg:flex-grow-0 font-semibold'>조회수</span>
           <span>{data.post.views}</span>
         </li>
         <li>

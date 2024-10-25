@@ -72,16 +72,18 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
           {/* title */}
           <div
             className='border-b border-grayColor-400
-          flex gap-4 justify-between items-center
+          flex gap-2 md:gap-4 justify-between items-center
           py-3'
           >
             <div className='p-2 cursor-pointer' onClick={handleBack}>
               <IoArrowBack size={18} />
             </div>
 
-            <h2 className='text-lg font-bold flex-grow'>
-              <span className='px-2'>{statusOptions(data.post.status)}</span>
-              {data.post.title}
+            <h2 className='flex gap-2 items-center text-lg font-bold flex-grow min-w-[120px] truncate'>
+              <span className='px-1 md:px-2 text-sm md:text-base'>
+                {statusOptions(data.post.status)}
+              </span>
+              <span className='inline-block truncate'>{data.post.title}</span>
             </h2>
 
             {(userInfo?.id === data.post.userId || userInfo?.isAdmin) && (
@@ -110,16 +112,22 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
 
           {/* post info */}
           <ul className='flex gap-4 pt-2 pb-6 justify-end items-center text-sm text-gray-500'>
-            <li>
-              <span className='pr-2 font-semibold'>작성자</span>
+            <li className='flex flex-wrap gap-1 md:gap-2'>
+              <span className='flex-grow lg:flex-grow-0 font-semibold'>
+                작성자
+              </span>
               <span>{data.post.displayName ?? data.post.user.displayName}</span>
             </li>
-            <li>
-              <span className='pr-2 font-semibold'>등록일자</span>
+            <li className='flex flex-wrap gap-1 md:gap-2'>
+              <span className='flex-grow lg:flex-grow-0 font-semibold'>
+                등록일자
+              </span>
               <span>{DateFormat(data.post.createdAt)}</span>
             </li>
-            <li>
-              <span className='pr-2 font-semibold'>조회수</span>
+            <li className='flex flex-wrap gap-1 md:gap-2'>
+              <span className='flex-grow lg:flex-grow-0 font-semibold'>
+                조회수
+              </span>
               <span>{data.post.views}</span>
             </li>
             <li>
