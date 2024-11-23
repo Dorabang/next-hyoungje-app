@@ -1,6 +1,5 @@
 'use client';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
@@ -16,6 +15,7 @@ import { Status } from '../StatusOptions';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useEditorStore } from '@/stores/useEditorStore';
 import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
+import useRedirect from '@/hooks/useRedirect';
 
 export interface PostDataState {
   title: string;
@@ -34,6 +34,7 @@ export type UpdateImage = { id: number; data: File; preview: string };
 
 const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
   const router = useRouter();
+  useRedirect();
 
   const { user } = useAuthStore();
 

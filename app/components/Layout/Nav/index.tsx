@@ -38,7 +38,7 @@ const LogoButton = ({ className = '' }: { className?: string }) => {
         }}
       >
         <Link href='/'>
-          <AutoHeightImageWrapper src={logoImg} alt='형제난원' />
+          <AutoHeightImageWrapper src={logoImg} alt='형제난원' priority />
         </Link>
       </Stack>
     </div>
