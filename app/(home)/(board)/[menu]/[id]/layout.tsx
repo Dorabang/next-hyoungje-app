@@ -4,9 +4,7 @@ import type { Metadata } from 'next';
 import { BASE_API_URL, BASE_FRONT_URL } from '@/constant/api';
 import { allRoutes } from '@/constant/Routes';
 import { PageParams } from '@/constant/type';
-import { getPost, PostData } from '@/apis/posts';
-import { queryClient } from '@/components/common/Wrapper/QueryClientWrapper';
-import { postQueryOptions } from '@/constant/queryOptions/postQueryOptions';
+import { PostData } from '@/apis/posts';
 
 export const generateMetadata = async ({
   params,
@@ -51,9 +49,6 @@ const DetailLayout = async ({
   children: ReactNode;
   params: { menu: string; id: string };
 }) => {
-  const { id } = params;
-  await queryClient.prefetchQuery(postQueryOptions.getPost(Number(id)));
-
   return <Fragment>{children}</Fragment>;
 };
 

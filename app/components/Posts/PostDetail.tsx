@@ -6,28 +6,24 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import DateFormat from '@/utils/DateFormat';
 import ContainerBox from '@/components/common/ContainerBox';
 import statusOptions from '@/components/StatusOptions';
-import PrevNextPost, {
-  PrevNextPostData,
-} from '@/components/Posts/PrevNextPost';
+import PrevNextPost from '@/components/Posts/PrevNextPost';
 import Comments from '../Comment/Comments';
 import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import HasLikes from '../Bookmark/BookmarkButton';
 import EditorReadOnly from '../Editor/ReadOnly';
 import { getUser } from '@/apis/users';
 import { deletePost } from '@/apis/posts';
-import { Post } from '../common/Board/types';
 import { useAuthStore, User } from '@/stores/useAuthStore';
+import { postQueryOptions } from '@/constant/queryOptions/postQueryOptions';
+import { useQuery } from '@tanstack/react-query';
 
 interface DetailPageProps {
   postId: number;
-  data: {
-    previous: PrevNextPostData | null;
-    next: PrevNextPostData | null;
-    post: Post;
-  };
 }
 
-const PostDetail = ({ postId, data }: DetailPageProps) => {
+const PostDetail = ({ postId }: DetailPageProps) => {
+  const { data, isLoading } = useQuery(postQueryOptions.getPost(postId));
+
   const router = useRouter();
   const { user } = useAuthStore();
   const [userInfo, setUserInfo] = useState<User | null>(null);
@@ -64,6 +60,13 @@ const PostDetail = ({ postId, data }: DetailPageProps) => {
     const pageParam = page ? `?page=${page}` : '';
     router.push(isCommunity + pageParam);
   };
+
+  if (!isLoading && !data)
+    return (
+      <ContainerBox className='py-20'>
+        <p>삭제된 게시물이거나 찾을 수 없는 게시물입니다.</p>
+      </ContainerBox>
+    );
 
   return (
     <ContainerBox>

@@ -1,28 +1,28 @@
 'use client';
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, Suspense } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import ContainerBox from '@/components/common/ContainerBox';
 import PostDetail from '@/components/Posts/PostDetail';
-import { usePost } from '@/hooks/queries/usePosts';
+// import { usePost } from '@/hooks/queries/usePosts';
 import { PageParams } from '@/constant/type';
+import { postQueryOptions } from '@/constant/queryOptions/postQueryOptions';
+import Loading from '@/components/common/Loading';
 
 const DetailPage = ({ params }: { params: PageParams }) => {
   const { id } = React.use(params);
-  const { data, refetch } = usePost(Number(id));
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   return (
     <Fragment>
-      {!data ? (
-        <ContainerBox className='py-20'>
-          <p>삭제된 게시물이거나 찾을 수 없는 게시물입니다.</p>
-        </ContainerBox>
-      ) : (
-        <PostDetail postId={Number(id)} data={data} />
-      )}
+      <Suspense
+        fallback={
+          <ContainerBox className='py-20'>
+            <Loading />
+          </ContainerBox>
+        }
+      >
+        <PostDetail postId={Number(id)} />
+      </Suspense>
     </Fragment>
   );
 };
