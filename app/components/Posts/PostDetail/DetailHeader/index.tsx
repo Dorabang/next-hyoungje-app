@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { IoArrowBack } from 'react-icons/io5';
 import DateFormat from '@/utils/DateFormat';
 
-import HasLikes from '@/components/Bookmark/BookmarkButton';
+import BookmarkButton from '@/components/Bookmark/BookmarkButton';
 import { getUser } from '@/apis/users';
 import statusOptions from '@/components/StatusOptions';
 import { useAuthStore, User } from '@/stores/useAuthStore';
@@ -109,7 +109,7 @@ export const DetailHeader = ({ postId, data }: DetailHeaderProps) => {
           <span>{data.post.views}</span>
         </li>
         <li>
-          <HasLikes postId={postId} />
+          <BookmarkButton postId={postId} />
         </li>
       </ul>
     </Fragment>

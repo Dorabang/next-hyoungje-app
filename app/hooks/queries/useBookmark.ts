@@ -11,9 +11,10 @@ export const useBookmark = () => {
   });
 };
 
-export const useBookmarkByPost = (postId: number) => {
+export const useBookmarkByPost = (postId: number, user: boolean | null) => {
   return useQuery({
     queryKey: [useBookmarkByPostKey, postId],
     queryFn: () => getBookmarkByPost(postId),
+    enabled: !!user,
   });
 };

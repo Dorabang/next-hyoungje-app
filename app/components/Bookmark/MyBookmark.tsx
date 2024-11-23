@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { usePost } from '@/hooks/queries/usePosts';
 import Logo from '@/assets/common/footer_logo.png';
 import statusOptions from '../StatusOptions';
-import HasLikes from './BookmarkButton';
+import BookmarkButton from './BookmarkButton';
 import { allRoutes } from '@/constant/Routes';
 import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
 
@@ -61,7 +61,7 @@ const MyBookmark = ({ postId }: { postId: number }) => {
                 {data.post.title}
               </span>
             </h3>
-            <HasLikes postId={postId} />
+            <BookmarkButton postId={postId} />
           </div>
           <p className='text-grayColor-500 text-sm'>
             {
