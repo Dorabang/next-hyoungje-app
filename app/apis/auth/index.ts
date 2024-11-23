@@ -1,4 +1,5 @@
 import { post } from '@/apis/fetchAPI';
+import { BASE_API_URL } from '@/constant/api';
 import { getCookie } from '@/utils/cookieStore';
 
 export const login = async (loginData: {
@@ -28,7 +29,7 @@ export const reissueAccessToken = async () => {
     Accept: 'application/json',
   };
 
-  const response = await fetch(`/api/auth/refresh`, {
+  const response = await fetch(`${BASE_API_URL}/auth/refresh`, {
     method: 'POST',
     credentials: 'include',
     headers: defaultHeaders,
