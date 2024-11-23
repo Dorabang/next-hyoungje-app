@@ -1,6 +1,6 @@
 'use client';
 import React, { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
 
@@ -20,6 +20,7 @@ const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
   const { id } = React.use(params);
   useRedirect();
 
+  const pathname = usePathname().replace('/edit', '');
   const { user } = useAuthStore();
 
   const router = useRouter();
@@ -49,7 +50,7 @@ const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
     if (response) {
       setValue('');
       setIsLoading(false);
-      router.back();
+      router.push(pathname);
     } else {
       alert(
         '문제가 발생하여 게시물 업데이트가 실패하였습니다. 다시 시도해주세요. \n\r지속적으로 문제 발생 시 관리자에 문의 부탁드립니다.',
