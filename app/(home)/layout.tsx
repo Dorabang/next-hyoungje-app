@@ -6,7 +6,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import Nav from '@/components/Layout/Nav';
 import Footer from '@/components/Layout/Footer/Footer';
-import QueryClientWrapper from '@/components/common/Wrapper/QueryClientWrapper';
+import Provider from '@/components/common/Wrapper/Provider';
 
 const noto_sans_kr = Noto_Sans_KR({
   weight: ['400', '500', '700'],
@@ -53,13 +53,13 @@ export default function RootLayout({
       <body
         className={`${noto_sans_kr.className} scrollbar scrollbar-thumb-grayColor-300 scrollbar-track-grayColor-100`}
       >
-        <QueryClientWrapper>
+        <Provider>
           <div className='flex flex-col w-full h-[100dvh]'>
             <Nav />
             <div className='flex-grow'>{children}</div>
             <Footer />
           </div>
-        </QueryClientWrapper>
+        </Provider>
         <Script
           type='text/javascript'
           src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false`}
