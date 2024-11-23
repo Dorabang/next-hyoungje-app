@@ -8,12 +8,11 @@ import { Autoplay } from 'swiper/modules';
 // Import Swiper styles
 import 'swiper/css';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { DocumentData } from 'firebase/firestore';
 
-import { getSlidePosts } from '@/apis/slides';
+import { usePosts } from '@/hooks/queries/usePosts';
+import DefaultImage from '@/assets/common/okdong.jpg';
 
 const Slide = ({
   pathname,
@@ -26,15 +25,7 @@ const Slide = ({
   speed: number;
   community?: boolean;
 }) => {
-  const [posts, setPosts] = useState<DocumentData[] | null>(null);
-
-  useEffect(() => {
-    const getPosts = async () => {
-      const leastPosts = await getSlidePosts(pathname);
-      setPosts(leastPosts);
-    };
-    getPosts();
-  }, [pathname, slidesPerView]);
+  const { data: posts } = usePosts(pathname, 1, 'all', null);
 
   return (
     <Swiper
@@ -59,8 +50,8 @@ const Slide = ({
       modules={[Autoplay]}
       className='w-full'
     >
-      {posts !== null ? (
-        posts.map(({ id, creatorId, image }) => {
+      {posts?.data ? (
+        posts.data.map(({ postId: id, image, user: { displayName } }) => {
           return (
             <SwiperSlide key={id} className='w-[50%]'>
               <Link
@@ -73,14 +64,24 @@ const Slide = ({
                   slidesPerView !== 2 ? 'h-[300px]' : 'h-[250px] xl:h-[420px] '
                 }`}
               >
-                <Image
-                  src={image}
-                  alt={`${creatorId} 업로드 이미지`}
-                  fill
-                  sizes='100%'
-                  className='object-cover'
-                  priority
-                />
+                {image.length > 0 ? (
+                  <Image
+                    src={image[0]}
+                    alt={`${displayName} 업로드 이미지`}
+                    fill
+                    sizes='100%'
+                    className='object-cover'
+                    priority
+                  />
+                ) : (
+                  <Image
+                    src={DefaultImage.src}
+                    alt='기본 이미지'
+                    width={DefaultImage.width}
+                    height={DefaultImage.height}
+                    className='pb-8'
+                  />
+                )}
               </Link>
             </SwiperSlide>
           );

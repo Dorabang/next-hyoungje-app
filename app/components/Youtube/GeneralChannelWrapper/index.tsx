@@ -7,10 +7,10 @@ import GeneralChannel from './GeneralChannel';
 import Skeleton from './Skeleton';
 import Order from './Order';
 
-export type OrderType = 'latest' | 'text';
+export type SortType = 'name' | 'createdAt';
 
 const GeneralChannelWrapper = () => {
-  const [order, setOrder] = useState<OrderType>('text');
+  const [order, setOrder] = useState<SortType>('name');
   const { data, isLoading } = useGeneralChannel(order);
 
   if (isLoading)

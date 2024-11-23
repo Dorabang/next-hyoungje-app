@@ -1,23 +1,32 @@
-import { getPost, getPosts } from '@/apis/posts/posts';
-import { useGetPostQueryKey, useGetPostsQueryKey } from '@/constant/queryKeys';
+'use client';
 import { useQuery } from '@tanstack/react-query';
 
-export const useGetPosts = (pathname: string) => {
+import { getPost, getPosts } from '@/apis/posts';
+import { Status } from '@/components/StatusOptions';
+import { usePostsQueryKey } from '@/constant/queryKeys';
+import { User } from '@/stores/useAuthStore';
+
+export const usePosts = (
+  marketType: string,
+  page: number,
+  status: Status,
+  user: User | null,
+) => {
   return useQuery({
-    queryKey: [useGetPostsQueryKey],
-    queryFn: () => getPosts(pathname),
-    enabled: !!pathname,
+    queryKey: [usePostsQueryKey, marketType, page, status, user],
+    queryFn: () => getPosts({ marketType, page, status }),
     staleTime: 0,
-    refetchInterval: 1 * 60 * 1000, // 1분
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };
 
-export const useGetPost = (pathname: string, postId: string) => {
+export const usePost = (postId: number) => {
   return useQuery({
-    queryKey: [useGetPostQueryKey, pathname, postId],
-    queryFn: () => getPost(pathname, postId),
-    enabled: !!pathname || !!postId,
+    queryKey: [usePostsQueryKey, postId],
+    queryFn: () => getPost(postId),
     staleTime: 0,
-    refetchInterval: 1 * 60 * 1000, // 1분
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };

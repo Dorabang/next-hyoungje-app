@@ -1,4 +1,4 @@
-import ContainerBox from '@/components/ContainerBox';
+import ContainerBox from '@/components/common/ContainerBox';
 import Advertisement from '@/components/Main/Advertisement';
 import MainSlide from '@/components/Main/MainSlide';
 import MainVisual from '@/components/Main/MainVisual';

@@ -3,7 +3,7 @@ import { Container } from '@mui/material';
 import styled from 'styled-components';
 
 import FImg from '@/assets/common/footer_logo.png';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
 export const FooterStyle = styled.footer`
   border-top: 1px solid #ddd;

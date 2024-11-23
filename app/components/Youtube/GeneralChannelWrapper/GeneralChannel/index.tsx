@@ -2,10 +2,10 @@ import React from 'react';
 import Link from 'next/link';
 import { BsArrowUpRight } from 'react-icons/bs';
 
-import { YoutubeChannelData } from '../../type';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
+import { YoutubeChannelDataType } from '../../type';
 
-const GeneralChannel = ({ data }: { data: YoutubeChannelData }) => {
+const GeneralChannel = ({ data }: { data: YoutubeChannelDataType }) => {
   return (
     <Link
       target='_blank'
@@ -31,7 +31,7 @@ const GeneralChannel = ({ data }: { data: YoutubeChannelData }) => {
       <div className='flex flex-col gap-3 cursor-default'>
         <h4 className=''>{data.name}</h4>
         <p className={`text-grayColor-400 text-xs`}>
-          {data.summary.length > 45
+          {data.summary && data.summary?.length > 45
             ? data.summary.slice(0, 45) + '...'
             : data.summary === ''
               ? '-'

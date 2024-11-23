@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 
 export const getCookie = async (name: string) => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   return cookieStore.get(name)?.value;
 };
 
@@ -12,6 +12,6 @@ export const setCookie = async (
   value: string,
   options?: { maxAge: number },
 ) => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   cookieStore.set(name, value, { ...options });
 };

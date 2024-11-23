@@ -20,7 +20,7 @@ export const mgnbBtnStyle = {
 
 export const authBtnStyle = {
   color: '#666 !important',
-  fontSize: 16,
+  fontSize: 15,
   padding: '10px',
   fontWeight: '400',
   backgroundColor: 'transparent !important',

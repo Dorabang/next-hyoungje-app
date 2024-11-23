@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { DocumentData } from 'firebase/firestore';
 import { AiOutlineFileImage, AiOutlinePlus } from 'react-icons/ai';
-import { noto_serif_kr } from '../NotoSerif';
+
+import { noto_serif_kr } from '../common/NotoSerif';
 import DateFormat from '@/utils/DateFormat';
 import PostsLoading from '../Posts/PostsLoading';
 import PostsNotFound from '../Posts/PostsNotFound';
+import { Post } from '../common/Board/types';
 
 const BoardForm = ({
   data,
@@ -12,7 +13,7 @@ const BoardForm = ({
   path,
   isLoading,
 }: {
-  data: DocumentData[];
+  data: Post[];
   title: string;
   path: string;
   isLoading: boolean;
@@ -44,16 +45,27 @@ const BoardForm = ({
         {!isLoading ? (
           data.length !== 0 ? (
             data.map(
-              ({ id, num, creatorName, title, createdAt, views, image }) => (
+              ({
+                title,
+                image,
+                postId,
+                user,
+                documentNumber,
+                createdAt,
+                views,
+                displayName,
+              }) => (
                 <li
-                  key={id}
+                  key={postId}
                   className='flex gap-2 items-center border-b border-grayColor-300 text-center text-gray-700 [&_>_div]:py-3 [&_>_div]:truncate'
                 >
-                  <div className='w-[6%]'>{num}</div>
-                  <div className='w-[15%] md:w-[10%]'>{creatorName}</div>
+                  <div className='w-[6%]'>{documentNumber}</div>
+                  <div className='w-[15%] md:w-[10%]'>
+                    {displayName ?? user.displayName}
+                  </div>
                   <div className='flex-grow h-full flex justify-between items-center'>
                     <Link
-                      href={`${path}/${id}`}
+                      href={`${path}/${postId}`}
                       className='flex w-full h-full items-center whitespace-nowrap hover:underline active:underline'
                     >
                       {image && image?.length !== 0 && <AiOutlineFileImage />}

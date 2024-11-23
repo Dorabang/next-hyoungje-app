@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { noto_serif_kr } from '../../NotoSerif';
+import { noto_serif_kr } from '../../common/NotoSerif';
 import Slide from './Slide';
 
 interface MainSlideProps {

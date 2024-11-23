@@ -10,10 +10,10 @@ import 'swiper/css';
 
 import Link from 'next/link';
 
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 import { useVideos } from '@/hooks/queries/useYoutube';
 
-const VideoSlide = ({ id }: { id: string }) => {
+const VideoSlide = ({ id }: { id: number }) => {
   const { data: videos, isLoading } = useVideos(id);
 
   if (isLoading)
@@ -52,21 +52,22 @@ const VideoSlide = ({ id }: { id: string }) => {
       className='w-full'
     >
       {videos &&
-        videos.map(({ id, snippet, contentDetails }) => {
+        videos.map(({ id, videoId, thumbnail, title }) => {
           return (
             <SwiperSlide key={id}>
               <Link
                 target='_blank'
-                href={`https://www.youtube.com/watch?v=${contentDetails.videoId}`}
+                className='group'
+                href={`https://www.youtube.com/watch?v=${videoId}`}
               >
-                <AutoHeightImageWrapper
-                  src={snippet.thumbnails.medium.url}
-                  alt={`${snippet.title} 썸네일 이미지`}
-                />
-                <p className='text-grayColor-400 pt-3 font-medium'>
-                  {snippet.title.length > 45
-                    ? snippet.title.slice(0, 45) + '...'
-                    : snippet.title}
+                <div className='overflow-hidden group-hover:[&_img]:scale-110 hover:[&_img]:transition-transform'>
+                  <AutoHeightImageWrapper
+                    src={thumbnail}
+                    alt={`${title} 썸네일 이미지`}
+                  />
+                </div>
+                <p className='text-grayColor-400 pt-3 font-medium group-hover:text-grayColor-500'>
+                  {title.length > 45 ? title.slice(0, 45) + '...' : title}
                 </p>
               </Link>
             </SwiperSlide>

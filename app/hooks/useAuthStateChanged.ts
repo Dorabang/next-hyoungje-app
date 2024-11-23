@@ -1,22 +1,18 @@
 'use client';
-import { authService } from '@/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { authState } from '@/recoil/atoms';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+
+import { authStateChanged } from '@/apis/auth';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const useAuthStateChanged = () => {
-  const setUser = useSetRecoilState(authState);
+  const { setUser } = useAuthStore();
 
   useEffect(() => {
-    onAuthStateChanged(authService, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-  });
+    (async () => {
+      const authState = await authStateChanged();
+      setUser(authState);
+    })();
+  }, [setUser]);
 };
 
 export default useAuthStateChanged;

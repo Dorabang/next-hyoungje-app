@@ -1,16 +1,16 @@
 import React from 'react';
 import './index.css';
-import { OrderType } from '..';
+import { SortType } from '..';
 
 interface OrderProps {
-  order: OrderType;
-  setOrder: (order: OrderType) => void;
+  order: SortType;
+  setOrder: (order: SortType) => void;
 }
 
 const Order = ({ order, setOrder }: OrderProps) => {
-  const orderOptions: { title: string; type: 'latest' | 'text' }[] = [
-    { title: '가나다순', type: 'text' },
-    { title: '등록순', type: 'latest' },
+  const orderOptions: { title: string; type: SortType }[] = [
+    { title: '가나다순', type: 'name' },
+    { title: '등록순', type: 'createdAt' },
   ];
 
   return (

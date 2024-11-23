@@ -1,26 +1,25 @@
 import Link from 'next/link';
 import { HiOutlinePencilSquare } from 'react-icons/hi2';
-import { useRecoilValue } from 'recoil';
 
-import { useAdmin } from '@/hooks/queries/useUserInfo';
-import { authState } from '@/recoil/atoms';
+import { Status } from './StatusOptions';
+import { User } from '@/stores/useAuthStore';
 
 interface FilterOptionProps {
+  user: User | null;
   selectedCategory: string;
-  handleUpdateFilter: (status: string) => void;
+  handleUpdateFilter: (status: Status) => void;
   pathname: string;
   type: 'community' | 'etc';
 }
 
 const FilterOption = ({
+  user,
   selectedCategory,
   handleUpdateFilter,
   pathname,
   type,
 }: FilterOptionProps) => {
-  const user = useRecoilValue(authState);
-
-  const filters = [
+  const filters: { key: Status; value: string }[] = [
     { key: 'all', value: '전체' },
     { key: 'sale', value: '판매 중' },
     { key: 'sold-out', value: '판매 완료' },
@@ -35,14 +34,15 @@ const FilterOption = ({
 
   const adminFilterRoutes = ['notice'];
 
-  const { data: admin } = useAdmin(user?.uid);
+  const isMarketRoute =
+    applyFilterRoutes.filter((route) => route === pathname).length > 0;
 
   return (
     <ul
       className='flex justify-end items-center gap-4 pt-10 pb-5
       text-gray-500 text-sm'
     >
-      {applyFilterRoutes.filter((route) => route === pathname).length > 0 &&
+      {isMarketRoute &&
         filters.map((filter) => (
           <li
             key={filter.key}
@@ -75,7 +75,7 @@ const FilterOption = ({
         )}
       {user &&
         adminFilterRoutes.filter((route) => route === pathname).length > 0 &&
-        admin && (
+        user.isAdmin && (
           <li>
             <Link
               href={`${type === 'community' ? '/community' : ''}/edit/${pathname}`}

@@ -1,126 +1,50 @@
-'use server';
+import { SortType } from '@/components/Youtube/GeneralChannelWrapper';
+import { get, post, upload } from '../fetchAPI';
 import {
-  addDoc,
-  collection,
-  getDocs,
-  orderBy,
-  query,
-  where,
-} from 'firebase/firestore';
-import { dbService, storageService } from '@/firebase';
-import { getDownloadURL, ref } from 'firebase/storage';
-
-import {
-  SpecialChannelData,
-  VideoData,
-  YoutubeChannelData,
+  ChannelState,
+  ChannelType,
+  Playlist,
+  YoutubeChannelDataType,
   YoutubeChannelType,
-  YoutubeType,
 } from '@/components/Youtube/type';
-import { OrderType } from '@/components/Youtube/GeneralChannelWrapper';
-import { getPlaylist } from './playlistItems';
-import { getImageURL } from '../images';
 
-export const postYoutubeChannel = async (data: YoutubeChannelType) => {
-  const youtubeChannelRef = collection(dbService, 'youtube');
-  await addDoc(youtubeChannelRef, {
-    ...data,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    channelId: data.channelId ?? null,
-    ...(data.channelId && { playlistRefresh: Date.now() }),
-    profile: `youtube/${data.name.replaceAll(' ', '')}/profile.jpg`,
-  });
+export const getChannels = async (type: ChannelType, sort?: SortType) => {
+  const sortType = sort ? '&sort=' + sort : '';
+  const url = `/youtube/channels?type=${type}${sortType}`;
+  return (await get(url)).data as YoutubeChannelDataType[];
 };
 
-export const getGeneralChannel = async (order: OrderType) => {
-  const channel: YoutubeChannelData[] = [];
-  const fieldPath = order === 'latest' ? 'createdAt' : 'name';
-
-  try {
-    const q = query(
-      collection(dbService, 'youtube'),
-      where('channelId', '==', null),
-      orderBy('channelId'),
-      orderBy(fieldPath),
-    );
-
-    const generalChannelSnap = await getDocs(q);
-    generalChannelSnap.forEach((doc) => {
-      channel.push({
-        id: doc.id,
-        ...doc.data(),
-      } as YoutubeChannelData);
-    });
-  } catch (err) {
-    // console.log('🚀 ~ getGeneralChannel ~ err:', err);
-  }
-
-  const transformChannelData = await Promise.all(
-    channel.map(async (data) => {
-      const profile = await getChannelProfile(data.profile);
-      return { ...data, profile: profile };
-    }),
-  );
-  return transformChannelData;
+export const getPlaylist = async (id: number) => {
+  const url = `/youtube/playlist/${id}`;
+  return (await get(url)).data as Playlist[];
 };
 
-export const getSpecialChannel = async () => {
-  const channel: SpecialChannelData[] = [];
-
-  try {
-    const q = query(
-      collection(dbService, 'youtube'),
-      where('channelId', '!=', null),
-    );
-
-    const specialChannelSnap = await getDocs(q);
-    specialChannelSnap.forEach((doc) => {
-      channel.push({
-        id: doc.id,
-        ...doc.data(),
-      } as SpecialChannelData);
-    });
-  } catch (err) {
-    // console.log('🚀 ~ getGeneralChannel ~ err:', err);
-  }
-
-  const transformChannelData = await Promise.all(
-    channel.map(async (data) => {
-      const profile = await getChannelProfile(data.profile);
-      return { ...data, profile: profile };
-    }),
-  );
-
-  return transformChannelData;
+export const refreshPlaylist = async () => {
+  const url = `/youtube/refresh`;
+  return (await get(url)).data as YoutubeChannelDataType[];
 };
 
-export const postVideos = async (id: string, channelId: string) => {
-  const youtubeChannelRef = collection(dbService, `youtube/${id}`, 'playlist');
-  const playlist: YoutubeType = await getPlaylist(channelId);
+export const createChannel = async (channel: ChannelState) => {
+  const url = `/youtube/channels`;
+  return await upload(url, { method: 'POST', body: channel });
+};
+interface Channel {
+  name: string;
+  summary: string;
+  url: string;
+  channelId?: string;
+  profile?: string;
+}
 
-  playlist.items.forEach(async (playlistItem) => {
-    await addDoc(youtubeChannelRef, playlistItem);
-  });
+export const prevChannel = async (channel: Channel) => {
+  const url = `/youtube/channels`;
+  return await post(url, channel);
 };
 
-export const getVideos = async (id: string) => {
-  const videos: VideoData[] = [];
-  const videosRef = collection(dbService, `youtube/${id}`, 'playlist');
-  const videosSnapshot = await getDocs(videosRef);
-
-  videosSnapshot.docs.forEach((doc) =>
-    videos.push({ id: doc.id, ...doc.data() } as VideoData),
-  );
-
-  return videos;
-};
-
-export const putVideos = async (id: string) => {};
-
-export const getChannelProfile = async (url: string) => {
-  const profileRef = ref(storageService, url);
-  const downloadURL = await getDownloadURL(profileRef);
-
-  return downloadURL;
+export const updateChannel = async (
+  id: number,
+  channel: YoutubeChannelType,
+) => {
+  const url = `/youtube/channels/${id}`;
+  return await post(url, channel);
 };

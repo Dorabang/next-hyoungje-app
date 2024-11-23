@@ -1,30 +1,26 @@
 'use client';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import Image from 'next/image';
-import uuid from 'react-uuid';
-import { dbService, storageService } from '@/firebase';
-import { deleteObject, ref } from 'firebase/storage';
-import { DocumentData, doc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
 
-import { ImageObjProps } from '@/(home)/edit/[id]/page';
 import statusList from '@/constant/StatusLists';
-import { authState, editorState } from '@/recoil/atoms';
-import { getPostImageURL, uploadImage } from '@/apis/images';
-import { imageResize } from '@/utils/imageResize';
-import ContainerBox from '../ContainerBox';
+import ContainerBox from '../common/ContainerBox';
 import Editor from '../Editor';
 import Input from './Input';
-import LoadingPromise from '../LoadingPromise';
+import LoadingPromise from '../common/LoadingPromise';
+import { UpdatePostData, putPost } from '@/apis/posts';
+import { Post } from '../common/Board/types';
+import { Status } from '../StatusOptions';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useEditorStore } from '@/stores/useEditorStore';
 
-interface PostDataState {
+export interface PostDataState {
   title: string;
   variant: string;
   phone: string;
-  status: 'sale' | 'sold-out' | 'reservation';
+  status: Status;
   price: string;
   date: string;
   height: string;
@@ -33,29 +29,28 @@ interface PostDataState {
   place: string;
 }
 
-type PrevImages = string[] | null;
-type NewImages = ImageObjProps[] | null;
+export type UpdateImage = { id: number; data: File; preview: string };
 
-const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
+const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
   const router = useRouter();
 
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
   const [postData, setPostData] = useState<PostDataState>({
     title: post.title,
     variant: post.variant,
-    phone: post.phone,
-    status: post.status,
-    price: post.price,
-    place: post.place,
-    date: post.date,
-    height: post.height,
-    width: post.width,
-    amount: post.width,
+    phone: post.phone ?? '',
+    status: post.status ?? 'sale',
+    price: post.price ?? '',
+    place: post.place ?? '',
+    date: post.date ?? '',
+    height: post.height ?? '',
+    width: post.width ?? '',
+    amount: post.amount ?? '',
   });
 
-  const [prevImages, setPrevImages] = useState<PrevImages>(null);
-  const [newImages, setNewImages] = useState<NewImages>(null);
+  const [image, setImage] = useState<string[]>(post.image ?? []);
+  const [updateImage, setUpdateImage] = useState<UpdateImage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -70,60 +65,20 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     width,
     place,
   } = postData;
-  const [value, setValue] = useRecoilState(editorState);
-
-  const contents = post.contents;
-
-  const postImages = post && post.image;
+  const { value, setValue } = useEditorStore();
 
   useEffect(() => {
-    if (postImages) {
-      postImages.forEach(async (img: string) => {
-        const url = await getPostImageURL(pathname, post.creatorId, img);
-        setPrevImages((prev) =>
-          prev ? (!prev?.includes(url) ? [...prev, url] : prev) : [url],
-        );
-      });
-    }
-  }, [postImages, pathname, post.creatorId]);
-
-  useEffect(() => {
-    setValue(contents);
-  }, [setValue, contents]);
+    setValue(post.contents);
+  }, [setValue, post.contents]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setIsLoading((prev) => !prev);
 
-    if (!user) return;
+    const updateImageData = updateImage.map((item) => item.data);
 
-    if (newImages) {
-      await Promise.all(
-        newImages.map(async ({ id, imageUrl }) => {
-          await uploadImage(
-            `${pathname}/${post.creatorId}/post/${id}/image`,
-            imageUrl,
-          );
-        }),
-      );
-    }
-
-    const newImagesId = newImages && newImages.map((item) => item.id);
-
-    const prevImage = postImages?.filter((item: string) =>
-      prevImages?.filter((items) => items.includes(item)),
-    );
-
-    const imageIdArr = prevImages
-      ? newImagesId
-        ? [...newImagesId, ...prevImage]
-        : [...prevImage]
-      : newImagesId
-        ? [...newImagesId]
-        : null;
-
-    const newPostObj = {
+    const newPostObj: UpdatePostData = {
       title: title,
       contents: value,
       status: status,
@@ -132,33 +87,27 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
       date: date,
       price: price,
       amount: amount,
-      updatedAt: Date.now(),
       ...(pathname.includes('market') && {
         phone: phone,
         height: height,
         width: width,
       }),
-      ...(imageIdArr !== null && { image: imageIdArr }),
+      ...(image && { prevImage: image }),
+      ...(updateImageData && { updateImage: updateImageData }),
     };
 
-    const docRef = doc(dbService, `${pathname}/${post.id}`);
+    const response = await putPost(post.postId, newPostObj);
 
-    await updateDoc(docRef, newPostObj);
-    setValue(contents);
-    setPostData({
-      title: post.title,
-      variant: post.variant,
-      phone: post.phone,
-      status: post.status,
-      price: post.price,
-      date: post.date,
-      height: post.height,
-      width: post.width,
-      amount: post.width,
-      place: post.place,
-    });
-    setIsLoading(false);
-    router.back();
+    if (response.result === 'SUCCESS') {
+      setValue('');
+      setIsLoading(false);
+      router.back();
+    } else {
+      alert(
+        '문제가 발생하여 게시물 업데이트에 실패하였습니다. 다시 시도해주세요. \n\r지속적으로 문제 발생 시 관리자에 문의 부탁드립니다.',
+      );
+      router.back();
+    }
   };
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,61 +118,36 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
-      fileList.map(async (file) => {
-        const resizingImage = await imageResize(file);
-        const imageObj: ImageObjProps = { id: uuid(), imageUrl: resizingImage };
-
-        setNewImages((prev) =>
-          prev !== null ? [...prev, imageObj] : [imageObj],
-        );
+      fileList.map((file, idx) => {
+        const id = updateImage.length > 0 ? updateImage.length + 1 : idx + 1;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = (e.target as FileReader).result;
+          const updateImages = { id, data: file, preview: result as string };
+          setUpdateImage((prev) => [...prev, updateImages]);
+          return (updateImages.preview = result as string);
+        };
+        reader.readAsDataURL(file);
       });
     }
   };
 
-  const handleDeleteImage = (id: string) => {
-    if (newImages?.length === 0 || newImages === null) {
-      return setNewImages(null);
-    } else {
-      const modifyImageArr = newImages.filter((imageObj) => imageObj.id !== id);
-
-      return setNewImages(modifyImageArr);
+  const handleDeleteImage = (
+    type: 'prevImage' | 'updateImage',
+    id: string | number,
+  ) => {
+    if (type === 'prevImage') {
+      const filteredImage = image.filter((item) => item !== id);
+      return setImage(filteredImage);
     }
-  };
 
-  const handleDBDeleteImage = async (id: string) => {
-    const imageId = postImages.filter((item: string) => id.includes(item))[0];
-    if (postImages.filter((item: string) => id.includes(item))) {
-      if (prevImages?.length === 0 || prevImages === null) {
-        return setPrevImages(null);
-      } else {
-        if (!user) return;
-
-        const deleteImageRef = ref(
-          storageService,
-          `${pathname}/${post.creatorId}/post/${imageId}/image.jpg`,
-        );
-
-        await deleteObject(deleteImageRef);
-
-        const docRef = doc(dbService, `${pathname}/${post.id}`);
-        const updateImage = postImages.filter(
-          (item: string) => !id.includes(item),
-        );
-        await updateDoc(docRef, { image: updateImage });
-
-        const deleteImages = prevImages.filter((image) => image !== id);
-        return setPrevImages(deleteImages);
-      }
-    }
+    const filteredImage = updateImage.filter((item) => item.id !== +id);
+    return setUpdateImage(filteredImage);
   };
 
   const handleDeleteImageAll = () => {
-    setNewImages(null);
-
-    prevImages?.forEach(async (image) => {
-      await handleDBDeleteImage(image);
-      setPrevImages(null);
-    });
+    setUpdateImage([]);
+    setImage([]);
   };
 
   const handleChangeValue = (
@@ -235,217 +159,227 @@ const Edit = ({ post, pathname }: { post: DocumentData; pathname: string }) => {
     setPostData((prev) => ({ ...prev, [name]: value }));
   };
 
-  if (!post || !user) return;
+  if (!post || !user) {
+    alert('접근 권한이 없는 사용자입니다. 로그인 후 이용해주세요.');
+    router.back();
+  }
 
   return (
-    <ContainerBox>
+    <>
       {isLoading && <LoadingPromise />}
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
-        <form
-          onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center'
-        >
-          <Input required>
-            <Input.Label>
-              <div className='pr-4'>
-                <select
-                  id='status'
-                  name='status'
-                  className='outline-none cursor-pointer'
-                  onChange={(e) => handleChangeValue(e)}
-                  value={status}
-                >
-                  {statusList.map((option) => (
-                    <option value={option.value} key={option.value}>
-                      {option.desc}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </Input.Label>
-            <Input.Text
-              value={title}
-              name='title'
-              onChange={(e) => handleChangeValue(e)}
-              placeholder='* 제목을 입력해주세요.'
-            />
-          </Input>
-
-          <Input required>
-            <Input.Label>종류</Input.Label>
-            <Input.Text
-              name='variant'
-              value={variant}
-              onChange={(e) => handleChangeValue(e)}
-            />
-          </Input>
-
-          {pathname.includes('market') && (
+      <ContainerBox>
+        <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0 '>
+          <form
+            onSubmit={(e) => handleSubmit(e)}
+            className='mb-3 flex flex-col justify-center'
+          >
             <Input required>
-              <Input.Label>연락처</Input.Label>
+              <Input.Label>
+                <div className='pr-4'>
+                  <select
+                    id='status'
+                    name='status'
+                    className='outline-none cursor-pointer'
+                    onChange={(e) => handleChangeValue(e)}
+                    value={status}
+                  >
+                    {statusList.map((option) => (
+                      <option value={option.value} key={option.value}>
+                        {option.desc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </Input.Label>
               <Input.Text
-                name='phone'
-                value={phone}
+                value={title}
+                name='title'
+                onChange={(e) => handleChangeValue(e)}
+                placeholder='* 제목을 입력해주세요.'
+              />
+            </Input>
+
+            <Input required>
+              <Input.Label>종류</Input.Label>
+              <Input.Text
+                name='variant'
+                value={variant}
                 onChange={(e) => handleChangeValue(e)}
               />
             </Input>
-          )}
 
-          <Input required>
-            <Input.Label>산지</Input.Label>
-            <Input.Text
-              name='place'
-              value={place}
-              onChange={(e) => handleChangeValue(e)}
-            />
-          </Input>
-
-          <Input required>
-            <Input.Label>산채일</Input.Label>
-            <Input.Date
-              name='date'
-              value={date}
-              onChange={(e) => handleChangeValue(e)}
-            />
-          </Input>
-
-          <Input required>
-            <Input.Label>가격</Input.Label>
-            <Input.Text
-              name='price'
-              value={price.toLocaleString()}
-              onChange={(e) => handleChangeValue(e)}
-            />
-          </Input>
-
-          {pathname.includes('market') && (
-            <>
+            {pathname.includes('market') && (
               <Input required>
-                <Input.Label>키</Input.Label>
+                <Input.Label>연락처</Input.Label>
                 <Input.Text
-                  name='height'
-                  value={height}
+                  name='phone'
+                  value={phone}
                   onChange={(e) => handleChangeValue(e)}
                 />
               </Input>
+            )}
 
-              <Input required>
-                <Input.Label>폭</Input.Label>
-                <Input.Text
-                  name='width'
-                  value={width}
-                  onChange={(e) => handleChangeValue(e)}
-                />
-              </Input>
-            </>
-          )}
+            <Input required>
+              <Input.Label>산지</Input.Label>
+              <Input.Text
+                name='place'
+                value={place}
+                onChange={(e) => handleChangeValue(e)}
+              />
+            </Input>
 
-          <Input required>
-            <Input.Label>촉수</Input.Label>
-            <Input.Text
-              name='amount'
-              value={amount}
-              onChange={(e) => handleChangeValue(e)}
-            />
-          </Input>
+            <Input required>
+              <Input.Label>산채일</Input.Label>
+              <Input.Date
+                name='date'
+                value={date}
+                onChange={(e) => handleChangeValue(e)}
+              />
+            </Input>
 
-          <Input disabled={newImages && newImages.length >= 8 ? true : false}>
-            <Input.Label>
-              <p>
-                파일 첨부
-                <br />
-                <span className='text-grayColor-300 text-sm'>
-                  {'('}
-                  {newImages?.length || prevImages?.length
-                    ? newImages?.length ??
-                      0 + (prevImages ? prevImages.length : 0)
-                    : 0}
-                  /8
-                  {')'}
-                </span>
-              </p>
-            </Input.Label>
-            <div className='pl-2'>
-              <div className='flex gap-2 items-center'>
-                <Input.File onChange={onFileChange} multiple>
-                  파일 선택
-                </Input.File>
-                {(newImages || prevImages) && (
-                  <span
-                    className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
-                    onClick={() => handleDeleteImageAll()}
-                  >
-                    파일 전체 삭제
+            <Input required>
+              <Input.Label>가격</Input.Label>
+              <Input.Text
+                name='price'
+                value={price.toLocaleString()}
+                onChange={(e) => handleChangeValue(e)}
+              />
+            </Input>
+
+            {pathname.includes('market') && (
+              <>
+                <Input required>
+                  <Input.Label>키</Input.Label>
+                  <Input.Text
+                    name='height'
+                    value={height}
+                    onChange={(e) => handleChangeValue(e)}
+                  />
+                </Input>
+
+                <Input required>
+                  <Input.Label>폭</Input.Label>
+                  <Input.Text
+                    name='width'
+                    value={width}
+                    onChange={(e) => handleChangeValue(e)}
+                  />
+                </Input>
+              </>
+            )}
+
+            <Input required>
+              <Input.Label>촉수</Input.Label>
+              <Input.Text
+                name='amount'
+                value={amount}
+                onChange={(e) => handleChangeValue(e)}
+              />
+            </Input>
+
+            <Input
+              disabled={updateImage && updateImage.length >= 8 ? true : false}
+            >
+              <Input.Label>
+                <p>
+                  파일 첨부
+                  <br />
+                  <span className='text-grayColor-300 text-sm'>
+                    {'('}
+                    {updateImage?.length || image?.length
+                      ? (updateImage?.length ?? 0 + (image ? image.length : 0))
+                      : 0}
+                    /8
+                    {')'}
                   </span>
-                )}
-              </div>
-              {(prevImages || newImages) && (
-                <ul className='w-full py-4 flex flex-wrap gap-2'>
-                  {prevImages &&
-                    prevImages.map((item) => (
-                      <li key={item}>
-                        <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                          <Image
-                            src={item}
-                            alt={`${item} 이미지`}
-                            fill
-                            className='object-cover'
-                          />
-                          <div
-                            className='absolute right-0 top-0 w-5 h-5
+                </p>
+              </Input.Label>
+              <div className='pl-2'>
+                <div className='flex gap-2 items-center'>
+                  <Input.File onChange={onFileChange} multiple>
+                    파일 선택
+                  </Input.File>
+                  {(updateImage.length > 0 || image.length > 0) && (
+                    <span
+                      className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
+                      onClick={() => handleDeleteImageAll()}
+                    >
+                      파일 전체 삭제
+                    </span>
+                  )}
+                </div>
+                {(image || updateImage) && (
+                  <ul className='w-full py-4 flex flex-wrap gap-2'>
+                    {image &&
+                      image.map((item) => (
+                        <li key={item}>
+                          <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
+                            <Image
+                              src={item}
+                              alt={`${item} 이미지`}
+                              fill
+                              className='object-cover'
+                            />
+                            <div
+                              className='absolute right-0 top-0 w-5 h-5
                         bg-black hover:bg-gray-900 transition-colors
                         flex justify-center items-center cursor-pointer'
-                            onClick={() => handleDBDeleteImage(item)}
-                          >
-                            <AiOutlineClose className='text-white' />
+                              onClick={() =>
+                                handleDeleteImage('prevImage', item)
+                              }
+                            >
+                              <AiOutlineClose className='text-white' />
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
-                  {newImages &&
-                    newImages.map((item) => (
-                      <li key={item.id}>
-                        <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                          <Image
-                            src={item.imageUrl}
-                            alt={`${item} 이미지`}
-                            fill
-                            className='object-cover'
-                          />
-                          <div
-                            className='absolute right-0 top-0 w-5 h-5
+                        </li>
+                      ))}
+                    {updateImage &&
+                      updateImage.map((item) => (
+                        <li key={item.id}>
+                          <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
+                            <Image
+                              src={item.preview}
+                              alt={`${item} 이미지`}
+                              fill
+                              className='object-cover'
+                            />
+                            <div
+                              className='absolute right-0 top-0 w-5 h-5
                           bg-black hover:bg-gray-900 transition-colors
                           flex justify-center items-center cursor-pointer'
-                            onClick={() => handleDeleteImage(item.id)}
-                          >
-                            <AiOutlineClose className='text-white' />
+                              onClick={() =>
+                                handleDeleteImage('updateImage', item.id)
+                              }
+                            >
+                              <AiOutlineClose className='text-white' />
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
-                </ul>
-              )}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </div>
+            </Input>
+
+            <Editor />
+
+            <div className='flex gap-2 justify-center pt-[80px]'>
+              <Button
+                type='reset'
+                size='large'
+                variant='contained'
+                onClick={() => router.back()}
+              >
+                취소
+              </Button>
+              <Button type='submit' size='large' variant='contained'>
+                등록하기
+              </Button>
             </div>
-          </Input>
-
-          <Editor />
-
-          <div className='flex gap-2 justify-center pt-[80px]'>
-            <Button
-              type='reset'
-              size='large'
-              variant='contained'
-              onClick={() => router.back()}
-            >
-              취소
-            </Button>
-            <Button type='submit' size='large' variant='contained'>
-              등록하기
-            </Button>
-          </div>
-        </form>
-      </div>
-    </ContainerBox>
+          </form>
+        </div>
+      </ContainerBox>
+    </>
   );
 };
 

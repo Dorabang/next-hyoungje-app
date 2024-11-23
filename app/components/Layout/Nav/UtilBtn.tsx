@@ -1,23 +1,20 @@
-import { authService } from '@/firebase';
-import { authState } from '@/recoil/atoms';
-import { Box, Button } from '@mui/material';
-import { signOut } from 'firebase/auth';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+'use client';
 import { useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import { Box, Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
+
 import { authBtnStyle } from './StyleComponents';
 import { routes } from '../../../constant/Routes';
-
-import defaultProfile from '@/assets/defaultProfile.jpg';
+import { logout } from '@/apis/auth';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
-  const [user, setUser] = useRecoilState(authState);
+  const { user, setUser } = useAuthStore();
   const router = useRouter();
 
   return useMemo(() => {
-    const onLogOutClick = () => {
-      signOut(authService);
+    const onLogOutClick = async () => {
+      await logout();
       setUser(null);
       onClick && onClick();
       router.push('/');
@@ -43,17 +40,7 @@ const UtilBtn = ({ onClick }: { onClick?: () => void }) => {
               }}
               sx={authBtnStyle}
             >
-              <div className='flex gap-[6px] items-center'>
-                <div className='relative mt-[1px] w-6 h-6 rounded-full overflow-hidden'>
-                  <Image
-                    src={user.photoURL ? user.photoURL : defaultProfile}
-                    alt={`${user.displayName} 업로드 이미지`}
-                    fill
-                    sizes='100%'
-                  />
-                </div>
-                <p className='normal-case'>{user.displayName}</p>
-              </div>
+              마이페이지
             </Button>
             <Button onClick={onLogOutClick} sx={authBtnStyle}>
               로그아웃
