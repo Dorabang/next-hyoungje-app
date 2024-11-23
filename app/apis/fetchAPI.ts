@@ -1,3 +1,4 @@
+import { BASE_API_URL } from '@/constant/api';
 import { reissueAccessToken } from './auth';
 
 export interface FetchOptions extends RequestInit {
@@ -30,8 +31,9 @@ export const fetchData = async <T>(
   };
 
   try {
-    const response = await fetch(`/api${url}`, config);
+    const response = await fetch(`${BASE_API_URL}${url}`, config);
     const result = await response.json();
+    console.log('🚀 ~ BASE_API_URL:', BASE_API_URL);
 
     // accessToken이 만료되어 401 에러가 발생할 경우
     if (
@@ -46,7 +48,7 @@ export const fetchData = async <T>(
         throw new Error(reissueToken.message);
       }
       // 재발급 후 데이터 패칭
-      const res = await fetch(`/api${url}`, config);
+      const res = await fetch(`${BASE_API_URL}${url}`, config);
       const result = await res.json();
 
       if (result.result === 'ERROR') {
