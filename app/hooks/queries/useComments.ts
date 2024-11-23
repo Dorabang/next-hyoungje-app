@@ -8,7 +8,5 @@ export const useComments = (id: number, page: number = 1) => {
     queryKey: [useCommentsQueryKey, id, page],
     queryFn: () => getComments(id, page),
     enabled: !!id,
-    staleTime: 0,
-    refetchInterval: 10 * 60 * 1000, // 10분
   });
 };

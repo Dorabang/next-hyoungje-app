@@ -8,8 +8,6 @@ export const useBookmark = () => {
   return useQuery({
     queryKey: [useBookmarkKey],
     queryFn: () => getMyBookmark(),
-    staleTime: 0,
-    refetchInterval: 10 + 60 * 1000,
   });
 };
 
@@ -17,7 +15,5 @@ export const useBookmarkByPost = (postId: number) => {
   return useQuery({
     queryKey: [useBookmarkByPostKey, postId],
     queryFn: () => getBookmarkByPost(postId),
-    staleTime: 0,
-    refetchInterval: 10 + 60 * 1000,
   });
 };

@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-import { usePost } from '@/hooks/queries/usePosts';
+import { usePost } from '@/hooks/queries/postQuery/usePosts';
 import Logo from '@/assets/common/footer_logo.png';
 import statusOptions from '../StatusOptions';
 import HasLikes from './BookmarkButton';
