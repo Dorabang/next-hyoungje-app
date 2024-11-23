@@ -1,7 +1,6 @@
 'use client';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Button } from '@mui/material';
 import { AiOutlineClose } from 'react-icons/ai';
 
@@ -16,6 +15,7 @@ import Input from '@/components/Edit/Input';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useEditorStore } from '@/stores/useEditorStore';
 import { EditPageParams } from '@/constant/type';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
 const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
   const { id } = React.use(params);
@@ -289,11 +289,9 @@ const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
                       image.map((item) => (
                         <li key={item.id}>
                           <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                            <Image
+                            <AutoHeightImageWrapper
                               src={item.preview}
                               alt={`${item.data.name} 이미지`}
-                              fill
-                              className='object-cover'
                             />
                             <div
                               className='absolute right-0 top-0 w-5 h-5

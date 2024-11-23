@@ -1,12 +1,12 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
-import { usePost } from '@/hooks/queries/postQuery/usePosts';
+import { usePost } from '@/hooks/queries/usePosts';
 import Logo from '@/assets/common/footer_logo.png';
 import statusOptions from '../StatusOptions';
 import HasLikes from './BookmarkButton';
 import { allRoutes } from '@/constant/Routes';
+import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
 
 const MyBookmark = ({ postId }: { postId: number }) => {
   const router = useRouter();
@@ -37,18 +37,14 @@ const MyBookmark = ({ postId }: { postId: number }) => {
         onClick={() => handleClickBookmark()}
       >
         {data.post.image ? (
-          <Image
-            fill
-            className='object-cover'
+          <AutoHeightImageWrapper
             alt={`${data.post.title} 대표 이미지`}
             src={data.post.image[0]}
           />
         ) : (
-          <Image
+          <AutoHeightImageWrapper
             src={Logo.src}
             alt='기본 이미지'
-            width={Logo.width}
-            height={Logo.height}
             className='pb-8'
           />
         )}

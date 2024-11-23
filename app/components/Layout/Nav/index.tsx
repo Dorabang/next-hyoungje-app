@@ -23,6 +23,7 @@ import MGNB from './MGNB';
 import { PagesRoutes } from '@/constant/PagesRoutes';
 import logoImg from '@/assets/common/logo.png';
 import { useAuthStore } from '@/stores/useAuthStore';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
 const LogoButton = ({ className = '' }: { className?: string }) => {
   return (
@@ -33,16 +34,11 @@ const LogoButton = ({ className = '' }: { className?: string }) => {
           minWidth: 70,
           height: 64,
           position: 'relative',
+          justifyContent: 'center',
         }}
       >
         <Link href='/'>
-          <Image
-            src={logoImg}
-            alt='형제난원'
-            fill
-            sizes='100%'
-            className='object-contain'
-          />
+          <AutoHeightImageWrapper src={logoImg} alt='형제난원' />
         </Link>
       </Stack>
     </div>

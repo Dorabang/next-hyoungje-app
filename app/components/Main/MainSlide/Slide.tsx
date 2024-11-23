@@ -1,18 +1,12 @@
 'use client';
-// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-
-// import required modules
 import { Autoplay } from 'swiper/modules';
-
-// Import Swiper styles
-import 'swiper/css';
-
 import Link from 'next/link';
-import Image from 'next/image';
+import 'swiper/css';
 
 import { usePosts } from '@/hooks/queries/usePosts';
 import DefaultImage from '@/assets/common/okdong.jpg';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
 const Slide = ({
   pathname,
@@ -65,20 +59,14 @@ const Slide = ({
                 }`}
               >
                 {image.length > 0 ? (
-                  <Image
+                  <AutoHeightImageWrapper
                     src={image[0]}
                     alt={`${displayName} 업로드 이미지`}
-                    fill
-                    sizes='100%'
-                    className='object-cover'
-                    priority
                   />
                 ) : (
-                  <Image
+                  <AutoHeightImageWrapper
                     src={DefaultImage.src}
                     alt='기본 이미지'
-                    width={DefaultImage.width}
-                    height={DefaultImage.height}
                     className='pb-8'
                   />
                 )}
