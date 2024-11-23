@@ -30,16 +30,13 @@ export const generateMetadata = async ({
     keywords: [
       '옥동',
       '형제난원',
+      '옥동 난원',
       '산채품',
-      '한국춘란',
-      '난',
-      '난초',
-      post.title,
       '직거래',
       '산채',
-      '집채',
-      '춘란',
-      '약초',
+      post.title,
+      '산채기',
+      '난자랑',
     ],
   };
 };
