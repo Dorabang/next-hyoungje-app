@@ -1,6 +1,5 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
-import Image from 'next/image';
 import { AiOutlineClose } from 'react-icons/ai';
 import { useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
@@ -14,6 +13,7 @@ import { putPost } from '@/apis/posts';
 import { Post } from '../common/Board/types';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useEditorStore } from '@/stores/useEditorStore';
+import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
 
 const CommEdit = ({ post }: { post: Post }) => {
   const router = useRouter();
@@ -158,11 +158,9 @@ const CommEdit = ({ post }: { post: Post }) => {
                       prevImage.map((item) => (
                         <li key={item}>
                           <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                            <Image
+                            <AutoHeightImageWrapper
                               src={item}
                               alt={`${item} 이미지`}
-                              fill
-                              className='object-cover'
                             />
                             <div
                               className='absolute right-0 top-0 w-5 h-5
@@ -181,11 +179,9 @@ const CommEdit = ({ post }: { post: Post }) => {
                       updateImage.map((item) => (
                         <li key={item.id}>
                           <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                            <Image
+                            <AutoHeightImageWrapper
                               src={item.preview}
                               alt={`${item} 이미지`}
-                              fill
-                              className='object-cover'
                             />
                             <div
                               className='absolute right-0 top-0 w-5 h-5
