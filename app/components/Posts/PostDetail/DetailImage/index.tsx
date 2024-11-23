@@ -13,7 +13,7 @@ export const DetailImage = ({ data }: { data: PostData }) => {
               <AutoHeightImageWrapper
                 src={imageURL}
                 alt={`${data.post.user.displayName + idx} 업로드 이미지`}
-                priority
+                loading='lazy'
               />
             </div>
           ))
