@@ -1,9 +1,12 @@
-import { Fragment, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import { BASE_API_URL, BASE_FRONT_URL } from '@/constant/api';
 import { allRoutes } from '@/constant/Routes';
 import { PageParams } from '@/constant/type';
+import { PostData } from '@/apis/posts';
+import ContainerBox from '@/components/common/ContainerBox';
 
 export const generateMetadata = async ({
   params,
@@ -11,8 +14,15 @@ export const generateMetadata = async ({
   params: PageParams;
 }): Promise<Metadata> => {
   const { id, menu } = await params;
+
   const url = `${BASE_API_URL}/posts/${id}`;
-  const { data } = await fetch(url).then((res) => res.json());
+  const { data } = (await fetch(url).then((res) => res.json())) as {
+    data: PostData;
+  };
+
+  if (!id || !menu || !data) {
+    notFound();
+  }
 
   const menuName = allRoutes.filter(({ link }) => link.includes(menu))[0];
 
@@ -28,23 +38,20 @@ export const generateMetadata = async ({
     keywords: [
       '옥동',
       '형제난원',
+      '옥동 난원',
       '산채품',
-      '한국춘란',
-      '난초',
       '직거래',
       '산채',
-      '집채',
-      '춘란',
       '약초',
-      data.post.variant,
-      data.post.place,
       data.post.title,
+      data.post.variant,
+      data.post.place || '춘란',
     ],
   };
 };
 
-const DetailLayout = ({ children }: { children: ReactNode }) => {
-  return <Fragment>{children}</Fragment>;
+const DetailLayout = async ({ children }: { children: ReactNode }) => {
+  return <ContainerBox>{children}</ContainerBox>;
 };
 
 export default DetailLayout;

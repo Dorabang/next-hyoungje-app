@@ -1,5 +1,5 @@
-import { Button, Stack } from '@mui/material';
 import Link from 'next/link';
+import { Stack } from '@mui/material';
 
 const ErrorPage = () => {
   return (

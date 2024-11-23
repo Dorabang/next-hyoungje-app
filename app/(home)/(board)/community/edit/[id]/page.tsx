@@ -1,7 +1,6 @@
 'use client';
 import React, { FormEvent, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
 
@@ -15,11 +14,13 @@ import { createPost } from '@/apis/posts';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useEditorStore } from '@/stores/useEditorStore';
 import { EditPageParams } from '@/constant/type';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
 const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
   const { id } = React.use(params);
   useRedirect();
 
+  const pathname = usePathname().replace('/edit', '');
   const { user } = useAuthStore();
 
   const router = useRouter();
@@ -49,7 +50,7 @@ const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
     if (response) {
       setValue('');
       setIsLoading(false);
-      router.back();
+      router.push(pathname);
     } else {
       alert(
         '문제가 발생하여 게시물 업데이트가 실패하였습니다. 다시 시도해주세요. \n\r지속적으로 문제 발생 시 관리자에 문의 부탁드립니다.',
@@ -143,11 +144,9 @@ const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
                     {image.map((item) => (
                       <li key={item.id}>
                         <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                          <Image
+                          <AutoHeightImageWrapper
                             src={item.preview}
                             alt={`${item} 이미지`}
-                            fill
-                            className='object-cover'
                           />
                           <div
                             className='absolute right-0 top-0 w-5 h-5

@@ -3,13 +3,15 @@ import { LiaHeartSolid, LiaHeart } from 'react-icons/lia';
 
 import { addBookmark, removeBookmark } from '@/apis/bookmark';
 import { useBookmarkByPost } from '@/hooks/queries/useBookmark';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface BtnBookmarkProps {
   postId: number;
 }
 
 const BookmarkButton = ({ postId }: BtnBookmarkProps) => {
-  const { data, refetch } = useBookmarkByPost(postId);
+  const { user } = useAuthStore();
+  const { data, refetch } = useBookmarkByPost(postId, user);
 
   const handleUpdatedLikes = async () => {
     if (data?.isBookmarked === undefined) return;

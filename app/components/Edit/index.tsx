@@ -1,6 +1,5 @@
 'use client';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Button } from '@mui/material';
@@ -15,6 +14,8 @@ import { Post } from '../common/Board/types';
 import { Status } from '../StatusOptions';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useEditorStore } from '@/stores/useEditorStore';
+import AutoHeightImageWrapper from '../common/Wrapper/AutoHeightImageWrapper';
+import useRedirect from '@/hooks/useRedirect';
 
 export interface PostDataState {
   title: string;
@@ -33,6 +34,7 @@ export type UpdateImage = { id: number; data: File; preview: string };
 
 const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
   const router = useRouter();
+  useRedirect();
 
   const { user } = useAuthStore();
 
@@ -314,11 +316,9 @@ const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
                       image.map((item) => (
                         <li key={item}>
                           <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                            <Image
+                            <AutoHeightImageWrapper
                               src={item}
                               alt={`${item} 이미지`}
-                              fill
-                              className='object-cover'
                             />
                             <div
                               className='absolute right-0 top-0 w-5 h-5
@@ -337,11 +337,9 @@ const Edit = ({ post, pathname }: { post: Post; pathname: string }) => {
                       updateImage.map((item) => (
                         <li key={item.id}>
                           <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                            <Image
+                            <AutoHeightImageWrapper
                               src={item.preview}
                               alt={`${item} 이미지`}
-                              fill
-                              className='object-cover'
                             />
                             <div
                               className='absolute right-0 top-0 w-5 h-5
