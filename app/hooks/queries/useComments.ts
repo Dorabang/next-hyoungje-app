@@ -1,13 +1,14 @@
-import { getComments } from '@/apis/comments';
-import { useGetCommentsQueryKey } from '@/constant/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 
-export const useGetComments = (pathname: string) => {
+import { getComments } from '@/apis/comments';
+import { useCommentsQueryKey } from '@/constant/queryKeys';
+
+export const useComments = (id: number, page: number = 1) => {
   return useQuery({
-    queryKey: [useGetCommentsQueryKey, pathname],
-    queryFn: () => getComments(pathname),
-    enabled: !!pathname,
+    queryKey: [useCommentsQueryKey, id, page],
+    queryFn: () => getComments(id, page),
+    enabled: !!id,
     staleTime: 0,
-    refetchInterval: 1 * 60 * 1000, // 1분
+    refetchInterval: 10 * 60 * 1000, // 10분
   });
 };

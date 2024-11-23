@@ -1,230 +1,190 @@
 'use client';
-
 import React, { FormEvent, useState } from 'react';
-import ContainerBox from '@/components/ContainerBox';
-import useRedirect from '@/hooks/useRedirect';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { authState, editorState } from '@/recoil/atoms';
-import { Button } from '@mui/material';
-import { dbService } from '@/firebase';
-import {
-  DocumentData,
-  addDoc,
-  collection,
-  doc,
-  updateDoc,
-} from 'firebase/firestore';
-import uuid from 'react-uuid';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { AiOutlineClose } from 'react-icons/ai';
+import { Button } from '@mui/material';
+
+import useRedirect from '@/hooks/useRedirect';
+import ContainerBox from '@/components/common/ContainerBox';
 import Editor from '@/components/Editor';
-import getPostsAmount from '@/apis/posts/getPostsAmount';
-import { imageResize } from '@/utils/imageResize';
-import { uploadImage } from '@/apis/images';
 import Input from '@/components/Edit/Input';
-import LoadingPromise from '@/components/LoadingPromise';
+import LoadingPromise from '@/components/common/LoadingPromise';
+import { UpdateImage } from '@/components/Edit';
+import { createPost } from '@/apis/posts';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useEditorStore } from '@/stores/useEditorStore';
+import { EditPageParams } from '@/constant/type';
 
-export interface ImageObjProps {
-  id: string;
-  imageUrl: string;
-}
-
-const ModifyPostPage = ({ params: { id } }: { params: { id: string } }) => {
+const ModifyPostPage = ({ params }: { params: EditPageParams }) => {
+  const { id } = React.use(params);
   useRedirect();
 
-  const user = useRecoilValue(authState);
+  const { user } = useAuthStore();
 
   const router = useRouter();
 
   const [title, setTitle] = useState('');
-  const [popup, setPopup] = useState(false);
-  const [value, setValue] = useRecoilState(editorState);
+  const { value, setValue } = useEditorStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  /* 이미지 id, url 정보를 담은 배열 */
-  const [selectedImage, setSelectedImage] = useState<ImageObjProps[] | null>(
-    null,
-  );
+  const [image, setImage] = useState<UpdateImage[]>([]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setIsLoading((prev) => !prev);
 
-    if (!user) return;
-
-    /* 이미지 업로드 */
-    if (selectedImage) {
-      await Promise.all(
-        selectedImage.map(async (value) => {
-          await uploadImage(
-            `${id}/${user.uid}/post/${value.id}/image`,
-            value.imageUrl,
-          );
-        }),
-      );
-    }
-
-    /* 이미지 ID 저장 */
-    const imageIdArr = selectedImage && selectedImage.map((item) => item.id);
-
-    const postAmount: DocumentData | undefined = await getPostsAmount(
-      `postsAmount/${id}`,
-    );
+    const imageData = image.map((item) => item.data);
 
     const newPostObj = {
       title: title,
-      ...(imageIdArr !== null && { image: imageIdArr }),
-      popup: popup,
       contents: value,
-      like: [],
-      views: 0,
-      num: postAmount?.amount + 1,
-      creatorId: user?.uid,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      image: imageData,
+      marketType: id,
     };
 
-    await addDoc(collection(dbService, `${id}`), newPostObj);
+    const response = await createPost(newPostObj);
 
-    const postsAmountRef = doc(dbService, `postsAmount/${id}`);
-
-    updateDoc(postsAmountRef, { amount: postAmount?.amount + 1 });
-
-    setTitle('');
-    setValue('');
-    setPopup(false);
-    setIsLoading(false);
-    router.back();
+    if (response) {
+      setValue('');
+      setIsLoading(false);
+      router.back();
+    } else {
+      alert(
+        '문제가 발생하여 게시물 업데이트가 실패하였습니다. 다시 시도해주세요. \n\r지속적으로 문제 발생 시 관리자에 문의 부탁드립니다.',
+      );
+      router.back();
+    }
   };
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
+
     if (files) {
       const fileList = Object.values(files).slice(0, 8);
 
-      fileList.map(async (file) => {
-        const resizingImage = await imageResize(file);
-        const imageObj: ImageObjProps = {
-          id: uuid(),
-          imageUrl: resizingImage,
+      fileList.map((file, idx) => {
+        const id = image.length > 0 ? image.length + 1 : idx + 1;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = (e.target as FileReader).result;
+          const images = { id, data: file, preview: result as string };
+          setImage((prev) => [...prev, images]);
+          return (images.preview = result as string);
         };
-
-        setSelectedImage((prev) =>
-          prev !== null ? [...prev, imageObj] : [imageObj],
-        );
+        reader.readAsDataURL(file);
       });
     }
   };
 
-  const handleDeleteImage = (id: string) => {
-    if (selectedImage?.length === 0 || selectedImage === null) {
-      return setSelectedImage(null);
-    } else {
-      const modifyImageArr = selectedImage.filter(
-        (imageObj) => imageObj.id !== id,
-      );
-
-      return setSelectedImage(modifyImageArr);
-    }
+  const handleDeleteImage = (id: string | number) => {
+    const filteredImage = image.filter((item) => item.id !== id);
+    return setImage(filteredImage);
   };
 
+  const handleDeleteImageAll = () => {
+    setImage([]);
+  };
+
+  if (!id || !user) {
+    alert('접근 권한이 없는 사용자입니다. 로그인 후 이용해주세요.');
+    router.back();
+  }
+
   return (
-    <ContainerBox>
+    <>
       {isLoading && <LoadingPromise />}
-      <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
-        <form
-          onSubmit={(e) => handleSubmit(e)}
-          className='mb-3 flex flex-col justify-center'
-        >
-          <Input required>
-            <Input.Label>제목</Input.Label>
-            <Input.Text
-              value={title}
-              name='title'
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder='제목을 입력해주세요.'
-            />
-          </Input>
-
-          {id.includes('notice') && (
-            <Input>
-              <Input.Label>공지 등록</Input.Label>
-              <Input.Radio
-                checked={popup}
-                name='popup'
-                onChange={(e) => setPopup(e.target.checked)}
-              >
-                공지 등록하기
-              </Input.Radio>
+      <ContainerBox>
+        <div className='flex flex-col gap-4 justify-center mx-4 sm:mx-0'>
+          <form
+            onSubmit={(e) => handleSubmit(e)}
+            className='mb-3 flex flex-col justify-center'
+          >
+            <Input required>
+              <Input.Label>제목</Input.Label>
+              <Input.Text
+                value={title}
+                name='title'
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder='제목을 입력해주세요.'
+              />
             </Input>
-          )}
 
-          <Input>
-            <Input.Label>
-              <p>
-                파일 첨부
-                <br />
-                <span className='text-grayColor-300 text-sm'>
-                  {'('}
-                  {selectedImage ? selectedImage.length : '0'}/8{')'}
-                </span>
-              </p>
-            </Input.Label>
-            <div className='flex flex-grow flex-wrap pl-3'>
-              <div className='flex gap-2 items-center'>
-                <Input.File onChange={onFileChange} multiple>
-                  파일 선택
-                </Input.File>
-                {selectedImage && (
-                  <span
-                    className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
-                    onClick={() => setSelectedImage(null)}
-                  >
-                    파일 전체 삭제
+            <Input>
+              <Input.Label>
+                <p>
+                  파일 첨부
+                  <br />
+                  <span className='text-grayColor-300 text-sm'>
+                    {'('}
+                    {image.length}/8{')'}
                   </span>
-                )}
-              </div>
-              {selectedImage && (
-                <ul className='w-full py-4 flex gap-2'>
-                  {selectedImage.map((item) => (
-                    <li key={item.id}>
-                      <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
-                        <Image
-                          src={item.imageUrl}
-                          alt={`${item} 이미지`}
-                          fill
-                          className='object-cover'
-                        />
-                        <div
-                          className='absolute right-0 top-0 w-5 h-5
+                </p>
+              </Input.Label>
+              <div className='flex flex-grow flex-wrap pl-3'>
+                <div className='flex gap-2 items-center'>
+                  <Input.File onChange={onFileChange} multiple>
+                    파일 선택
+                  </Input.File>
+                  {image.length > 0 && (
+                    <span
+                      className='text-sm text-red-500 hover:text-red-800 active:text-red-800 cursor-pointer pl-2'
+                      onClick={handleDeleteImageAll}
+                    >
+                      파일 전체 삭제
+                    </span>
+                  )}
+                </div>
+                {image && (
+                  <ul className='w-full py-4 flex gap-2'>
+                    {image.map((item) => (
+                      <li key={item.id}>
+                        <div className='w-[100px] h-[100px] relative flex gap-4 overflow-hidden'>
+                          <Image
+                            src={item.preview}
+                            alt={`${item} 이미지`}
+                            fill
+                            className='object-cover'
+                          />
+                          <div
+                            className='absolute right-0 top-0 w-5 h-5
                           bg-black hover:bg-gray-900 transition-colors
                           flex justify-center items-center cursor-pointer'
-                          onClick={() => handleDeleteImage(item.id)}
-                        >
-                          <AiOutlineClose className='text-white' />
+                            onClick={() => handleDeleteImage(item.id)}
+                          >
+                            <AiOutlineClose className='text-white' />
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </Input>
+
+            <Editor />
+
+            <div className='flex gap-2 justify-center pt-[80px]'>
+              <Button
+                type='reset'
+                size='large'
+                variant='contained'
+                onClick={() => router.back()}
+              >
+                취소
+              </Button>
+
+              <Button type='submit' size='large' variant='contained'>
+                등록하기
+              </Button>
             </div>
-          </Input>
-
-          <Editor />
-
-          <div className='flex justify-center pt-[80px]'>
-            <Button type='submit' size='large' variant='contained'>
-              등록하기
-            </Button>
-          </div>
-        </form>
-      </div>
-    </ContainerBox>
+          </form>
+        </div>
+      </ContainerBox>
+    </>
   );
 };
 

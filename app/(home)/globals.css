@@ -17,6 +17,13 @@
     box-shadow: none;
   }
 
+  button[type='submit']:disabled {
+    background-color: #ddd;
+    color: #999;
+    border: 1px solid #ddd;
+    box-shadow: none;
+  }
+
   button[type='reset'] {
     background-color: #fff;
     border-radius: 0;

@@ -1,16 +1,17 @@
 // comments
-export const useGetCommentsQueryKey = 'useGetCommentsQueryKey';
+export const useCommentsQueryKey = 'useCommentsQueryKey';
 
-// likes
-export const useHasLikesQueryKey = 'useHasLikesQueryKey';
+// bookmark
+export const useBookmarkKey = 'useBookmarkKey';
+export const useBookmarkByPostKey = 'useBookmarkByPostKey';
 
 // posts
-export const useGetPostsQueryKey = 'useGetPostsQueryKey';
-export const useGetPostQueryKey = 'useGetPostQueryKey';
-
-// user
-export const useUserInfoQueryKey = 'useUserInfoQueryKey';
+export const usePostsQueryKey = 'usePostsQueryKey';
+export const usePostQueryKey = 'usePostQueryKey';
 
 // youtube
 export const useGeneralChannelQueryKey = 'useGeneralChannelQueryKey';
 export const useSpecialChannelQueryKey = 'useSpecialChannelQueryKey';
+
+// user
+export const useAdminKey = 'useAdmin';

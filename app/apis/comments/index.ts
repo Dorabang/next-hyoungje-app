@@ -1,72 +1,31 @@
-import { dbService } from '@/firebase';
-import {
-  DocumentData,
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  updateDoc,
-} from 'firebase/firestore';
-import { getNickname } from '../user';
+import { del, get, post, put } from '../fetchAPI';
+import { Comment } from '@/components/Comment/Comments';
 
-interface NewCommentsProps {
-  userId: string;
-  comment: string;
-}
-
-interface CommentsProps extends NewCommentsProps {
-  id: string;
-  createdAt: number;
-  nickname: string;
-  updatedAt?: number;
-}
-
-export const addComments = async (pathname: string, data: NewCommentsProps) => {
-  const commentsRef = collection(dbService, pathname, 'comments');
-  await addDoc(commentsRef, {
-    ...data,
-    createdAt: Date.now(),
-  });
-};
-
-export const getComments = async (pathname: string) => {
-  const commentsArr: DocumentData[] = [];
-
-  const commentsRef = collection(dbService, pathname, 'comments');
-  const commentsSnapshot = await getDocs(commentsRef);
-
-  commentsSnapshot.docs
-    .sort((a, b) => a.data().createdAt - b.data().createdAt)
-    .forEach((doc) => {
-      return commentsArr.push({
-        id: doc.id,
-        ...doc.data(),
-      });
-    });
-
-  const transformComments = await Promise.all(
-    commentsArr.map(async (comment) => {
-      const nickname = await getNickname(comment.userId);
-      return { ...comment, nickname: nickname };
-    }),
-  );
-  return transformComments as CommentsProps[];
-};
-
-export const updateComments = async (
-  pathname: string,
-  data: { comment: string; updatedAt: number },
-  id: string,
+export const getComments = async (
+  id: number,
+  page: number = 1,
+  size: number = 5,
+  order: 'asc' | 'desc' = 'desc',
 ) => {
-  const commentsRef = doc(dbService, pathname, 'comments', id);
-  await updateDoc(commentsRef, {
-    comment: data.comment,
-    updatedAt: data.updatedAt,
-  });
+  const url = `/comments/${id}?page=${page}&size=${size}&order=${order}`;
+  return (await get(url)) as {
+    result: 'SUCCESS' | 'ERROR';
+    data: Comment[];
+    totalResult: number;
+    currentPage: number;
+    totalPages: number;
+    isLast: boolean;
+  };
 };
 
-export const deleteComments = async (pathname: string, id: string) => {
-  const commentsRef = doc(dbService, pathname, 'comments', id);
-  await deleteDoc(commentsRef);
+export const createComment = async (postId: number, content: string) => {
+  return await post(`/comments/${postId}`, { content });
+};
+
+export const updateComment = async (commentId: number, content: string) => {
+  return await put(`/comments/${commentId}`, { content });
+};
+
+export const deleteComment = async (commentId: number) => {
+  return await del(`/comments/${commentId}`);
 };

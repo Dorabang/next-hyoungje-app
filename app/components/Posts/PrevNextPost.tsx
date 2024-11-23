@@ -1,75 +1,62 @@
-import { getNextPost, getPrevPost } from '@/apis/posts/posts';
-import { allRoutes } from '@/constant/Routes';
-import { DocumentData } from 'firebase/firestore';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+
+import { allRoutes } from '@/constant/Routes';
+
+export interface PrevNextPostData {
+  title: string;
+  postId: number;
+}
 
 interface PrevNextPostProps {
   pathname: string;
-  post: DocumentData;
+  prev: PrevNextPostData | null;
+  next: PrevNextPostData | null;
 }
 
-const PrevNextPost = ({ pathname, post }: PrevNextPostProps) => {
-  const [prevPost, setPrevPosts] = useState<DocumentData | null | undefined>(
-    null,
-  );
-  const [nextPost, setNextPosts] = useState<DocumentData | null | undefined>(
-    null,
-  );
-
+const PrevNextPost = ({ pathname, prev, next }: PrevNextPostProps) => {
   const includesCommunity = allRoutes
     .filter((r) => r.link.includes('community'))
     .filter((r) => r.link.includes(pathname));
 
-  useEffect(() => {
-    const getPrevNext = async () => {
-      const prev = await getPrevPost(pathname, post.num);
-      setPrevPosts(prev);
-      const next = await getNextPost(pathname, post.num);
-      setNextPosts(next);
-    };
-    getPrevNext();
-  }, [pathname, post.num]);
-
   return (
     <>
-      {(prevPost || nextPost) && (
+      {(prev || next) && (
         <div className='mt-10 flex justify-between items-start border-t border-t-grayColor-400 pt-5'>
           <div>
-            {prevPost && (
+            {prev && (
               <Link
                 href={
                   includesCommunity.length > 0
-                    ? `/community/${pathname}/${prevPost.id}`
-                    : `/${pathname}/${prevPost.id}`
+                    ? `/community/${pathname}/${prev.postId}`
+                    : `/${pathname}/${prev.postId}`
                 }
                 className='text-left flex gap-1 justify-start items-center text-sm transition-colors text-grayColor-300 hover:text-grayColor-400 active:text-grayColor-400'
               >
                 <AiOutlineLeft size={20} />
                 <p>
                   이전 글 ・{' '}
-                  {prevPost.title.length > 7
-                    ? prevPost.title.substr(0, 7) + '...'
-                    : prevPost.title}
+                  {prev?.title.length > 7
+                    ? prev?.title.substr(0, 7) + '...'
+                    : prev.title}
                 </p>
               </Link>
             )}
           </div>
           <div>
-            {nextPost && (
+            {next && (
               <Link
                 href={
                   includesCommunity.length > 0
-                    ? `/community/${pathname}/${nextPost.id}`
-                    : `/${pathname}/${nextPost.id}`
+                    ? `/community/${pathname}/${next.postId}`
+                    : `/${pathname}/${next.postId}`
                 }
                 className='text-right flex gap-1 justify-end items-center text-sm transition-colors text-grayColor-300 hover:text-grayColor-400 active:text-grayColor-400'
               >
                 <p>
-                  {nextPost.title.length > 7
-                    ? nextPost.title.substr(0, 7) + '...'
-                    : nextPost.title}{' '}
+                  {next.title.length > 7
+                    ? next.title.substring(0, 7) + '...'
+                    : next.title}{' '}
                   ・ 다음 글
                 </p>
                 <AiOutlineRight size={20} />

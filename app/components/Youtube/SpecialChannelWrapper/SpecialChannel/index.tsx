@@ -2,13 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import { TfiArrowCircleRight } from 'react-icons/tfi';
 
-import { noto_serif_kr } from '@/components/NotoSerif';
-import { SpecialChannelData } from '../../type';
+import { noto_serif_kr } from '@/components/common/NotoSerif';
+import { YoutubeChannelDataType } from '../../type';
 import VideoSlide from '../VideoSlide';
 import Badge from '../../Badge';
-import AutoHeightImageWrapper from '@/components/AutoHeightImageWrapper';
+import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
 
-const SpecialChannel = ({ data }: { data: SpecialChannelData }) => {
+const SpecialChannel = ({ data }: { data: YoutubeChannelDataType }) => {
   return (
     <div className='flex flex-col gap-8 md:gap-16 min-h-[600px] bg-white rounded-xl mt-[30px] mb-[90px] md:mt-[80px] md:mb-[120px] px-5 py-4 md:px-10 md:py-8'>
       <div className='flex justify-between items-center flex-col gap-5 md:gap-0 md:flex-row'>

@@ -1,6 +1,8 @@
 'use client';
-
-/* mui */
+import { Fragment, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   AppBar,
   Box,
@@ -12,31 +14,15 @@ import {
   Toolbar,
 } from '@mui/material';
 import { LightTooltip, btnStyle } from './StyleComponents';
+import { AiOutlineMenu } from 'react-icons/ai';
 
-/* next */
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Fragment, useEffect, useState } from 'react';
-
-/* firebase */
-import { User } from 'firebase/auth';
-
-/* recoil */
-import { useRecoilValue } from 'recoil';
-import { authState } from '@/recoil/atoms';
-
-/* utils */
-import { noto_serif_kr } from '@/components/NotoSerif';
 import useAuthStateChanged from '@/hooks/useAuthStateChanged';
+import { noto_serif_kr } from '@/components/common/NotoSerif';
 import UtilBtn from './UtilBtn';
 import MGNB from './MGNB';
-import { AiOutlineMenu } from 'react-icons/ai';
 import { PagesRoutes } from '@/constant/PagesRoutes';
-
-/* image */
 import logoImg from '@/assets/common/logo.png';
-import NotificationWrapper from '@/components/Main/NotificationWrapper';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const LogoButton = ({ className = '' }: { className?: string }) => {
   return (
@@ -65,27 +51,10 @@ const LogoButton = ({ className = '' }: { className?: string }) => {
 
 const Nav = () => {
   useAuthStateChanged();
-  const user = useRecoilValue<User | null>(authState);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const router = useRouter();
-
-  useEffect(() => {
-    /* scroll event */
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [user]);
 
   useEffect(() => {
     if (isOpen) {
@@ -97,10 +66,9 @@ const Nav = () => {
 
   return (
     <Fragment>
-      <NotificationWrapper />
-      <div className={`h-[80px] ${isScrolled ? 'block' : 'hidden'}`} />
+      <div className='min-h-[80px]' />
       <AppBar
-        position={isScrolled ? 'fixed' : 'static'}
+        position={'fixed'}
         sx={{
           background: 'rgba(255,255,255,0.85)',
           padding: '10px 0',
@@ -109,7 +77,7 @@ const Nav = () => {
           zIndex: '30',
         }}
         color='transparent'
-        style={{ backdropFilter: isScrolled ? 'blur(10px)' : 'none' }}
+        style={{ backdropFilter: 'blur(10px)' }}
       >
         <Container maxWidth='xl'>
           <Toolbar
@@ -137,9 +105,7 @@ const Nav = () => {
                       <LightTooltip
                         key={item.name}
                         title={
-                          item.depth.length === 0 ? (
-                            ''
-                          ) : (
+                          item.depth.length === 0 ? null : (
                             <MenuList>
                               {item.depth?.map((item2) => (
                                 <MenuItem
@@ -167,9 +133,7 @@ const Nav = () => {
                     <LightTooltip
                       key={item.name}
                       title={
-                        item.depth.length === 0 ? (
-                          ''
-                        ) : (
+                        item.depth.length === 0 ? null : (
                           <MenuList>
                             {item.depth?.map((item2) => (
                               <MenuItem
@@ -214,7 +178,7 @@ const Nav = () => {
         </Container>
       </AppBar>
 
-      <MGNB isOpen={isOpen} setIsOpen={(value) => setIsOpen(value)} />
+      <MGNB isOpen={isOpen} setIsOpen={setIsOpen} />
     </Fragment>
   );
 };
