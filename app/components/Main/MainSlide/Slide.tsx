@@ -7,6 +7,7 @@ import 'swiper/css';
 import { usePosts } from '@/hooks/queries/usePosts';
 import DefaultImage from '@/assets/common/okdong.jpg';
 import AutoHeightImageWrapper from '@/components/common/Wrapper/AutoHeightImageWrapper';
+import Image from 'next/image';
 
 const Slide = ({
   pathname,
@@ -55,19 +56,22 @@ const Slide = ({
                     : `/${pathname}/${id}`
                 }
                 className={`relative block w-full ${
-                  slidesPerView !== 2 ? 'h-[300px]' : 'h-[250px] xl:h-[420px] '
+                  slidesPerView !== 2 ? 'min-h-[300px]' : 'min-h-[150px] xl:h-[420px] '
                 }`}
               >
                 {image.length > 0 ? (
-                  <AutoHeightImageWrapper
+                  <Image
+                    fill
                     src={image[0]}
                     alt={`${displayName} 업로드 이미지`}
-                  />
+                    sizes='100%'
+                    className='object-cover border border-gray-100' />
                 ) : (
-                  <AutoHeightImageWrapper
+                  <Image
+                    fill
                     src={DefaultImage.src}
                     alt='기본 이미지'
-                    className='pb-8'
+                    className='object-contain border'
                   />
                 )}
               </Link>

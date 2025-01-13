@@ -21,6 +21,7 @@ export default function Home() {
           title='일반 장터'
           subTitle='현재 판매 중인 집채품'
           variant='left'
+          speed={1500}
         />
 
         <YoutubeBanner />
@@ -38,6 +39,7 @@ export default function Home() {
           subTitle='산채품·집채품 자랑 커뮤니티'
           variant='left'
           community
+          speed={1500}
         />
 
         <Advertisement />
